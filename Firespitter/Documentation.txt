@@ -10,9 +10,3 @@ KSP Forum Thread: http://forum.kerbalspaceprogram.com/showthread.php/24551-Fires
 
 GUI Window IDs
 Use FSGUIwindowID.*className* as the ID when creating GUI.windows
-5879		FSinfoPopup
-5880-5889	FSanimateGeneric
-5890		FSswitchEngineThrustTransform
-5891		FStoggleSurfaceAttach
-5892		test
-5893-5897	trimAdjustment - 4 reserved for pitch/yaw/roll/wheel
