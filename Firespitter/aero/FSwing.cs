@@ -106,13 +106,25 @@ class FSwing : PartModule
         toggleLeadingEdgeEvent();
     }
 
+    public void updateDrag()
+    {
+        if (leadingEdgeCurrent > 0f)
+        {
+            part.rigidbody.drag = leadingEdgeDrag * (float)vessel.atmDensity * leadingEdgeCurrent;
+        }
+        else
+        {
+            part.rigidbody.drag = 0f;
+        }
+    }
+
     public void setLeadingEdge(bool newState)
     {
         leadingEdgeExtended = newState;
         if (newState == true)
         {
             leadingEdgeTarget = 1f;
-            part.rigidbody.drag = leadingEdgeDrag;
+            //part.rigidbody.drag = leadingEdgeDrag * vessel.atmDensity * ;
             currentDeflectionLiftCoeff = deflectionLiftCoeff + leadingEdgeLift;
             if (affectStockWingModule)
             {
@@ -122,7 +134,7 @@ class FSwing : PartModule
         else
         {
             leadingEdgeTarget = 0f;
-            part.rigidbody.drag = 0f;
+            //part.rigidbody.drag = 0f;
             if (affectStockWingModule)
             {
                 stockWingModule.deflectionLiftCoeff = deflectionLiftCoeff;
@@ -254,6 +266,7 @@ class FSwing : PartModule
                         leadingEdgeCurrent = 0f;
                 }
                 updateLeadingEdgePosition();
+                updateDrag();
             }
 
         }

@@ -135,7 +135,7 @@ public class FSmonitorScript : InternalModule
         // Run once. (Must be run after all parts have been created, so it can't be in the OnAwake)
         if (!monitorDefaultStateSet)
         {
-            //Debug.Log("initializing monitors");
+            Debug.Log("initializing monitors"); // -------------------------------------------------<<<<<<<<
             fsMon = new FSmonitorInterface[20];
             fsMon = base.transform.parent.GetComponentsInChildren<FSmonitorInterface>();
             //Debug.Log("found " + fsMon.Length + " monitors");
@@ -155,8 +155,8 @@ public class FSmonitorScript : InternalModule
             monitorDefaultStateSet = true;
         }
 
-        if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA
-            || CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Internal)
+        /*
+        if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA)            //|| CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Internal)
         { //Only run this code when IVA
 
             if (arrayCreated)
@@ -196,7 +196,7 @@ public class FSmonitorScript : InternalModule
                     }
                 }
             }
-        }
+        }*/
     }
 }
 

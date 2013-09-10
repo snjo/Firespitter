@@ -53,10 +53,14 @@ public class FSmonitorInterface : InternalModule
         info,
     }
 
+    private delegate void MenuStateHandler();
+
+    private MenuStateHandler menuState;
+
     //ActionGroupList actionGroupList;
 
-    public MenuState menuState = MenuState.splashScreen;
-    public MenuState startState = MenuState.splashScreen;
+    //public MenuState menuState = MenuState.splashScreen;
+    public MenuState startState = MenuState.splashScreen;    
 
     //private GameObject targetObject;
     private FSmonitorScript targetScript;
@@ -92,6 +96,7 @@ public class FSmonitorInterface : InternalModule
     string climbrateString = "";
     string hoverString = "";
     float hoverHeight = 0f;
+    double displaySpeed = 0D;
 
     // action group number ints
     int gearGroupNumber;
@@ -262,308 +267,385 @@ public class FSmonitorInterface : InternalModule
         lightGroupNumber = BaseAction.GetGroupIndex(KSPActionGroup.Light);
 
         useInfoPopup = getInfoPopupObject();
+
+        menuState = menuSplashScreen;
     }
 
     public override void OnUpdate()
     {
-        if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA
-            || CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Internal)
+        if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA && vessel == FlightGlobals.ActiveVessel)            //|| CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Internal)
         {
+            // clear all the text lines
             for (int i = 0; i < linesPerPage; i++)
             {
                 textArray[i] = "";
             }
 
-            // do resource update if enought ime has passed or the number of parts in the vessel has changed
-            if (vesselNumParts != vessel.Parts.Count || resourceUpdateCountdown <= 0)
-            {
-                getResourceList();
-                resourceUpdateCountdown = 60;
-                vesselNumParts = vessel.Parts.Count;
-                getHoverHeight();
-            }
-            else
-            {
-                resourceUpdateCountdown--;
-            }
+            //updateFuel();
 
             // get flight data numbers. Metric and imperial/aviation
 
-            double displaySpeed = 0D;
-            switch (speedMode)
-            {
-                case "Surface":
-                    displaySpeed = FlightGlobals.ship_srfSpeed;
-                    break;
-                case "Orbit":
-                    displaySpeed = FlightGlobals.ship_obtSpeed;
-                    break;
-                case "Target":
-                    displaySpeed = FlightGlobals.ship_tgtSpeed;
-                    break;
-                default:
-                    displaySpeed = FlightGlobals.ship_srfSpeed;
-                    break;
-            }
 
-            if (unitType == "Metric")
-            {
-                altitudeString = Math.Floor(FlightGlobals.ship_altitude).ToString().PadLeft(6) + " m";
-                radarAltitudeString = Math.Floor(vessel.altitude - Math.Max(vessel.pqsAltitude, 0D)).ToString().PadLeft(6) + " m";
-                climbrateString = Math.Round(FlightGlobals.ship_verticalSpeed, 1).ToString().PadLeft(6) + " m/s";
-                speedString = Math.Round(displaySpeed, 1).ToString().PadLeft(6) + " m/s";
-                hoverString = Math.Round(hoverHeight, 1).ToString().PadLeft(6) + " m";
-            }
-            else
-            {
-                double altitude = FlightGlobals.ship_altitude;
-                double radarAltitude = vessel.altitude - Math.Max(vessel.pqsAltitude, 0D);
-                double climbrate = FlightGlobals.ship_verticalSpeed;
-                double speed = displaySpeed;
-                float hover = hoverHeight * 3.2808399f;
-                altitude *= 3.2808399f;
-                radarAltitude *= 3.2808399f;
-                climbrate = climbrate * 3.2808399f * 60f;
-                speed *= 1.944;
-                altitudeString = Math.Floor(altitude).ToString().PadLeft(6) + " ft";
-                radarAltitudeString = Math.Floor(radarAltitude).ToString().PadLeft(6) + " ft";
-                climbrateString = Math.Floor(climbrate).ToString().PadLeft(6) + " ft/m";
-                speedString = Math.Floor(speed).ToString().PadLeft(6) + " kt";
-                hoverString = Math.Floor(hover).ToString().PadLeft(6) + " ft";
-            }
+            //updateFlightData();
 
-            gearState = FlightGlobals.ActiveVessel.ActionGroups.groups[gearGroupNumber];
-            brakeState = FlightGlobals.ActiveVessel.ActionGroups.groups[brakeGroupNumber];
-            SASState = FlightGlobals.ActiveVessel.ActionGroups.groups[SASGroupNumber];
-            lightState = FlightGlobals.ActiveVessel.ActionGroups.groups[lightGroupNumber];
+            //updateActionGroupStates();
+
             //FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Gear);
 
-            switch (menuState)
-            {
-                case MenuState.splashScreen:
-                    textArray[0] = "Firespitter v4.0";
-                    textArray[2] = "Booting OS";
-                    textArray[4] = "Checking RAM ";
-                    textArray[5] = RAMcount + "/512KB";
-                    if (RAMcount < 512)
-                    {
-                        RAMcount += 4;
-                        pause(60);
-                    }
-                    else
-                    {
-                        if (!pause())
-                            menuState = startState;
-                        //menuSelection = menuSelectionTop;
-                    }
-                    break;
-                case MenuState.mainMenu:
-                    menuSelectionTop = 2;
-                    menuSelectionBottom = Enum.GetValues(typeof(MainMenuItems)).Length + 1;
-                    textArray[0] = "Main Menu";
-                    textArray[(int)MainMenuItems.flightdata + menuSelectionTop] = " Flight data";
-                    textArray[(int)MainMenuItems.settings + menuSelectionTop] = " Settings";
-                    textArray[(int)MainMenuItems.abort + menuSelectionTop] = " ABORT!";
-                    textArray[(int)MainMenuItems.fuel + menuSelectionTop] = " Fuel";
-                    textArray[(int)MainMenuItems.hover + menuSelectionTop] = " Hover";
-
-                    string gearStateString = "Up";
-                    if (gearState) gearStateString = "Down";
-                    textArray[(int)MainMenuItems.gear + menuSelectionTop] = " Gear " + gearStateString;
-
-                    string brakeStateString = "Off";
-                    if (brakeState) brakeStateString = "On";
-                    textArray[(int)MainMenuItems.brakes + menuSelectionTop] = " Brakes " + brakeStateString;
-
-                    string SASStateString = "Off";
-                    if (SASState) SASStateString = "On";
-                    textArray[(int)MainMenuItems.SAS + menuSelectionTop] = " (A)SAS " + SASStateString;
-
-                    string lightStateString = "Off";
-                    if (lightState) lightStateString = "On";
-                    textArray[(int)MainMenuItems.light + menuSelectionTop] = " Lights " + lightStateString;
-
-                    textArray[(int)MainMenuItems.reboot + menuSelectionTop] = " Reboot";
-                    textArray[linesPerPage - 1] = "root/main_menu";
-                    textArray[menuSelection] += " <<<";
-
-                    if (buttonArray[(int)ButtonNames.up]) menuSelection--;
-                    if (buttonArray[(int)ButtonNames.down]) menuSelection++;
-                    if (menuSelection < menuSelectionTop) menuSelection = menuSelectionTop; //up pressed
-                    if (menuSelection > menuSelectionBottom) menuSelection = menuSelectionBottom; // down pressed
-                    if (menuSelection > linesPerPage - 1) menuSelection = linesPerPage - 1; // down pressed
-
-                    if (buttonArray[(int)ButtonNames.confirm])  //confirm pressed
-                    {
-                        switch (menuSelection)
-                        {
-                            case (int)MainMenuItems.flightdata + 2:
-                                menuState = MenuState.flightData;
-                                break;
-                            case (int)MainMenuItems.settings + 2:
-                                menuState = MenuState.settings;
-                                break;
-                            case (int)MainMenuItems.abort + 2:
-                                pauseInitialized = false;
-                                menuState = MenuState.abort;
-                                break;
-                            case (int)MainMenuItems.fuel + 2:
-                                menuState = MenuState.fuel;
-                                break;
-                            case (int)MainMenuItems.gear + 2:
-                                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Gear);
-                                break;
-                            case (int)MainMenuItems.brakes + 2:
-                                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Brakes);
-                                break;
-                            case (int)MainMenuItems.SAS + 2:
-                                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.SAS);
-                                break;
-                            case (int)MainMenuItems.light + 2:
-                                FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Light);
-                                break;
-                            case (int)MainMenuItems.hover + 2:
-                                toggleHover();
-                                break;
-                            case (int)MainMenuItems.reboot + 2:
-                                menuState = MenuState.splashScreen;
-                                RAMcount = 0;
-                                break;
-                        }
-                    }
-
-                    clearButtons();
-                    break;
-                case MenuState.flightData:
-                    int i = 0; // putting ++i in the [] gives it the value before incrementation
-                    textArray[++i] = "climbRate: " + climbrateString;
-                    textArray[++i] = "radar alt: " + radarAltitudeString;
-                    textArray[++i] = "sea alt  : " + altitudeString;
-                    textArray[++i] = "speed    : " + speedString;
-                    textArray[++i] = "heading  : " + Math.Round(FlightGlobals.ship_heading, 1).ToString().PadLeft(6) + " deg";
-                    textArray[++i] = "hover ht.: " + hoverString;
-                    i++;
-
-                    foreach (KeyValuePair<string, Vector2d> kvp in resourceDictionary)
-                    {
-                        if (kvp.Key == "LiquidFuel" || kvp.Key == "ElectricCharge")
-                        {
-                            string fuelName = kvp.Key;
-                            if (kvp.Key == "ElectricCharge") fuelName = "Battery  ";
-                            else if (kvp.Key == "LiquidFuel") fuelName = "Lqd Fuel ";
-                            textArray[++i] = fuelName + ": " + (int)kvp.Value.x + " / " + (int)kvp.Value.y;
-                        }
-                    }
-
-                    textArray[linesPerPage - 1] = "root/flight_data";
-                    if (buttonArray[(int)ButtonNames.back]) menuState = MenuState.mainMenu;
-                    clearButtons();
-                    break;
-                case MenuState.settings:
-                    menuSelectionTop = 2;
-                    menuSelectionBottom = 3;
-                    textArray[0] = "Settings";
-                    textArray[2] = " Units: " + unitType;
-                    textArray[3] = " Speed: " + speedMode;
-                    if (useInfoPopup)
-                    {
-                        textArray[4] = " Craft info";
-                        menuSelectionBottom++;
-                    }
-                    textArray[linesPerPage - 1] = "root/settings";
-                    textArray[menuSelection] += " <<<";
-
-                    if (buttonArray[(int)ButtonNames.up]) menuSelection--;
-                    if (buttonArray[(int)ButtonNames.down]) menuSelection++;
-                    if (menuSelection < menuSelectionTop) menuSelection = menuSelectionTop; //up pressed
-                    if (menuSelection > menuSelectionBottom) menuSelection = menuSelectionBottom; // down pressed
-                    if (menuSelection > linesPerPage - 1) menuSelection = linesPerPage - 1; // down pressed
-
-                    if (buttonArray[(int)ButtonNames.confirm])  //confirm pressed
-                    {
-                        switch (menuSelection)
-                        {
-                            case 2:
-                                if (unitType == "Metric") unitType = "Aviation";
-                                else unitType = "Metric";
-                                break;
-                            case 3:
-                                if (speedMode == "Surface") speedMode = "Orbit";
-                                else if (speedMode == "Orbit") speedMode = "Target";
-                                else if (speedMode == "Target") speedMode = "Surface";
-                                break;
-                            case 4:
-                                if (useInfoPopup)
-                                {
-                                    getInfoPopupText();
-                                    menuState = MenuState.info;
-                                }
-                                break;
-                        }
-                    }
-                    if (buttonArray[(int)ButtonNames.back]) menuState = MenuState.mainMenu;
-                    clearButtons();
-                    break;
-                case MenuState.abort:
-                    textArray[5] = "--ABORT SEQUENCE--";
-
-                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Abort);
-                    if (!pauseInitialized)
-                    {
-                        pause(120);
-                    }
-                    else
-                    {
-                        if (!pause())
-                            menuState = MenuState.mainMenu;
-                    }
-                    break;
-                case MenuState.gunner:
-                    textArray[5] = "   Gunner module not";
-                    textArray[6] = "   installed. Contact";
-                    textArray[7] = "   your customer rep";
-                    textArray[8] = "   for a quote today!";
-                    textArray[linesPerPage - 1] = "root/gunner";
-                    if (buttonArray[(int)ButtonNames.back]) menuState = MenuState.mainMenu;
-                    clearButtons();
-                    break;
-                case MenuState.fuel:
-                    int r = 0;
-                    foreach (KeyValuePair<string, Vector2d> kvp in resourceDictionary)
-                    {
-                        textArray[r] = kvp.Key + ": " + (int)kvp.Value.x + " / " + (int)kvp.Value.y;
-                        r++;
-                    }
-
-                    textArray[linesPerPage - 1] = "root/fuel";
-                    if (buttonArray[(int)ButtonNames.back]) menuState = MenuState.mainMenu;
-                    clearButtons();
-                    break;
-                case MenuState.info:
-                    if (useInfoPopup)
-                    {
-                        for (int j = 0; j < infoPopupStrings.Length; j++)
-                        {
-                            textArray[j] = infoPopupStrings[j];
-                        }
-                        textArray[linesPerPage - 1] = "root/settings/info";
-                        if (buttonArray[(int)ButtonNames.confirm]) getInfoPopupText();
-                    }
-                    else
-                        menuState = MenuState.mainMenu;
-                    if (buttonArray[(int)ButtonNames.back]) menuState = MenuState.mainMenu;
-                    clearButtons();
-                    break;
-                default:
-                    textArray[0] = "Please insert";
-                    textArray[1] = "boot disk";
-                    if (buttonArray[(int)ButtonNames.back]) menuState = MenuState.splashScreen;
-                    clearButtons();
-                    break;
-            }
+            menuState();                        
 
             //textArray[0] = "Testing";
             targetScript.textArray = textArray;
         }
     }
+
+    #region update display data
+
+    private void updateActionGroupStates()
+    {
+        gearState = FlightGlobals.ActiveVessel.ActionGroups.groups[gearGroupNumber];
+        brakeState = FlightGlobals.ActiveVessel.ActionGroups.groups[brakeGroupNumber];
+        SASState = FlightGlobals.ActiveVessel.ActionGroups.groups[SASGroupNumber];
+        lightState = FlightGlobals.ActiveVessel.ActionGroups.groups[lightGroupNumber];
+    }
+
+    private void updateFlightData()
+    {
+        switch (speedMode)
+        {
+            case "Surface":
+                displaySpeed = FlightGlobals.ship_srfSpeed;
+                break;
+            case "Orbit":
+                displaySpeed = FlightGlobals.ship_obtSpeed;
+                break;
+            case "Target":
+                displaySpeed = FlightGlobals.ship_tgtSpeed;
+                break;
+            default:
+                displaySpeed = FlightGlobals.ship_srfSpeed;
+                break;
+        }
+
+        if (unitType == "Metric")
+        {
+            altitudeString = Math.Floor(FlightGlobals.ship_altitude).ToString().PadLeft(6) + " m";
+            radarAltitudeString = Math.Floor(vessel.altitude - Math.Max(vessel.pqsAltitude, 0D)).ToString().PadLeft(6) + " m";
+            climbrateString = Math.Round(FlightGlobals.ship_verticalSpeed, 1).ToString().PadLeft(6) + " m/s";
+            speedString = Math.Round(displaySpeed, 1).ToString().PadLeft(6) + " m/s";
+            hoverString = Math.Round(hoverHeight, 1).ToString().PadLeft(6) + " m";
+        }
+        else
+        {
+            double altitude = FlightGlobals.ship_altitude;
+            double radarAltitude = vessel.altitude - Math.Max(vessel.pqsAltitude, 0D);
+            double climbrate = FlightGlobals.ship_verticalSpeed;
+            double speed = displaySpeed;
+            float hover = hoverHeight * 3.2808399f;
+            altitude *= 3.2808399f;
+            radarAltitude *= 3.2808399f;
+            climbrate = climbrate * 3.2808399f * 60f;
+            speed *= 1.944;
+            altitudeString = Math.Floor(altitude).ToString().PadLeft(6) + " ft";
+            radarAltitudeString = Math.Floor(radarAltitude).ToString().PadLeft(6) + " ft";
+            climbrateString = Math.Floor(climbrate).ToString().PadLeft(6) + " ft/m";
+            speedString = Math.Floor(speed).ToString().PadLeft(6) + " kt";
+            hoverString = Math.Floor(hover).ToString().PadLeft(6) + " ft";
+        }
+    }
+
+    private void updateFuel()
+    {
+        // do resource update if enought ime has passed or the number of parts in the vessel has changed
+        if (vesselNumParts != vessel.Parts.Count || resourceUpdateCountdown <= 0)
+        {
+            getResourceList();
+            resourceUpdateCountdown = 60;
+            vesselNumParts = vessel.Parts.Count;
+            getHoverHeight();
+        }
+        else
+        {
+            resourceUpdateCountdown--;
+        }
+    }
+
+    #endregion
+
+    #region menu states
+
+    private void menuAbort()
+    {
+        textArray[5] = "--ABORT SEQUENCE--";
+        FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Abort);
+        if (!pauseInitialized)
+        {
+            pause(120);
+        }
+        else
+        {
+            if (!pause())
+                menuState = menuMainMenu;
+        }
+    }
+
+    private void menuFlightData()
+    {
+        updateFlightData();
+        updateFuel();
+
+        int i = 0; // putting ++i in the [] gives it the value before incrementation
+        textArray[++i] = "climbRate: " + climbrateString;
+        textArray[++i] = "radar alt: " + radarAltitudeString;
+        textArray[++i] = "sea alt  : " + altitudeString;
+        textArray[++i] = "speed    : " + speedString;
+        textArray[++i] = "heading  : " + Math.Round(FlightGlobals.ship_heading, 1).ToString().PadLeft(6) + " deg";
+        textArray[++i] = "hover ht.: " + hoverString;
+        i++;
+
+        foreach (KeyValuePair<string, Vector2d> kvp in resourceDictionary)
+        {
+            if (kvp.Key == "LiquidFuel" || kvp.Key == "ElectricCharge")
+            {
+                string fuelName = kvp.Key;
+                if (kvp.Key == "ElectricCharge") fuelName = "Battery  ";
+                else if (kvp.Key == "LiquidFuel") fuelName = "Lqd Fuel ";
+                textArray[++i] = fuelName + ": " + (int)kvp.Value.x + " / " + (int)kvp.Value.y;
+            }
+        }
+
+        textArray[linesPerPage - 1] = "root/flight_data";
+        if (buttonArray[(int)ButtonNames.back]) menuState = menuMainMenu;
+        clearButtons();
+    }
+
+    private void menuFuel()
+    {
+        updateFuel();
+
+        int r = 0;
+        foreach (KeyValuePair<string, Vector2d> kvp in resourceDictionary)
+        {
+            textArray[r] = kvp.Key + ": " + (int)kvp.Value.x + " / " + (int)kvp.Value.y;
+            r++;
+        }
+
+        textArray[linesPerPage - 1] = "root/fuel";
+        if (buttonArray[(int)ButtonNames.back]) menuState = menuMainMenu;
+        clearButtons();
+    }
+
+    private void menuGunner()
+    {
+        textArray[5] = "   Gunner module not";
+        textArray[6] = "   installed. Contact";
+        textArray[7] = "   your customer rep";
+        textArray[8] = "   for a quote today!";
+        textArray[linesPerPage - 1] = "root/gunner";
+        if (buttonArray[(int)ButtonNames.back]) menuState = menuMainMenu;
+        clearButtons();
+    }
+
+    private void menuInfo()
+    {
+        if (useInfoPopup)
+        {
+            for (int j = 0; j < infoPopupStrings.Length; j++)
+            {
+                textArray[j] = infoPopupStrings[j];
+            }
+            textArray[linesPerPage - 1] = "root/settings/info";
+            if (buttonArray[(int)ButtonNames.confirm]) getInfoPopupText();
+        }
+        else
+            menuState = menuMainMenu;
+        if (buttonArray[(int)ButtonNames.back]) menuState = menuMainMenu;
+        clearButtons();
+    }
+
+    private void menuMainMenu()
+    {
+        updateActionGroupStates();
+
+        menuSelectionTop = 2;
+        menuSelectionBottom = Enum.GetValues(typeof(MainMenuItems)).Length + 1;
+        textArray[0] = "Main Menu";
+        textArray[(int)MainMenuItems.flightdata + menuSelectionTop] = " Flight data";
+        textArray[(int)MainMenuItems.settings + menuSelectionTop] = " Settings";
+        textArray[(int)MainMenuItems.abort + menuSelectionTop] = " ABORT!";
+        textArray[(int)MainMenuItems.fuel + menuSelectionTop] = " Fuel";
+        textArray[(int)MainMenuItems.hover + menuSelectionTop] = " Hover";
+
+        string gearStateString = "Up";
+        if (gearState) gearStateString = "Down";
+        textArray[(int)MainMenuItems.gear + menuSelectionTop] = " Gear " + gearStateString;
+
+        string brakeStateString = "Off";
+        if (brakeState) brakeStateString = "On";
+        textArray[(int)MainMenuItems.brakes + menuSelectionTop] = " Brakes " + brakeStateString;
+
+        string SASStateString = "Off";
+        if (SASState) SASStateString = "On";
+        textArray[(int)MainMenuItems.SAS + menuSelectionTop] = " (A)SAS " + SASStateString;
+
+        string lightStateString = "Off";
+        if (lightState) lightStateString = "On";
+        textArray[(int)MainMenuItems.light + menuSelectionTop] = " Lights " + lightStateString;
+
+        textArray[(int)MainMenuItems.reboot + menuSelectionTop] = " Reboot";
+        textArray[linesPerPage - 1] = "root/main_menu";
+        textArray[menuSelection] += " <<<";
+
+        if (buttonArray[(int)ButtonNames.up]) menuSelection--;
+        if (buttonArray[(int)ButtonNames.down]) menuSelection++;
+        if (menuSelection < menuSelectionTop) menuSelection = menuSelectionTop; //up pressed
+        if (menuSelection > menuSelectionBottom) menuSelection = menuSelectionBottom; // down pressed
+        if (menuSelection > linesPerPage - 1) menuSelection = linesPerPage - 1; // down pressed
+
+        if (buttonArray[(int)ButtonNames.confirm])  //confirm pressed
+        {
+            switch (menuSelection)
+            {
+                case (int)MainMenuItems.flightdata + 2:
+                    menuState = menuFlightData;                    
+                    break;
+                case (int)MainMenuItems.settings + 2:
+                    menuState = menuSettings;
+                    break;
+                case (int)MainMenuItems.abort + 2:
+                    pauseInitialized = false;
+                    menuState = menuAbort;
+                    break;
+                case (int)MainMenuItems.fuel + 2:
+                    menuState = menuFuel;
+                    break;
+                case (int)MainMenuItems.gear + 2:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Gear);
+                    break;
+                case (int)MainMenuItems.brakes + 2:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Brakes);
+                    break;
+                case (int)MainMenuItems.SAS + 2:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.SAS);
+                    break;
+                case (int)MainMenuItems.light + 2:
+                    FlightGlobals.ActiveVessel.ActionGroups.ToggleGroup(KSPActionGroup.Light);
+                    break;
+                case (int)MainMenuItems.hover + 2:
+                    toggleHover();
+                    break;
+                case (int)MainMenuItems.reboot + 2:
+                    menuState = menuSplashScreen;
+                    RAMcount = 0;
+                    break;
+            }
+        }
+
+        clearButtons();
+    }
+
+    private void menuSettings()
+    {
+        menuSelectionTop = 2;
+        menuSelectionBottom = 3;
+        textArray[0] = "Settings";
+        textArray[2] = " Units: " + unitType;
+        textArray[3] = " Speed: " + speedMode;
+        if (useInfoPopup)
+        {
+            textArray[4] = " Craft info";
+            menuSelectionBottom++;
+        }
+        textArray[linesPerPage - 1] = "root/settings";
+        textArray[menuSelection] += " <<<";
+
+        if (buttonArray[(int)ButtonNames.up]) menuSelection--;
+        if (buttonArray[(int)ButtonNames.down]) menuSelection++;
+        if (menuSelection < menuSelectionTop) menuSelection = menuSelectionTop; //up pressed
+        if (menuSelection > menuSelectionBottom) menuSelection = menuSelectionBottom; // down pressed
+        if (menuSelection > linesPerPage - 1) menuSelection = linesPerPage - 1; // down pressed
+
+        if (buttonArray[(int)ButtonNames.confirm])  //confirm pressed
+        {
+            switch (menuSelection)
+            {
+                case 2:
+                    if (unitType == "Metric") unitType = "Aviation";
+                    else unitType = "Metric";
+                    break;
+                case 3:
+                    if (speedMode == "Surface") speedMode = "Orbit";
+                    else if (speedMode == "Orbit") speedMode = "Target";
+                    else if (speedMode == "Target") speedMode = "Surface";
+                    break;
+                case 4:
+                    if (useInfoPopup)
+                    {
+                        getInfoPopupText();
+                        menuState = menuInfo;
+                    }
+                    break;
+            }
+        }
+        if (buttonArray[(int)ButtonNames.back]) menuState = menuMainMenu;
+        clearButtons();
+    }    
+
+    private void menuSplashScreen()
+    {
+        textArray[0] = "Firespitter v4.0";
+        textArray[2] = "Booting OS";
+        textArray[4] = "Checking RAM ";
+        textArray[5] = RAMcount + "/512KB";
+        if (RAMcount < 512)
+        {
+            RAMcount += 4;
+            pause(60);
+        }
+        else
+        {
+            if (!pause())
+                menuState = getMenuHandlerFromEnum(startState);                
+        }
+    }
+
+    private void menuDefault()
+    {
+        textArray[0] = "Please insert";
+        textArray[1] = "boot disk";
+        if (buttonArray[(int)ButtonNames.back]) menuState = menuSplashScreen;
+        clearButtons();
+    }
+
+    private void menuOff()
+    {
+
+    }
+
+    private MenuStateHandler getMenuHandlerFromEnum(MenuState state)
+    {
+        switch (state)
+        {
+            case MenuState.flightData:
+                return menuFlightData;
+            case MenuState.abort:
+                return menuAbort;
+            case MenuState.fuel:
+                return menuFuel;
+            case MenuState.gunner:
+                return menuGunner;
+            case MenuState.info:
+                return menuInfo;
+            case MenuState.mainMenu:
+                return menuMainMenu;
+            case MenuState.settings:
+                return menuSettings;
+            case MenuState.splashScreen:
+                return menuSplashScreen;
+            default:
+                return menuOff;
+        }
+    }
+
+#endregion
 }
