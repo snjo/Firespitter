@@ -154,8 +154,7 @@ public class FSmonitorScript : InternalModule
             }
             monitorDefaultStateSet = true;
         }
-
-        /*
+        
         if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA)            //|| CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Internal)
         { //Only run this code when IVA
 
@@ -196,7 +195,7 @@ public class FSmonitorScript : InternalModule
                     }
                 }
             }
-        }*/
+        }
     }
 }
 
