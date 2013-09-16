@@ -122,7 +122,8 @@ class FSwheel : PartModule
 
     [KSPField]
     public int moduleID = 0;
-    
+
+    public bool hasAnimation = false;
     public float animTime = 0f;
     public float animSpeed = 0f;
 
@@ -498,6 +499,7 @@ class FSwheel : PartModule
             anim = part.FindModelAnimators(animationName).FirstOrDefault();
             if (anim != null)
             {
+                hasAnimation = true;
                 anim[animationName].layer = animationLayer;
                 float startAnimTime = 0f;
                 if (deploymentState == "Retracted")
@@ -542,7 +544,19 @@ class FSwheel : PartModule
             Events["brakesOffEvent"].guiActive = brakesEngaged;
             Events["brakesOnEvent"].guiActiveUnfocused = guiActiveUnfocused;
             Events["brakesOffEvent"].guiActiveUnfocused = guiActiveUnfocused;
-
+            if (!hasMotor)
+            {
+                //Events["EnableMotorEvent"].guiActive = false;
+                //Events["DisableMotorEvent"].guiActive = false;
+                Events["EnableMotorEvent"].active = false;
+                Events["DisableMotorEvent"].active = false;
+                Events["ReverseMotorEvent"].active = false;
+            }
+            if (!hasAnimation)
+            {
+                Events["RaiseGear"].active = false;
+                Events["LowerGear"].active = false;
+            }
             if (debugMode)
             {
                 Events["increaseFrictionEvent"].guiActive = true;
