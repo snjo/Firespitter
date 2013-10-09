@@ -138,13 +138,13 @@ public class FSmultiAxisEngine : PartModule // This if for the swamp engine, and
         }
         if (useRoll)
         {
-            //rollTransform.localRotation = Quaternion.Euler((rollResponseAxis * rotation.y) + rollDefaultRotation);
-            rollTransform.localRotation = Quaternion.Euler(new Vector3(0, 0, rotation.y) + rollDefaultRotation);
+            rollTransform.localRotation = Quaternion.Euler((rollResponseAxis * rotation.y) + rollDefaultRotation);
+            //rollTransform.localRotation = Quaternion.Euler(new Vector3(0, 0, rotation.y) + rollDefaultRotation);
         }
         if (useYaw)
         {
-            //yawTransform.localRotation = Quaternion.Euler((yawResponseAxis * rotation.z) + yawDefaultRotation);
-            yawTransform.localRotation = Quaternion.Euler(new Vector3(rotation.z, 0, 0) + yawDefaultRotation);
+            yawTransform.localRotation = Quaternion.Euler((yawResponseAxis * rotation.z) + yawDefaultRotation);
+            //yawTransform.localRotation = Quaternion.Euler(new Vector3(rotation.z, 0, 0) + yawDefaultRotation);
         }       
     }
 

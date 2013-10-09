@@ -22,6 +22,9 @@ public class FSpropellerAtmosphericNerf : PartModule
     public float engineModeModifier = 1f; // allows for hover, normal and cargo throttle presets in copterThrottle.cs.
     public float steeringModifier = 1f; // used by the VTOL roll steering mode
 
+    [KSPField]
+    public bool disableAtmosphericNerf = false;
+
     private ModuleEngines engine = new ModuleEngines();
     private float fullThrottle;
 
@@ -51,7 +54,7 @@ public class FSpropellerAtmosphericNerf : PartModule
     public override void OnUpdate() {
         if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
         float atmosphericModifier = ((float)part.staticPressureAtm * thrustModifier);
-        if (atmosphericModifier > 1f && thrustModifier > 1f) atmosphericModifier = 1f; // not setting modifier to 1 at thrustModifier 1 or lower allows for engine that are better than normal in atmospeheres above 1
+        if ((atmosphericModifier > 1f && thrustModifier > 1f) || disableAtmosphericNerf) atmosphericModifier = 1f; // not setting modifier to 1 at thrustModifier 1 or lower allows for engine that are better than normal in atmospeheres above 1
         float newThrust = fullThrottle * atmosphericModifier * engineModeModifier * steeringModifier;
         if (newThrust <= 0) newThrust = 0.001f;
         engine.maxThrust = newThrust;
