@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+//using System.Threading.Tasks;
 
 using UnityEngine;
 
@@ -132,9 +132,9 @@ using UnityEngine;
                 steerModifier = Mathf.Max(speedAdjustedSteeringMinimumMultiplier, -(((float)vessel.horizontalSrfSpeed - steerMaxSpeed) / steerMaxSpeed));
             }            
 
-            currentRotation.x = steerMultiplier * rotationDirectionX * direction * steerModifier;
-            currentRotation.y = steerMultiplier * rotationDirectionY * direction * steerModifier;
-            currentRotation.z = steerMultiplier * rotationDirectionZ * direction * steerModifier;
+            currentRotation.x = (steerMultiplier * rotationDirectionX * direction * steerModifier) + defaultRotationX;
+            currentRotation.y = (steerMultiplier * rotationDirectionY * direction * steerModifier) + defaultRotationY;
+            currentRotation.z = (steerMultiplier * rotationDirectionZ * direction * steerModifier) + defaultRotationZ;
         }
                 
         private void setPartRotation()

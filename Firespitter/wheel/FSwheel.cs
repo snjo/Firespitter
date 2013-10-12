@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+//using System.Threading.Tasks;
 using UnityEngine;
 
 class FSwheel : PartModule
@@ -73,6 +73,8 @@ class FSwheel : PartModule
     #region  wheel collider settings
     [KSPField]
     public bool overrideModelFrictionValues = false;
+    [KSPField]
+    public bool overrideModelSpringValues = false;
     [KSPField]
     public float forwardsStiffness = 10.0f; //for tire friction
     [KSPField]
@@ -484,7 +486,7 @@ class FSwheel : PartModule
             }
 
             //optionally set collider and spring values
-            if (suspensionSpring >= 0f && suspensionDamper >= 0f && suspensionTargetPosition >= 0f)
+            if ((suspensionSpring >= 0f && suspensionDamper >= 0f && suspensionTargetPosition >= 0f) || overrideModelSpringValues)
             {
                 wheelList.updateSpring(suspensionSpring, suspensionDamper, suspensionTargetPosition);
             }
