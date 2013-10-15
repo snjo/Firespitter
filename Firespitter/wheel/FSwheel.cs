@@ -340,12 +340,32 @@ class FSwheel : PartModule
     {
         motorEnabled = !motorEnabled;
         motorToggleElement.buttons[0].toggle(motorEnabled);
+
+        foreach (Part p in part.symmetryCounterparts)
+        {
+            FSwheel wheel = p.GetComponent<FSwheel>();
+            if (wheel != null)
+            {
+                wheel.motorEnabled = motorEnabled;
+                wheel.motorToggleElement.buttons[0].toggle(motorEnabled);
+            }
+        }
     }
 
     private void popupToggleReverseMotor()
     {
         motorStartsReversed = !motorStartsReversed;
         motorReverseElement.buttons[0].toggle(motorStartsReversed);
+
+        foreach (Part p in part.symmetryCounterparts)
+        {
+            FSwheel wheel = p.GetComponent<FSwheel>();
+            if (wheel != null)
+            {
+                wheel.motorStartsReversed = motorStartsReversed;
+                wheel.motorReverseElement.buttons[0].toggle(motorStartsReversed);
+            }
+        }
     }
 
     private void popupUpdateSuspension()
@@ -482,16 +502,7 @@ class FSwheel : PartModule
                 {
                     wheelList.enabled = false;
                 }
-            }
-            if (disableColliderWhenRetracting)
-            {
-
-                if ((deploymentState == "Retracting" && !disableColliderTimeInverted && animTime < disableColliderAtAnimTime)
-                    || (deploymentState == "Retracting" && disableColliderTimeInverted && animTime > disableColliderAtAnimTime))
-                {
-                    wheelList.enabled = false;
-                }
-            }
+            }            
 
             //friction override
             if (overrideModelFrictionValues)
@@ -549,7 +560,7 @@ class FSwheel : PartModule
             popup.useInFlight = true;
             suspensionSpringElement = new PopupElement("Spring", suspensionSpring.ToString());
             suspensionDamperElement = new PopupElement("Damper", suspensionDamper.ToString());
-            suspensionTargetPositionElement = new PopupElement("Target pos", suspensionTargetPosition.ToString());
+            suspensionTargetPositionElement = new PopupElement("Target pos", suspensionTargetPosition.ToString());            
             popup.elementList.Add(suspensionSpringElement);
             popup.elementList.Add(suspensionDamperElement);
             popup.elementList.Add(suspensionTargetPositionElement);
@@ -613,8 +624,9 @@ class FSwheel : PartModule
         {
             #region GUI popup
 
-            motorToggleElement = new PopupElement("Motor", new PopupButton("On", "Off", 0f, popupToggleMotor));
-            popup = new FSGUIPopup(part, "FSwheel", moduleID, FSGUIwindowID.wheel, new Rect(500f, 300f, 250f, 100f), "Wheel settings", motorToggleElement);
+            motorToggleElement = new PopupElement("Motor", new PopupButton("On", "Off", 0f, popupToggleMotor));            
+            popup = new FSGUIPopup(part, "FSwheel", moduleID, FSGUIwindowID.wheel, new Rect(500f, 300f, 250f, 100f), "Wheel settings", new PopupElement("Settings affect symmetry group"));
+            popup.elementList.Add(motorToggleElement);
             motorReverseElement = new PopupElement("Reverse Motor", new PopupButton("On", "Off", 0f, popupToggleReverseMotor));
             popup.elementList.Add(motorReverseElement);
 
@@ -725,17 +737,46 @@ class FSwheel : PartModule
         if (vessel.isActiveVessel && base.vessel.IsControllable)
         {
             #region collider disabling
-            if (disableColliderWhenRetracted) // runs OnStart too, so no need to run it in fixed update on non active vessels
+
+            float animNormalizedTime = anim[animationName].normalizedTime;
+
+            if (disableColliderWhenRetracted || disableColliderWhenRetracting) // runs OnStart too, so no need to run it in fixed update on non active vessels
             {
-                if (deploymentState == "Retracted")
+                switch (deploymentState)
                 {
-                    wheelList.enabled = false;
-                }
-                else
-                {
-                    wheelList.enabled = true;
-                }
+                    case "Retracted":
+                        if (disableColliderWhenRetracted)
+                            wheelList.enabled = false;
+                        else
+                            wheelList.enabled = true;
+                        break;
+                    case "Retracting":
+                        if (disableColliderWhenRetracting)
+                        {
+                            if (animNormalizedTime > disableColliderAtAnimTime)
+                                wheelList.enabled = false;
+                            else wheelList.enabled = true;                                                   
+                        }
+                        Debug.Log(animNormalizedTime);
+                        break;
+                    case "Deploying":
+                        if (disableColliderWhenRetracting)
+                        {
+                            if (animNormalizedTime > disableColliderAtAnimTime)
+                                wheelList.enabled = false;
+                            else wheelList.enabled = true;                            
+                        }
+                        else
+                        {
+                            wheelList.enabled = true;
+                        }
+                        break;
+                    default:
+                        wheelList.enabled = true;
+                        break;
+                }                
             }
+            
             #endregion
 
             #region update motors

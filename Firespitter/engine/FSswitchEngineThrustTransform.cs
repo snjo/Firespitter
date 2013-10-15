@@ -27,7 +27,7 @@ using UnityEngine;
         public int moduleID = 0;
 
         //private bool showMenu = false;
-        private Rect windowRect = new Rect(500f, 300f, 125f, 50f);
+        private Rect windowRect = new Rect(500f, 250f, 250f, 50f);
         private FSGUIPopup popup;
 
         public override void OnStart(PartModule.StartState state)
@@ -66,7 +66,8 @@ using UnityEngine;
                 Debug.Log("FSswitchEngineThrustTransform: no engine module found");
             }
 
-            popup = new FSGUIPopup(part, "FSswitchEngineThrustTransform", moduleID, FSGUIwindowID.switchEngineThrustTransform, windowRect, "Start Reversed?", new PopupElement(new PopupButton("Yes","No",0f,toggleIsReversed)));
+            popup = new FSGUIPopup(part, "FSswitchEngineThrustTransform", moduleID, FSGUIwindowID.switchEngineThrustTransform, windowRect, "Start Engine Reversed?", new PopupElement(new PopupButton("Yes","No",0f,toggleIsReversed)));
+            popup.elementList.Add(new PopupElement("Settings affect symmetry group"));
             popup.elementList[0].useTitle = false;
         }
 
@@ -156,6 +157,16 @@ using UnityEngine;
         {
             isReversed = !isReversed;
             popup.elementList[0].buttons[0].toggle(isReversed);
+
+            foreach (Part p in part.symmetryCounterparts)
+            {
+                FSswitchEngineThrustTransform switcher = p.GetComponent<FSswitchEngineThrustTransform>();
+                if (switcher != null)
+                {
+                    switcher.isReversed = isReversed;
+                    switcher.popup.elementList[0].buttons[0].toggle(isReversed);
+                }
+            }
         }
 
         //private void drawWindow(int windowID)

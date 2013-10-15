@@ -149,6 +149,7 @@ public class FSengineSounds : PartModule
             group.audio.clip = GameDatabase.Instance.GetAudioClip(name);
             group.audio.loop = loop;
             group.audio.playOnAwake = false;
+            
 
             highPassFilter = group.audio.GetComponent<AudioHighPassFilter>();            
             return true;
