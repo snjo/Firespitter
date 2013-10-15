@@ -23,6 +23,13 @@ class FSwheel : PartModule
     public bool disableColliderWhenRetracted = false;
 
     [KSPField]
+    public bool disableColliderWhenRetracting = false;
+    [KSPField]
+    public bool disableColliderTimeInverted = false;
+    [KSPField]
+    public float disableColliderAtAnimTime = 0.5f;
+   
+    [KSPField]
     public string animationName = "Retract";
     [KSPField]
     public int animationLayer = 1;
@@ -190,10 +197,18 @@ class FSwheel : PartModule
         reverseMotor = !reverseMotor;
     }
 
-    [KSPEvent(guiName = "Toggle Reverse Motor", guiActive = true)]
+    [KSPEvent(guiName = "Enable Reverse Motor", guiActive = true)]
     public void ReverseMotorEvent()
     {
         reverseMotor = !reverseMotor;
+        if (reverseMotor)
+        {
+            Events["ReverseMotorEvent"].guiName = "Disable Reverse Motor";
+        }
+        else
+        {
+            Events["ReverseMotorEvent"].guiName = "Enable Reverse Motor";
+        }
     }
 
     [KSPAction("Toggle Motor")]
@@ -270,7 +285,7 @@ class FSwheel : PartModule
 
     [KSPAction("Brakes", KSPActionGroup.Brakes)]
     public void BrakesAction(KSPActionParam param)
-    {
+    {        
         if (param.type == KSPActionType.Activate)
         {
             brakesEngaged = true;
@@ -468,6 +483,15 @@ class FSwheel : PartModule
                     wheelList.enabled = false;
                 }
             }
+            if (disableColliderWhenRetracting)
+            {
+
+                if ((deploymentState == "Retracting" && !disableColliderTimeInverted && animTime < disableColliderAtAnimTime)
+                    || (deploymentState == "Retracting" && disableColliderTimeInverted && animTime > disableColliderAtAnimTime))
+                {
+                    wheelList.enabled = false;
+                }
+            }
 
             //friction override
             if (overrideModelFrictionValues)
@@ -564,6 +588,15 @@ class FSwheel : PartModule
                 Events["increaseFrictionEvent"].guiActive = true;
                 Events["decreaseFrictionEvent"].guiActive = true;
                 Events["suspensionGUIEvent"].guiActive = true;
+            }
+
+            if (reverseMotor)
+            {
+                Events["ReverseMotorEvent"].guiName = "Disable Reverse Motor";
+            }
+            else
+            {
+                Events["ReverseMotorEvent"].guiName = "Enable Reverse Motor";
             }
             #endregion
 

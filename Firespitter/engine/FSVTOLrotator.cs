@@ -78,6 +78,11 @@ public class FSVTOLrotator : PartModule
     [KSPField(guiActive = false, isPersistant = true)]
     public bool isInFrontOfCoMSet = false;
     //public bool invertInHangar = false;
+    [KSPField]
+    public bool startInverted = false;
+
+    [KSPField]
+    public int steerDirection = 1; // -1 is for inverted steering for silly b9 engines
 
     [KSPEvent(name = "invertVTOLrotation", active = true, guiActive = true, guiName = "invert VTOL rotation", guiActiveUnfocused = true, externalToEVAOnly = true, unfocusedRange = 4f)]
     public void toggleInvertRotation()
@@ -546,8 +551,15 @@ public class FSVTOLrotator : PartModule
                 invertRotation = true;
                 //Debug.Log("Inverting left side VTOL rotation");
             }
+            else
+            {
+                invertRotation = false;
+            }
+
+            if (startInverted)
+                invertRotation = !invertRotation;
         }
-        invertSet = true;
+        invertSet = true;        
 
         if (!isInFrontOfCoMSet)
         {
@@ -584,25 +596,25 @@ public class FSVTOLrotator : PartModule
                 float steerModifier = ctrl.pitch * SteeringMaxPitchThrottle;
                 if (isInFrontOfCoM)
                     steerModifier *= -1;
-                atmosphericNerf.steeringModifier -= steerModifier;
+                atmosphericNerf.steeringModifier -= steerModifier * steerDirection;
             }
             else
             {
-                steerAngle -= ctrl.pitch * SteeringMaxPitch;
+                steerAngle -= ctrl.pitch * SteeringMaxPitch * steerDirection;
                 if (invertRotation)
                     steerAngle *= -1;
             }
         }
         if (steerYaw)
         {
-            steerAngle -= ctrl.yaw * SteeringMaxYaw;
+            steerAngle -= ctrl.yaw * SteeringMaxYaw * steerDirection;
         }
         if (steerRoll)
         {
             float steerModifier = ctrl.roll * SteeringMaxRoll;
             if (invertRotation)
                 steerModifier *= -1;
-            atmosphericNerf.steeringModifier -= steerModifier;
+            atmosphericNerf.steeringModifier -= steerModifier * steerDirection;
         }
 
 

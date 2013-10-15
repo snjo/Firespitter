@@ -18,7 +18,7 @@ public class FSmoveCraftAtLaunch : PartModule
     public float altitude = 5.0f;
 
     [KSPField]
-    public Vector3 launchPosition = new Vector3(-1199.2f, 66.2f, 4095.4f);    
+    public Vector3 launchPosition = new Vector3(-1199.2f, 66.2f, 4095.4f);    // new Vector3(-1199.2f, 66.2f, 4095.4f);    
 
     [KSPField(isPersistant=true)]
     public bool hasLaunched = false;
@@ -28,7 +28,7 @@ public class FSmoveCraftAtLaunch : PartModule
     public bool doQuickLoad = false;
     private bool isFixed = false;
     public FSGUIPopup popup;
-    private Transform boundsTransform;
+    //private Transform boundsTransform;
     //private Transform partPosition;
 
     [KSPEvent(guiActive = true, guiName = "Log position")]
@@ -54,7 +54,7 @@ public class FSmoveCraftAtLaunch : PartModule
 
         //partPosition = new GameObject().transform;
         //partPosition.position = part.transform.position;
-        boundsTransform = part.FindModelTransform("Bounds");
+        //boundsTransform = part.FindModelTransform("Bounds");
         base.OnStart(state);
     }
 
@@ -97,11 +97,21 @@ public class FSmoveCraftAtLaunch : PartModule
     {
         if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
         if (!moveAtLaunch) return;
+
+
+        
+        
         if (!hasLaunched)
         {
+            // --------- TEMP DISABLING ----------
+            //ScreenMessages.PostScreenMessage(new ScreenMessage("The water launch module is disabled in KSP 0.22 due to a bug", 10f, ScreenMessageStyle.UPPER_CENTER));
+            //hasLaunched = true;
+            // --------- -------------- ----------
+
+            
             if (timer <= 0 && !isFixed)
             {
-                fixCraftLock();
+                //fixCraftLock();
                 isFixed = true;
                 hasLaunched = true;
             }
@@ -111,7 +121,9 @@ public class FSmoveCraftAtLaunch : PartModule
                 tryMoveVessel();
                 //moveBounds();
             }
+             
         }
+         
     }
 
     public void OnGUI()
