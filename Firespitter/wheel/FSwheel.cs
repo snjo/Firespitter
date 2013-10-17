@@ -756,8 +756,7 @@ class FSwheel : PartModule
                             if (animNormalizedTime > disableColliderAtAnimTime)
                                 wheelList.enabled = false;
                             else wheelList.enabled = true;                                                   
-                        }
-                        Debug.Log(animNormalizedTime);
+                        }                        
                         break;
                     case "Deploying":
                         if (disableColliderWhenRetracting)

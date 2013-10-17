@@ -51,6 +51,8 @@ public class FSVTOLrotator : PartModule
 
     [KSPField(guiName="VTOL steering mode", isPersistant = true, guiActive = true)]
     public string VTOLSteeringMode = "Off";
+    [KSPField(isPersistant = true)]
+    public bool VTOLsteeringActive = true;
     [KSPField]
     public float SteeringMaxPitch = 20f; // in degrees
     [KSPField]
@@ -134,7 +136,7 @@ public class FSVTOLrotator : PartModule
             hideAllExternalPopups();
             popup.showMenu = true;
         }
-    }
+    }    
 
     [KSPAction("Cycle max Angles")]
     public void cycleAnglesAction(KSPActionParam param)
@@ -142,7 +144,7 @@ public class FSVTOLrotator : PartModule
         cycleAngles();
     }
 
-    [KSPAction("toggle VTOL")]
+    [KSPAction("toggle VTOL rotation")]
     public void toggleVTOLAction(KSPActionParam param)
     {
         toggleAngle();
@@ -176,6 +178,12 @@ public class FSVTOLrotator : PartModule
             targetAngle += stepAngle;
             if (targetAngle > -maxDownAngle) targetAngle = -maxDownAngle;
         }
+    }
+
+    [KSPAction("VTOL steering toggle")]
+    public void toogleVTOLsteeringAction(KSPActionParam param)
+    {
+        VTOLsteeringActive = !VTOLsteeringActive;
     }
 
     private void toggleAngle()
@@ -589,34 +597,37 @@ public class FSVTOLrotator : PartModule
         steerAngle = 0f;
         atmosphericNerf.steeringModifier = 1f;
 
-        if (steerPitch)
+        if (VTOLsteeringActive)
         {
-            if (steerThrottlePitch)
+
+            if (steerPitch)
             {
-                float steerModifier = ctrl.pitch * SteeringMaxPitchThrottle;
-                if (isInFrontOfCoM)
+                if (steerThrottlePitch)
+                {
+                    float steerModifier = ctrl.pitch * SteeringMaxPitchThrottle;
+                    if (isInFrontOfCoM)
+                        steerModifier *= -1;
+                    atmosphericNerf.steeringModifier -= steerModifier * steerDirection;
+                }
+                else
+                {
+                    steerAngle -= ctrl.pitch * SteeringMaxPitch * steerDirection;
+                    if (invertRotation)
+                        steerAngle *= -1;
+                }
+            }
+            if (steerYaw)
+            {
+                steerAngle -= ctrl.yaw * SteeringMaxYaw * steerDirection;
+            }
+            if (steerRoll)
+            {
+                float steerModifier = ctrl.roll * SteeringMaxRoll;
+                if (invertRotation)
                     steerModifier *= -1;
                 atmosphericNerf.steeringModifier -= steerModifier * steerDirection;
             }
-            else
-            {
-                steerAngle -= ctrl.pitch * SteeringMaxPitch * steerDirection;
-                if (invertRotation)
-                    steerAngle *= -1;
-            }
         }
-        if (steerYaw)
-        {
-            steerAngle -= ctrl.yaw * SteeringMaxYaw * steerDirection;
-        }
-        if (steerRoll)
-        {
-            float steerModifier = ctrl.roll * SteeringMaxRoll;
-            if (invertRotation)
-                steerModifier *= -1;
-            atmosphericNerf.steeringModifier -= steerModifier * steerDirection;
-        }
-
 
         #endregion
     }

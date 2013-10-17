@@ -68,6 +68,8 @@ using UnityEngine;
         public PopupElement elementInvertSteering;
         public PopupElement elementSteeringRange;
 
+        private float oldSteerMultiplier = 0f;
+
         [KSPAction("Toggle Steering")]
         public void toggleSteeringAction(KSPActionParam param)
         {
@@ -149,12 +151,32 @@ using UnityEngine;
         {
             toggleSteering();
             elementSteeringEnabled.buttons[0].toggle(steeringEnabled);
+
+            foreach (Part p in part.symmetryCounterparts)
+            {
+                FSpartTurner wheel = p.GetComponent<FSpartTurner>();
+                if (wheel != null)
+                {
+                    wheel.steeringEnabled = steeringEnabled;
+                    wheel.elementSteeringEnabled.buttons[0].toggle(steeringEnabled);
+                }
+            }
         }
 
         private void popupToggleReverseInput()
         {
             toggleReverseInput();
             elementInvertSteering.buttons[0].toggle(reversedInput);
+
+            foreach (Part p in part.symmetryCounterparts)
+            {
+                FSpartTurner wheel = p.GetComponent<FSpartTurner>();
+                if (wheel != null)
+                {
+                    wheel.reversedInput = reversedInput;
+                    wheel.elementInvertSteering.buttons[0].toggle(reversedInput);
+                }
+            }
         }
 
         private void addTransformToList(string targetName)
@@ -200,11 +222,14 @@ using UnityEngine;
                 elementInvertSteering.buttons[0].toggle(reversedInput);
                 elementSteeringRange = new PopupElement("Range", steerMultiplier.ToString());
                 popup = new FSGUIPopup(part, "FSpartTurner", moduleID, FSGUIwindowID.partTurner, new Rect(753f, 300f, 250f, 100f), "Steering", elementSteeringEnabled);
+                //popup.elementList.Add(elementSteeringEnabled);
                 popup.elementList.Add(elementInvertSteering);
                 popup.elementList.Add(elementSteeringRange);                
 
                 #endregion
             }
+
+            oldSteerMultiplier = steerMultiplier;
         }
 
         public override void OnUpdate()
@@ -255,6 +280,22 @@ using UnityEngine;
                 {                    
                     popup.popup();
                     steerMultiplier = float.Parse(elementSteeringRange.inputText);
+                    if (popup.showMenu)
+                    {                        
+                        if (oldSteerMultiplier != steerMultiplier)
+                        {
+                            foreach (Part p in part.symmetryCounterparts)
+                            {
+                                FSpartTurner wheel = p.GetComponent<FSpartTurner>();
+                                if (wheel != null)
+                                {
+                                    wheel.elementSteeringRange.inputText = steerMultiplier.ToString();
+                                    wheel.steerMultiplier = steerMultiplier;
+                                }
+                            }
+                        }
+                        oldSteerMultiplier = steerMultiplier;
+                    }
                 }
             }
         }

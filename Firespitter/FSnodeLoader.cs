@@ -20,7 +20,7 @@ class FSnodeLoader
     //List<string> moduleIDList = new List<string>(); // seems lists aren't copied from OnLoad to a new part, do filling a list with just the ID will test for whether this is a new part
     [KSPField]
     public string moduleID = "0"; // only needed in the orginal onLoad from the part.cfg to differentiate similar modules. After that, they will opnly check their internal nodes.
-    public bool debugMode = false;
+    public bool debugMode = true;
 
     public FSnodeLoader(Part _part, string _moduleName, string _moduleID, string _nodeName, string _valueName)
     {
@@ -94,7 +94,7 @@ class FSnodeLoader
                 // fill trimList from part.cfg module
                 debugMessage("OnStart moduleName is " + moduleName);
                 debugMessage("OnStart partName is " + part.partName);
-                debugMessage("OnStart partInfor.name is " + part.partInfo.name);
+                debugMessage("OnStart partInfo.name is " + part.partInfo.name);
                 debugMessage("getting configs");
                 UrlDir.UrlConfig[] cfg = GameDatabase.Instance.GetConfigs("PART");
                 debugMessage("looping through " + cfg.Length);
