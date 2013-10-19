@@ -17,6 +17,8 @@ class FStextureSwitch : PartModule
     public int selectedTexture = 0;
     [KSPField]
     public bool showListButton = false;
+    [KSPField]
+    public bool debugMode = false;
     //[KSPField]
     //public string targetObjectName = "mountCasing";
     
@@ -32,7 +34,7 @@ class FStextureSwitch : PartModule
     private string objectNodeName = "objects";
     private string objectValueName = "name";
     private List<String> objectList = new List<string>();
-    FSdebugMessages debug = new FSdebugMessages(true, FSdebugMessages.OutputMode.both, 2f);
+    FSdebugMessages debug = new FSdebugMessages(false, FSdebugMessages.OutputMode.both, 2f); //set to true for debug
     FSGUIPopup popup;
 
     public void listAllObjects()
@@ -91,7 +93,8 @@ class FStextureSwitch : PartModule
 
     public override void OnStart(PartModule.StartState state)
     {
-        base.OnStart(state);           
+        base.OnStart(state);
+        debug.debugMode = debugMode;
         textureNode = new FSnodeLoader(part, moduleName, moduleID.ToString(), textureNodeName, textureValueName);
         texList = textureNode.OnStart();
 

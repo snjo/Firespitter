@@ -139,6 +139,7 @@ class FSwheel : PartModule
     private Animation anim;    
     private WheelList wheelList = new WheelList();
     private bool boundsColliderRemoved = false;
+    private float animNormalizedTime = 0f;
 
     FSGUIPopup popup;
     PopupElement motorToggleElement;
@@ -643,11 +644,11 @@ class FSwheel : PartModule
     public void FixedUpdate()
     {
         if (!HighLogic.LoadedSceneIsFlight)
-            return;
+            return;        
 
         #region destroy bounds collider
         if (!boundsColliderRemoved)
-        {
+        {            
             if (boundsCollider != string.Empty)
             {
                 Transform boundsTransform = part.FindModelTransform(boundsCollider);
@@ -660,9 +661,10 @@ class FSwheel : PartModule
         }
         #endregion
 
-        #region update deployment state
+        #region update deployment state        
         if (anim != null)
         {
+            
             if (!anim.isPlaying)
             {
                 if (deploymentState == "Deploying")
@@ -679,7 +681,7 @@ class FSwheel : PartModule
         }
         #endregion
 
-        #region update brake torque
+        #region update brake torque        
         if (brakesEngaged)
         {
             wheelList.brakeTorque = Mathf.Lerp(wheelList.brakeTorque, brakeTorque, TimeWarp.deltaTime * brakeSpeed);
@@ -690,7 +692,7 @@ class FSwheel : PartModule
         }
         #endregion
 
-        #region rotate wheel meshes
+        #region rotate wheel meshes        
         for (int i = 0; i < wheelList.wheels.Count; i++)
         {
             if (wheelList.wheels[i].useRotation)
@@ -702,8 +704,7 @@ class FSwheel : PartModule
         }
         #endregion
 
-        #region update suspension
-
+        #region update suspension        
         for (int i = 0; i < wheelList.wheels.Count; i++)
         {
             if (wheelList.wheels[i].useSuspension)
@@ -732,53 +733,56 @@ class FSwheel : PartModule
         }
         #endregion
 
-        #region Active vessel code
+        #region Active vessel code        
 
         if (vessel.isActiveVessel && base.vessel.IsControllable)
         {
             #region collider disabling
 
-            float animNormalizedTime = anim[animationName].normalizedTime;
-
-            if (disableColliderWhenRetracted || disableColliderWhenRetracting) // runs OnStart too, so no need to run it in fixed update on non active vessels
+            if (anim != null)
             {
-                switch (deploymentState)
+                animNormalizedTime = anim[animationName].normalizedTime;
+
+                if (disableColliderWhenRetracted || disableColliderWhenRetracting) // runs OnStart too, so no need to run it in fixed update on non active vessels
                 {
-                    case "Retracted":
-                        if (disableColliderWhenRetracted)
-                            wheelList.enabled = false;
-                        else
-                            wheelList.enabled = true;
-                        break;
-                    case "Retracting":
-                        if (disableColliderWhenRetracting)
-                        {
-                            if (animNormalizedTime > disableColliderAtAnimTime)
+                    switch (deploymentState)
+                    {
+                        case "Retracted":
+                            if (disableColliderWhenRetracted)
                                 wheelList.enabled = false;
-                            else wheelList.enabled = true;                                                   
-                        }                        
-                        break;
-                    case "Deploying":
-                        if (disableColliderWhenRetracting)
-                        {
-                            if (animNormalizedTime > disableColliderAtAnimTime)
-                                wheelList.enabled = false;
-                            else wheelList.enabled = true;                            
-                        }
-                        else
-                        {
+                            else
+                                wheelList.enabled = true;
+                            break;
+                        case "Retracting":
+                            if (disableColliderWhenRetracting)
+                            {
+                                if (animNormalizedTime > disableColliderAtAnimTime)
+                                    wheelList.enabled = false;
+                                else wheelList.enabled = true;
+                            }
+                            break;
+                        case "Deploying":
+                            if (disableColliderWhenRetracting)
+                            {
+                                if (animNormalizedTime > disableColliderAtAnimTime)
+                                    wheelList.enabled = false;
+                                else wheelList.enabled = true;
+                            }
+                            else
+                            {
+                                wheelList.enabled = true;
+                            }
+                            break;
+                        default:
                             wheelList.enabled = true;
-                        }
-                        break;
-                    default:
-                        wheelList.enabled = true;
-                        break;
-                }                
+                            break;
+                    }
+                }
             }
             
             #endregion
 
-            #region update motors
+            #region update motors            
 
             if (hasMotor && motorEnabled && deploymentState == "Deployed")
             {
@@ -808,7 +812,7 @@ class FSwheel : PartModule
             }
             #endregion
 
-            #region update drag
+            #region update drag            
 
             if (deploymentState == "Deployed")
             {
