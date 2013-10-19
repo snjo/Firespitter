@@ -51,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="engine\FSanimateThrottle.cs" />
     <Compile Include="FSgenericButtonHandler.cs" />
     <Compile Include="water\FSbuoyancy.cs" />
     <Compile Include="gui\FSdebugMessages.cs" />

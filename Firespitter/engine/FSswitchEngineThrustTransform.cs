@@ -19,6 +19,11 @@ using UnityEngine;
         private Transform alternateTT;
         private ModuleEngines engine;
 
+        private int animateThrottleMode = 1;
+        private FSanimateThrottle animateThrottle;
+        [KSPField]
+        public Vector2 animateThrottleRange = new Vector2(0.5f, 0f);
+
         [KSPField(isPersistant = true)]
         public bool isReversed = false;
         public bool valid = true;
@@ -64,6 +69,13 @@ using UnityEngine;
             {
                 valid = false;
                 Debug.Log("FSswitchEngineThrustTransform: no engine module found");
+            }
+
+            animateThrottle = part.Modules.OfType<FSanimateThrottle>().FirstOrDefault();
+            if (animateThrottle != null)
+            {
+                animateThrottle.modeList.Add(new mode(animateThrottleRange.x, animateThrottleRange.y));
+                animateThrottleMode = animateThrottle.modeList.Count - 1;
             }
 
             popup = new FSGUIPopup(part, "FSswitchEngineThrustTransform", moduleID, FSGUIwindowID.switchEngineThrustTransform, windowRect, "Start Engine Reversed?", new PopupElement(new PopupButton("Yes","No",0f,toggleIsReversed)));
@@ -145,6 +157,14 @@ using UnityEngine;
                 }
                 Events["normalTTEvent"].guiActive = doReverse;
                 Events["reverseTTEvent"].guiActive = !doReverse;
+
+                if (animateThrottle != null)
+                {
+                    if (isReversed)
+                        animateThrottle.engineMode = animateThrottleMode;
+                    else
+                        animateThrottle.engineMode = 0;
+                }
             }
             else
             {

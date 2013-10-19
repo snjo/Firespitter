@@ -5,6 +5,12 @@ using System.Text;
 //using System.Threading.Tasks;
 using UnityEngine;
 
+// for wheel angle to ground adjuster:
+/** * Determines the angle of a straight line drawn between point one and two. The number returned, which is a float in degrees, tells us how much we have to rotate a horizontal line clockwise for it to match the line between the two points.
+ * If you prefer to deal with angles using radians instead of degrees, just change the last line to: "return Math.Atan2(yDiff, xDiff);" */ 
+//public static float GetAngleOfLineBetweenTwoPoints(PointF p1, PointF p2) { float xDiff = p2.X - p1.X; float yDiff = p2.Y - p1.Y; return Math.Atan2(yDiff, xDiff) * (180 / Math.PI); }
+//See more at: http://wikicode.wikidot.com/get-angle-of-line-between-two-points#sthash.zAEKYkPK.dpuf
+
 class FSwheel : PartModule
 {
     #region variables
