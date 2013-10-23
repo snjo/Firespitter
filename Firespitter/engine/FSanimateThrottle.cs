@@ -8,25 +8,29 @@ public class FSanimateThrottle : PartModule
 {
     [KSPField]
     public string animationName = "throttle";
+    /// <summary>
+    /// If false, the animation reverts to the start position if the engine state is off/flameout
+    /// </summary>
     [KSPField]
     public bool dependOnEngineState = false;
+    /// <summary>
+    /// how quickly it goes from the last animation time to the target time. 1 is instant.
+    /// </summary>
     [KSPField]
     public float responseSpeed = 0.5f;
+    /// <summary>
+    /// to avoid conflict with other animations, choose a different layer for each animation on the part if there's a problem
+    /// </summary>
     [KSPField]
     public int animationLayer = 1;
-    ///// <summary>
-    ///// normal is 0, 1 can for instance be reverse engine, 2 can be afterburner... Set by an external module.
-    ///// Add instances of mode to modeList for additional ones
-    ///// </summary>
-    //[KSPField]
-    //private int engineMode = 0;
-
     /// <summary>
-    /// moves from anim times of different modes smoothly if true, snaps too correct tiem if false when mode changes
+    /// moves from anim times of different modes smoothly if true, if false it snaps to correct the time when the mode changes
     /// </summary>
     [KSPField]
     public bool smoothModeTransition = true;
-
+    /// <summary>
+    /// the start and end time of the default engine modes throttle animation
+    /// </summary>
     [KSPField]
     public Vector2 primaryModeRange = new Vector2(0f, 1f);
   
