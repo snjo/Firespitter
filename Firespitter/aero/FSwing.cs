@@ -30,21 +30,34 @@ class FSwing : PartModule
     [KSPField]
     public float leadingEdgeDrag = 3f;
     [KSPField]
-    public float leadingEdgeLift = 1f;
+    public float leadingEdgeLift = 1f; // for stock wings, this increases lift coef, for FSliftSurface, it measures the increase in wingArea in meters
     [KSPField]
-    public float flapSpeed = 0.03f;
+    public string leadingEdgeLiftSurface = "lift";
+    [KSPField(isPersistant = true)]
+    public float flapTarget = 0f;
+    [KSPField]
+    public float flapIncrements = 10f;
+    [KSPField]
+    public float flapMax = 40f;
+    [KSPField]
+    public float flapMin = 0f;
+    [KSPField]
+    public float flapSpeed = 0.3f;
     [KSPField]
     public string flapRetractedName = "flapRetracted";
     [KSPField]
-    public string flapExtendedName = "flapExtended";
+    public string flapExtendedName = "flapExtended";        
     [KSPField]
     public Vector3 controlSurfaceAxis = Vector3.right;
     [KSPField]
-    public float pitchResponse = 1f;
+    public float pitchResponse = 0f;
     [KSPField]
-    public float rollResponse = 1f;
+    public float rollResponse = 0f;
     [KSPField]
-    public float yawResponse = 1f;
+    public float yawResponse = 0f;
+    [KSPField]
+    public float flapResponse = 0f;
+
     [KSPField(isPersistant = true)]
     public bool wingIsOnLeft = true; // used to determine leading edge to use, etc. Sniffed on first launch.
     [KSPField(isPersistant = true)]
@@ -76,8 +89,7 @@ class FSwing : PartModule
     public bool useLeadingEdge;
 
     private float leadingEdgeTarget = 0f;
-    private float leadingEdgeCurrent = 0f;
-    private float flapTarget = 0f;
+    private float leadingEdgeCurrent = 0f;    
     private float flapCurrent = 0f;
 
     public Transform mainLiftSurface;
@@ -92,7 +104,12 @@ class FSwing : PartModule
     public Transform leadingEdgeBottomExtended;
     public Transform leadingEdgeBottomRetracted;
 
+    private Vector3 ctrllSrfDefRot = new Vector3();
+    private Vector3 flapDefRot = new Vector3();
+
     private ControlSurface stockWingModule;
+    private FSliftSurface mainLift;
+    private float mainLiftAreaDefault;
 
     [KSPEvent(guiActive = true, guiName = "Toggle Leading Edge")]
     public void toggleLeadingEdgeEvent()
@@ -104,6 +121,42 @@ class FSwing : PartModule
     public void toggleLeadingEdgeAction(KSPActionParam param)
     {
         toggleLeadingEdgeEvent();
+    }
+
+    [KSPAction("Extend Flap")]
+    public void extendFlapAction(KSPActionParam param)
+    {
+        flapTarget += flapIncrements;
+        if (flapTarget > flapMax)
+            flapTarget = flapMax;
+    }
+
+    [KSPAction("Retract Flap")]
+    public void retractFlapAction(KSPActionParam param)
+    {
+        flapTarget -= flapIncrements;
+        if (flapTarget < flapMin)
+            flapTarget = flapMin;
+    }
+
+    private void updateFlap()
+    {
+        if (flapCurrent < flapTarget)
+        {
+            flapCurrent += flapSpeed;
+            if (flapCurrent > flapMax)
+                flapCurrent = flapMax;
+        }
+        else if (flapCurrent > flapTarget)
+        {
+            flapCurrent -= flapSpeed;
+            if (flapCurrent < flapMin)
+                flapCurrent = flapMin;
+        }
+
+        float invert = 1f;
+        if (wingIsOnLeft) invert = -1f;
+        flap.localRotation = Quaternion.Euler(ctrllSrfDefRot + (controlSurfaceAxis * flapCurrent * invert));
     }
 
     public void updateDrag()
@@ -124,11 +177,15 @@ class FSwing : PartModule
         if (newState == true)
         {
             leadingEdgeTarget = 1f;
-            //part.rigidbody.drag = leadingEdgeDrag * vessel.atmDensity * ;
-            currentDeflectionLiftCoeff = deflectionLiftCoeff + leadingEdgeLift;
+            //part.rigidbody.drag = leadingEdgeDrag * vessel.atmDensity * ;            
             if (affectStockWingModule)
             {
+                currentDeflectionLiftCoeff = deflectionLiftCoeff + leadingEdgeLift;
                 stockWingModule.deflectionLiftCoeff = currentDeflectionLiftCoeff;
+            }
+            else
+            {
+                mainLift.wingArea = mainLiftAreaDefault + leadingEdgeLift;
             }
         }
         else
@@ -138,6 +195,10 @@ class FSwing : PartModule
             if (affectStockWingModule)
             {
                 stockWingModule.deflectionLiftCoeff = deflectionLiftCoeff;
+            }
+            else
+            {
+                mainLift.wingArea = mainLiftAreaDefault;
             }
         }
     }
@@ -165,16 +226,20 @@ class FSwing : PartModule
         {
 
             #region find transforms
-            mainLiftSurface = part.FindModelTransform(mainLiftSurfaceName);
-            if (mainLiftSurface != null) useMainSrf = true;
-            else Debug.Log("FSwing: did not find mainLiftSurface " + mainLiftSurfaceName);
+            //mainLiftSurface = part.FindModelTransform(mainLiftSurfaceName);
+            //if (mainLiftSurface != null) useMainSrf = true;
+            //else Debug.Log("FSwing: did not find mainLiftSurface " + mainLiftSurfaceName);
 
             controlSurface = part.FindModelTransform(controlSurfaceName);
             if (controlSurface != null) useCtrlSrf = true;
             else Debug.Log("FSwing: did not find controlSurface " + controlSurfaceName);
 
             flap = part.FindModelTransform(flapName);
-            if (flap != null) useFlap = true;
+            if (flap != null)
+            {
+                useFlap = true;
+                flapDefRot = flap.localRotation.eulerAngles;
+            }
             else Debug.Log("FSwing: did not find flap " + flapName);
 
             leadingEdgeTop = part.FindModelTransform(leadingEdgeTopName);
@@ -198,8 +263,20 @@ class FSwing : PartModule
             leadingEdgeBottomRetracted = part.FindModelTransform(leadingEdgeBottomRetractedName);
             if (leadingEdgeBottomRetracted == null) Debug.Log("FSwing: did not find leadingEdgeBottomRetracted " + leadingEdgeBottomRetractedName);
 
+            controlSurface = part.FindModelTransform(controlSurfaceName);
+            if (controlSurface == null)
+            {
+                Debug.Log("FSwing: did not find controlSurface " + controlSurfaceName);
+            }
+            else
+            {
+                useCtrlSrf = true;
+                ctrllSrfDefRot = controlSurface.localRotation.eulerAngles;
+            }
+
             #endregion
 
+            // Check if a stock wing module is present, if not, manipulate FSliftSurface stuff instead.
             if (affectStockWingModule)
             {
                 Debug.Log("FSwing: getting stock wing module");
@@ -214,6 +291,29 @@ class FSwing : PartModule
                     affectStockWingModule = false;
                 }
             }
+
+            // get the main lift surface for the leading edge to manipulate
+            if (!affectStockWingModule)
+            {
+                FSliftSurface[] surfaces = part.GetComponents<FSliftSurface>();
+                foreach (FSliftSurface surface in surfaces)
+                {
+                    if (surface.liftTransformName == leadingEdgeLiftSurface)
+                    {
+                        mainLift = surface;
+                        mainLiftAreaDefault = surface.wingArea;
+                        Debug.Log("FSwing: Slat assigned main lift to: " + surface.liftTransformName);
+                        break;
+                    }
+                }
+                if (mainLift == null) Debug.Log("FSwing: mssing main FSliftSurface: " + leadingEdgeLiftSurface);
+            }
+
+            if (!useLeadingEdge)
+            {
+                Events["toggleLeadingEdgeEvent"].guiActive = false;
+            }
+                
         }
     }
 
@@ -251,6 +351,8 @@ class FSwing : PartModule
                 positionOnVesselSet = true;
             }
 
+            FlightCtrlState ctrl = vessel.ctrlState;
+
             if (useLeadingEdge)
             {
                 if (leadingEdgeCurrent < leadingEdgeTarget)
@@ -266,7 +368,22 @@ class FSwing : PartModule
                         leadingEdgeCurrent = 0f;
                 }
                 updateLeadingEdgePosition();
-                updateDrag();
+                if (affectStockWingModule)
+                    updateDrag();
+            }
+
+            if (useCtrlSrf)
+            {
+                float roll = ctrl.roll;
+                if (wingIsOnLeft) roll *= -1;
+                float amount = (ctrlSurfaceRange * ( (ctrl.pitch * pitchResponse) + (roll * rollResponse) + (ctrl.yaw * yawResponse) )) + (flapCurrent * flapResponse);
+                if (wingIsOnLeft) amount *= -1;
+                controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis));
+            }
+
+            if (useFlap)
+            {
+                updateFlap();
             }
 
         }
