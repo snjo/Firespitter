@@ -26,6 +26,8 @@ class FSliftSurface : PartModule
     private Rigidbody commonRigidBody;
     private Vector3 rigidBodyVelocity;
     private float airDensity = 1f;
+    public float lift = 0f;
+    public float drag = 0f;
         
     public bool debugMode = false;
     private Vector2 liftAndDrag = new Vector2(0f, 0f);
@@ -40,17 +42,19 @@ class FSliftSurface : PartModule
     private Vector2 getLiftAndDrag()
     {
         commonRigidBody = part.Rigidbody;
-        float speed = commonRigidBody.GetPointVelocity(liftTransform.position).magnitude;
-        float angleOfAttackRad = CalculateAoA(liftTransform);
-        float liftCoeff = 2f * Mathf.PI * angleOfAttackRad;
-        float lift = 0.5f * liftCoeff * airDensity * (speed * speed) * wingArea;
-        float aspectRatio = (span * span) / wingArea;
-        float dragCoeff = zeroLiftDrag + (liftCoeff * liftCoeff) / (Mathf.PI * aspectRatio * efficiency);
-        float drag = 0.5f * dragCoeff * airDensity * (speed * speed) * wingArea;
+        if (commonRigidBody != null)
+        {
+            float speed = commonRigidBody.GetPointVelocity(liftTransform.position).magnitude;
+            float angleOfAttackRad = CalculateAoA(liftTransform);
+            float liftCoeff = 2f * Mathf.PI * angleOfAttackRad;
+            lift = 0.5f * liftCoeff * airDensity * (speed * speed) * wingArea;
+            float aspectRatio = (span * span) / wingArea;
+            float dragCoeff = zeroLiftDrag + (liftCoeff * liftCoeff) / (Mathf.PI * aspectRatio * efficiency);
+            drag = 0.5f * dragCoeff * airDensity * (speed * speed) * wingArea;
 
-        lift *= power;
-        drag *= power;
-        
+            lift *= power;
+            drag *= power;
+        }
         return new Vector2(lift, drag);
     }
 
@@ -74,9 +78,9 @@ class FSliftSurface : PartModule
     }
 
     // Update is called once per frame
-    public override void OnUpdate()
+    public void FixedUpdate()
     {
-        base.OnUpdate();
+       // base.OnUpdate();
         if (!HighLogic.LoadedSceneIsFlight) return;
 
         airDensity = (float)vessel.atmDensity;
