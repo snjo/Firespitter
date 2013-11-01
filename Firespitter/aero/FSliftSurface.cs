@@ -20,6 +20,8 @@ class FSliftSurface : PartModule
     public float efficiency = 1f; // wright's plane 0.7f
     [KSPField]
     public float dragMultiplier = 1f;
+    //[KSPField]
+    //public float glideEfficiency = 0.015f; // used by cheatyLiftVector 0.002 in the unity test.
 
     float zeroLiftDrag = 0.0161f; // p-51 Mustang: 0.0161. sopwith camel: 0.0378
     private Transform liftTransform;
@@ -29,8 +31,20 @@ class FSliftSurface : PartModule
     public float lift = 0f;
     public float drag = 0f;
         
-    public bool debugMode = false;
+    public bool debugMode = true;
     private Vector2 liftAndDrag = new Vector2(0f, 0f);
+    private float speed = 0f;
+    private Vector3 velocity = Vector3.zero;
+
+    //private Vector3 cheatyLiftVector(Vector3 liftVector)  // this is for cheating the lift code into using less of the lift in the rear direction, basically counteracting drag in the velocity vector
+    //{
+    //    float forwardSpeedRatio = Vector3.Dot(liftTransform.forward, velocity.normalized);
+    //    Vector3 adjustment = speed * forwardSpeedRatio * glideEfficiency * liftTransform.forward;
+    //    //Debug.Log(adjustment);
+    //    //if (debugMode)
+    //    //	cheatTestCube.rotation = Quaternion.Euler(adjustment);
+    //    return liftVector + adjustment;
+    //}
 
     public float AngleOfAttack
     {
@@ -52,7 +66,8 @@ class FSliftSurface : PartModule
         commonRigidBody = part.Rigidbody;
         if (commonRigidBody != null)
         {
-            float speed = commonRigidBody.GetPointVelocity(liftTransform.position).magnitude;
+            velocity = commonRigidBody.GetPointVelocity(liftTransform.position);
+            speed = velocity.magnitude;
             float angleOfAttackRad = CalculateAoA(liftTransform);
             float liftCoeff = 2f * Mathf.PI * angleOfAttackRad;
             lift = 0.5f * liftCoeff * airDensity * (speed * speed) * wingArea;
@@ -85,6 +100,23 @@ class FSliftSurface : PartModule
         }                
     }
 
+    //public void Update()
+    //{
+    //    if (debugMode)
+    //    {
+    //        if (Input.GetKeyDown(KeyCode.PageUp))
+    //        {
+    //            glideEfficiency += 0.001f;
+    //            Debug.Log("FSliftSurface: glideEfficiency " + glideEfficiency);
+    //        }
+    //        if (Input.GetKeyDown(KeyCode.PageDown))
+    //        {
+    //            glideEfficiency -= 0.001f;
+    //            Debug.Log("FSliftSurface: glideEfficiency " + glideEfficiency);
+    //        }
+    //    }
+    //}
+
     // Update is called once per frame
     public void FixedUpdate()
     {
@@ -93,7 +125,15 @@ class FSliftSurface : PartModule
 
         airDensity = (float)vessel.atmDensity;
         liftAndDrag = getLiftAndDrag();
-        commonRigidBody.AddForceAtPosition(liftAndDrag.x * -liftTransform.up, liftTransform.position);
+
+        Vector3 ParallelInPlane = Vector3.Exclude(liftTransform.up, velocity).normalized;  //Projection of velocity vector onto the plane of the wing
+        Vector3 perp = Vector3.Cross(liftTransform.up, ParallelInPlane).normalized;       //This just gives the vector to cross with the velocity vector
+        Vector3 liftDirection = Vector3.Cross(perp, velocity).normalized;
+        Vector3 liftVector = liftDirection * liftAndDrag.x;
+
+        //Vector3 liftVector = liftAndDrag.x * -liftTransform.up;
+        commonRigidBody.AddForceAtPosition(liftVector, liftTransform.position);
+
         commonRigidBody.AddForceAtPosition(liftAndDrag.y * dragMultiplier * -commonRigidBody.GetPointVelocity(liftTransform.position).normalized, liftTransform.position);
     }
 }
