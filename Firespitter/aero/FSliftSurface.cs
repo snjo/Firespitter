@@ -32,6 +32,14 @@ class FSliftSurface : PartModule
     public bool debugMode = false;
     private Vector2 liftAndDrag = new Vector2(0f, 0f);
 
+    public float AngleOfAttack
+    {
+        get
+        {
+            return CalculateAoA(liftTransform) * Mathf.Rad2Deg;
+        }
+    }
+
     private float CalculateAoA(Transform wingOrientation)
     {
         float PerpVelocity = Vector3.Dot(wingOrientation.up, commonRigidBody.velocity.normalized);

@@ -33,6 +33,12 @@ class FSwing : PartModule
     public float leadingEdgeLift = 1f; // for stock wings, this increases lift coef, for FSliftSurface, it measures the increase in wingArea in meters
     [KSPField]
     public string leadingEdgeLiftSurface = "lift";
+    [KSPField]
+    public bool autoDeployLeadingEdge = false;
+    [KSPField]
+    public float autoLeadingEdgeSpeed = 90f;
+    [KSPField]
+    public float autoLeadingEdgeAoA = 15f;
     [KSPField(isPersistant = true)]
     public float flapTarget = 0f;
     [KSPField]
@@ -80,8 +86,8 @@ class FSwing : PartModule
     public float currentDeflectionLiftCoeff = 1.5f;
     [KSPField]
     public float ctrlSurfaceRange = 20f;
-    [KSPField]
-    public float ctrlSurfaceArea = 0.2f;
+    //[KSPField]
+    //public float ctrlSurfaceArea = 0.2f;
 
     public bool useMainSrf;
     public bool useCtrlSrf;
@@ -355,6 +361,14 @@ class FSwing : PartModule
 
             if (useLeadingEdge)
             {
+                if (autoDeployLeadingEdge)
+                {
+                    if (vessel.horizontalSrfSpeed < autoLeadingEdgeSpeed || Mathf.Abs(mainLift.AngleOfAttack) > autoLeadingEdgeAoA)
+                        setLeadingEdge(true);
+                    else
+                        setLeadingEdge(false);
+                }
+
                 if (leadingEdgeCurrent < leadingEdgeTarget)
                 {
                     leadingEdgeCurrent += leadingEdgeSpeed;
