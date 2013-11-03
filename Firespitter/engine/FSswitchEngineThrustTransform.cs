@@ -41,7 +41,7 @@ using UnityEngine;
             engine = part.Modules.OfType<ModuleEngines>().FirstOrDefault();
             if (engine != null)
             {
-                Debug.Log("FSswitchEngineThrustTransform: Engine module found");
+                //Debug.Log("FSswitchEngineThrustTransform: Engine module found");
                 thrustTransform = part.FindModelTransform(defaultTTName);                
                 defaultTT = new GameObject().transform;
                 defaultTT.localPosition = thrustTransform.localPosition;

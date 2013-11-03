@@ -48,18 +48,18 @@ public class FSanimateManually : PartModule
         }
         else
         {
-            Debug.Log("FSanimateManually: Found object " + targetObject);
+            //Debug.Log("FSanimateManually: Found object " + targetObject);
             originalTransform.localPosition = objectTransform.localPosition;
             originalTransform.localRotation = objectTransform.localRotation;
             //originalTransform = objectTransform;
             objectExists = true;
         }
 
-        Debug.Log("FSanimateManually: looking for anim");
+        //Debug.Log("FSanimateManually: looking for anim");
         anim = part.GetComponentInChildren<Animation>();
         if (anim != null)
         {            
-            Debug.Log("FSanimateManually: Found anim ");// + animationName + " / " + anim.name);
+            //Debug.Log("FSanimateManually: Found anim ");// + animationName + " / " + anim.name);
             animationExists = true;
         }
         else

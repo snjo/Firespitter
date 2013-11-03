@@ -42,7 +42,7 @@ public class FSmoveCraftAtLaunch : PartModule
     {
         if (HighLogic.LoadedSceneIsFlight && moveAtLaunch)
         {
-            Debug.Log("FSmoveCraftAtLaunch: moving craft");
+            //Debug.Log("FSmoveCraftAtLaunch: moving craft");
             //if (!hasLaunched)
             //{
             //    moveCraft();
@@ -68,7 +68,7 @@ public class FSmoveCraftAtLaunch : PartModule
     {
         if (vessel != null)
         {
-            Debug.Log("FSmoveCAL: moving vessel to: " + launchPosition);
+            //Debug.Log("FSmoveCAL: moving vessel to: " + launchPosition);
             vessel.SetPosition(launchPosition, true);
         }
     }

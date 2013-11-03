@@ -491,11 +491,11 @@ class FSwheel : PartModule
                     if (dot < 0) // below 0 means the engine is on the left side of the craft
                     {
                         reverseMotor = true;
-                        Debug.Log("FSwheel: Reversing motor, dot: " + dot);
+                        //Debug.Log("FSwheel: Reversing motor, dot: " + dot);
                     }
                     else
                     {
-                        Debug.Log("FSwheel: Motor reversing skipped, dot: " + dot);
+                        //Debug.Log("FSwheel: Motor reversing skipped, dot: " + dot);
                     }
                     if (motorStartsReversed)
                         reverseMotor = !reverseMotor;

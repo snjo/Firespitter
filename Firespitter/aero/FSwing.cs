@@ -285,15 +285,15 @@ class FSwing : PartModule
             // Check if a stock wing module is present, if not, manipulate FSliftSurface stuff instead.
             if (affectStockWingModule)
             {
-                Debug.Log("FSwing: getting stock wing module");
+                //Debug.Log("FSwing: getting stock wing module");
                 stockWingModule = part as ControlSurface;
                 if (stockWingModule != null)
                 {
-                    Debug.Log("FSwing: success");
+                    //Debug.Log("FSwing: success");
                 }
                 else
                 {
-                    Debug.Log("FSwing: failure");
+                    Debug.Log("FSwing: did not Find stock wing module");
                     affectStockWingModule = false;
                 }
             }
@@ -308,7 +308,7 @@ class FSwing : PartModule
                     {
                         mainLift = surface;
                         mainLiftAreaDefault = surface.wingArea;
-                        Debug.Log("FSwing: Slat assigned main lift to: " + surface.liftTransformName);
+                        //Debug.Log("FSwing: Slat assigned main lift to: " + surface.liftTransformName);
                         break;
                     }
                 }
@@ -346,12 +346,12 @@ class FSwing : PartModule
 
                 if (relativePosition.x < 0)
                 {
-                    Debug.Log("FSwing: part is on the left: " + relativePosition);
+                    //Debug.Log("FSwing: part is on the left: " + relativePosition);
                     wingIsOnLeft = true;
                 }
                 else
                 {
-                    Debug.Log("FSwing: part is on the right: " + relativePosition);
+                    //Debug.Log("FSwing: part is on the right: " + relativePosition);
                     wingIsOnLeft = false;
                 }
 
