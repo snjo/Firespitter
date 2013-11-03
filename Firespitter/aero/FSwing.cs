@@ -327,6 +327,7 @@ class FSwing : PartModule
     {
         if (HighLogic.LoadedSceneIsFlight)
         {
+
             if (!positionOnVesselSet) //run only the first time the craft is loaded
             {
                 // test whether the part is in the front or rear of the craft
@@ -402,4 +403,12 @@ class FSwing : PartModule
 
         }
     }
+
+    //public void OnGUI()
+    //{
+    //    GUI.Label(new Rect(100f, 100f, 400f, 50f), "kraken frameSpd: " + Krakensbane.GetFrameVelocity().magnitude);
+    //    GUI.Label(new Rect(100f, 140f, 400f, 50f), "kraken partSpd : " + part.Rigidbody.velocity.magnitude);
+    //    GUI.Label(new Rect(100f, 180f, 400f, 50f), "kraken frameVel: " + Krakensbane.GetFrameVelocity());
+    //    GUI.Label(new Rect(100f, 220f, 400f, 50f), "kraken lastCorr: " + Krakensbane.GetLastCorrection());
+    //}
 }
