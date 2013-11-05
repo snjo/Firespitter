@@ -22,5 +22,5 @@ public static class FSGUIwindowID
     public static int partTurner = 5912;
     public static int wing = 5913;
 
-    public static Rect standardRect = new Rect(500f, 300f, 250f, 100f);
+    public static Rect standardRect = new Rect(500f, 300f, 300f, 100f);
 }

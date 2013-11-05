@@ -20,10 +20,9 @@ class FSliftSurface : PartModule
     public float efficiency = 1f; // wright's plane 0.7f
     [KSPField]
     public float dragMultiplier = 1f;
-    //[KSPField]
-    //public float glideEfficiency = 0.015f; // used by cheatyLiftVector 0.002 in the unity test.
+    [KSPField]
+    public float zeroLiftDrag = 0.0161f; // p-51 Mustang: 0.0161. sopwith camel: 0.0378
 
-    float zeroLiftDrag = 0.0161f; // p-51 Mustang: 0.0161. sopwith camel: 0.0378
     private Transform liftTransform;
     private Rigidbody commonRigidBody;
     //private Vector3 rigidBodyVelocity;
@@ -37,12 +36,12 @@ class FSliftSurface : PartModule
     private float speed = 0f;
     private Vector3 velocity = Vector3.zero;
 
-    public Vector3 GetVelocity(Rigidbody rigidbody, Vector3 refPoint) //from Ferram
+    public Vector3 GetVelocity(Rigidbody rigidbody, Vector3 refPoint) // from Ferram
     {
         Vector3 newVelocity = Vector3.zero;
         //newVelocity = commonRigidBody.velocity + Krakensbane.GetFrameVelocity() + Vector3.Cross(commonRigidBody.angularVelocity, liftTransform.position - commonRigidBody.position);
         newVelocity += rigidbody.GetPointVelocity(refPoint);
-        newVelocity += Krakensbane.GetFrameVelocityV3f() - Krakensbane.GetLastCorrection() * TimeWarp.fixedDeltaTime; // OR +?
+        newVelocity += Krakensbane.GetFrameVelocityV3f() - Krakensbane.GetLastCorrection() * TimeWarp.fixedDeltaTime;
         return newVelocity;
     }
 
@@ -50,13 +49,13 @@ class FSliftSurface : PartModule
     {
         get
         {
-            return CalculateAoA(liftTransform) * Mathf.Rad2Deg;
+            return CalculateAoA(liftTransform, velocity) * Mathf.Rad2Deg;
         }
     }
 
-    private float CalculateAoA(Transform wingOrientation)
+    private float CalculateAoA(Transform wingOrientation, Vector3 inVelocity) // from Ferram
     {
-        float PerpVelocity = Vector3.Dot(wingOrientation.up, velocity.normalized);
+        float PerpVelocity = Vector3.Dot(wingOrientation.up, inVelocity.normalized);
         float AoA = Mathf.Asin(Mathf.Clamp(PerpVelocity, -1, 1));
         return AoA;
     }
@@ -66,10 +65,9 @@ class FSliftSurface : PartModule
         commonRigidBody = part.Rigidbody;
         if (commonRigidBody != null)
         {
-            velocity = GetVelocity(commonRigidBody, liftTransform.position);
-            //velocity = commonRigidBody.GetPointVelocity(liftTransform.position);
+            velocity = GetVelocity(commonRigidBody, liftTransform.position);            
             speed = velocity.magnitude;
-            float angleOfAttackRad = CalculateAoA(liftTransform);
+            float angleOfAttackRad = CalculateAoA(liftTransform, velocity);
             float liftCoeff = 2f * Mathf.PI * angleOfAttackRad;
             lift = 0.5f * liftCoeff * airDensity * (speed * speed) * wingArea;
             float aspectRatio = (span * span) / wingArea;
@@ -82,7 +80,7 @@ class FSliftSurface : PartModule
         return new Vector2(lift, drag);
     }
 
-    private Vector3 getLiftVector()
+    private Vector3 getLiftVector() // from Ferram
     {
         Vector3 ParallelInPlane = Vector3.Exclude(liftTransform.up, velocity).normalized;  //Projection of velocity vector onto the plane of the wing
         Vector3 perp = Vector3.Cross(liftTransform.up, ParallelInPlane).normalized;       //This just gives the vector to cross with the velocity vector
@@ -112,8 +110,7 @@ class FSliftSurface : PartModule
     }
 
     public void FixedUpdate()
-    {
-       // base.OnUpdate();
+    {       
         if (!HighLogic.LoadedSceneIsFlight || !initialized) return;
 
         airDensity = (float)vessel.atmDensity;
@@ -125,6 +122,28 @@ class FSliftSurface : PartModule
         commonRigidBody.AddForceAtPosition(liftVector, liftTransform.position);
 
         commonRigidBody.AddForceAtPosition(liftAndDrag.y * dragMultiplier * -commonRigidBody.GetPointVelocity(liftTransform.position).normalized, liftTransform.position);
-    }   
+    }
+
+    public void OnCenterOfLiftQuery(CenterOfLiftQuery qry)
+    {
+        Vector3 testVelocity = qry.refVector;            
+        speed = testVelocity.magnitude;
+        float angleOfAttackRad = 0f;
+        if (liftTransform != null) 
+            angleOfAttackRad = CalculateAoA(liftTransform, testVelocity);
+        float liftCoeff = 2f * Mathf.PI * angleOfAttackRad;
+        lift = 0.5f * liftCoeff * airDensity * (speed * speed) * wingArea;
+        float aspectRatio = (span * span) / wingArea;
+        float dragCoeff = zeroLiftDrag + (liftCoeff * liftCoeff) / (Mathf.PI * aspectRatio * efficiency);
+        drag = 0.5f * dragCoeff * airDensity * (speed * speed) * wingArea;
+
+        lift *= power;
+        drag *= power;
+
+        qry.pos = liftTransform.position;
+        qry.dir = -liftTransform.up * lift;
+        qry.lift = qry.dir.magnitude;
+        qry.dir.Normalize();
+    }
 }
 

@@ -181,7 +181,7 @@ public class FSVTOLrotator : PartModule
     }
 
     [KSPAction("VTOL steering toggle")]
-    public void toogleVTOLsteeringAction(KSPActionParam param)
+    public void toggleVTOLsteeringAction(KSPActionParam param)
     {
         VTOLsteeringActive = !VTOLsteeringActive;
     }

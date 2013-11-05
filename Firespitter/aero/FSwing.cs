@@ -123,6 +123,8 @@ class FSwing : PartModule
     private FSliftSurface mainLift;
     private float mainLiftAreaDefault;
 
+    #region gui variables
+
     private FSGUIPopup popup;
     //private PopupSection axisSection = new PopupSection();
     public WingAxisSection axisPitchSection;
@@ -139,6 +141,10 @@ class FSwing : PartModule
     private float oldRollResponse;
     private float oldYawResponse;
     private float oldFlapResponse;
+
+    private bool invertAxisTest;
+
+    #endregion
 
     #region events and actions
 
@@ -338,119 +344,40 @@ class FSwing : PartModule
     {
         doTestSymmetry = true;
         testAxis = Vector4.zero;
+        invertAxisTest = true;
         switch (ID)
         {
-            case 0:
-                testAxis.x = 1;
+            case 0: // Pitch ^
+                testAxis.x = 1; 
                 break;
-            case 1:
+            case 1: // Pitch v
                 testAxis.x = -1;
                 break;
-            case 2:
+            case 2:// Roll <
                 testAxis.y = 1;
+                invertAxisTest = true;
                 break;
-            case 3:
+            case 3: // Roll >
                 testAxis.y = -1;
+                invertAxisTest = true;
                 break;
-            case 4:
+            case 4: // Yaw <
                 testAxis.z = 1;
                 break;
-            case 5:
+            case 5: // Yaw >
                 testAxis.z = -1;
                 break;
-            case 6:
+            case 6: // Flap ^
                 testAxis.w = 1;
                 break;
-            case 7:
+            case 7: // Flap v
                 testAxis.w = -1;
                 break;
-            case 8:
+            case 8: // Reset
                 testAxis = Vector4.zero;
                 break;
         }
         Debug.Log("test axis: " + testAxis);
-    }
-
-    public override void OnStart(PartModule.StartState state)
-    {
-    	base.OnStart(state);
-
-        #region fligth mode
-
-        if (HighLogic.LoadedSceneIsFlight)
-        {
-
-            findTransforms(true);
-
-            // Check if a stock wing module is present, if not, manipulate FSliftSurface stuff instead.
-            if (affectStockWingModule)
-            {
-                //Debug.Log("FSwing: getting stock wing module");
-                stockWingModule = part as ControlSurface;
-                if (stockWingModule != null)
-                {
-                    //Debug.Log("FSwing: success");
-                }
-                else
-                {
-                    Debug.Log("FSwing: did not Find stock wing module");
-                    affectStockWingModule = false;
-                }
-            }
-
-            // get the main lift surface for the leading edge to manipulate
-            if (!affectStockWingModule)
-            {
-                FSliftSurface[] surfaces = part.GetComponents<FSliftSurface>();
-                foreach (FSliftSurface surface in surfaces)
-                {
-                    if (surface.liftTransformName == leadingEdgeLiftSurface)
-                    {
-                        mainLift = surface;
-                        mainLiftAreaDefault = surface.wingArea;
-                        //Debug.Log("FSwing: Slat assigned main lift to: " + surface.liftTransformName);
-                        break;
-                    }
-                }
-                if (mainLift == null) Debug.Log("FSwing: leading edge missing main FSliftSurface: " + leadingEdgeLiftSurface);
-            }
-
-            if (!useLeadingEdge || autoDeployLeadingEdge)
-            {
-                Events["toggleLeadingEdgeEvent"].guiActive = false;
-            }
-
-        }
-        #endregion
-
-        #region editor mode
-
-        if (HighLogic.LoadedSceneIsEditor)
-        {            
-            popup = new FSGUIPopup(part, "FSwing", moduleID, FSGUIwindowID.wing, windowRect, "Wing Settings");            
-            axisPitchSection = new WingAxisSection("Pitch Response", pitchResponse);
-            axisRollSection = new WingAxisSection("Roll Response", rollResponse);
-            axisYawSection = new WingAxisSection("Yaw Response", yawResponse);
-            axisFlapSection = new WingAxisSection("Flap Response", flapResponse);
-            popup.sections.Add(axisPitchSection);
-            popup.sections.Add(axisRollSection);
-            popup.sections.Add(axisYawSection);
-            popup.sections.Add(axisFlapSection);
-
-            testAxisSection = createTestSection();
-            popup.sections.Add(testAxisSection);
-
-            popup.showCloseButton = false;
-            popup.useInActionEditor = true;
-            popup.useInFlight = false;
-
-            oldPitchResponse = pitchResponse;
-            oldRollResponse = rollResponse;
-            oldYawResponse = yawResponse;
-            oldFlapResponse = flapResponse;
-            
-        }
-        #endregion
     }
 
     private void findTransforms(bool verboseErrors)
@@ -503,7 +430,7 @@ class FSwing : PartModule
         #endregion
     }
 
-    public void testAxisOnSymmetry(float amount)
+    public void testAxisOnSymmetry(float amount, bool allowInvert)
     {
         try
         {
@@ -518,13 +445,13 @@ class FSwing : PartModule
                 {
                     //wing.targetAngle = availableAnglesList[selectedListAngle];
                     float dot = Vector3.Dot(wing.part.transform.right, Vector3.right);
-                    if (dot < 0f) // check for orientation of the part, relative to world directions, since there is no vessel transfrom to compare to
+                    if (dot < 0f && allowInvert) // check for orientation of the part, relative to world directions, since there is no vessel transfrom to compare to
                     {
                         invert = -1f;
                     }
 
                     wing.popup.windowTitle = "wing invert " + invert;
-                    wing.controlSurface.localRotation = Quaternion.Euler(invert * ctrllSrfDefRot + (amount * controlSurfaceAxis));
+                    wing.controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis * invert));
                 }
             }
         }
@@ -532,6 +459,88 @@ class FSwing : PartModule
         {
             //Debug.Log("FSwing testAxisSymmetryError");
         }
+    }
+
+    public override void OnStart(PartModule.StartState state)
+    {
+        base.OnStart(state);
+
+        #region fligth mode
+
+        if (HighLogic.LoadedSceneIsFlight)
+        {
+
+            findTransforms(true);
+
+            // Check if a stock wing module is present, if not, manipulate FSliftSurface stuff instead.
+            if (affectStockWingModule)
+            {
+                //Debug.Log("FSwing: getting stock wing module");
+                stockWingModule = part as ControlSurface;
+                if (stockWingModule != null)
+                {
+                    //Debug.Log("FSwing: success");
+                }
+                else
+                {
+                    Debug.Log("FSwing: did not Find stock wing module");
+                    affectStockWingModule = false;
+                }
+            }
+
+            // get the main lift surface for the leading edge to manipulate
+            if (!affectStockWingModule)
+            {
+                FSliftSurface[] surfaces = part.GetComponents<FSliftSurface>();
+                foreach (FSliftSurface surface in surfaces)
+                {
+                    if (surface.liftTransformName == leadingEdgeLiftSurface)
+                    {
+                        mainLift = surface;
+                        mainLiftAreaDefault = surface.wingArea;
+                        //Debug.Log("FSwing: Slat assigned main lift to: " + surface.liftTransformName);
+                        break;
+                    }
+                }
+                if (mainLift == null) Debug.Log("FSwing: leading edge missing main FSliftSurface: " + leadingEdgeLiftSurface);
+            }
+
+            if (!useLeadingEdge || autoDeployLeadingEdge)
+            {
+                Events["toggleLeadingEdgeEvent"].guiActive = false;
+            }
+
+        }
+        #endregion
+
+        #region editor mode
+
+        if (HighLogic.LoadedSceneIsEditor)
+        {
+            popup = new FSGUIPopup(part, "FSwing", moduleID, FSGUIwindowID.wing, windowRect, "Wing Settings");
+            axisPitchSection = new WingAxisSection("Pitch Response", pitchResponse);
+            axisRollSection = new WingAxisSection("Roll Response", rollResponse);
+            axisYawSection = new WingAxisSection("Yaw Response", yawResponse);
+            axisFlapSection = new WingAxisSection("Flap Response", flapResponse);
+            popup.sections.Add(axisPitchSection);
+            popup.sections.Add(axisRollSection);
+            popup.sections.Add(axisYawSection);
+            popup.sections.Add(axisFlapSection);
+
+            testAxisSection = createTestSection();
+            popup.sections.Add(testAxisSection);
+
+            popup.showCloseButton = false;
+            popup.useInActionEditor = true;
+            popup.useInFlight = false;
+
+            oldPitchResponse = pitchResponse;
+            oldRollResponse = rollResponse;
+            oldYawResponse = yawResponse;
+            oldFlapResponse = flapResponse;
+
+        }
+        #endregion
     }
 
     public override void OnUpdate()
@@ -548,11 +557,11 @@ class FSwing : PartModule
                 CoMTransform.rotation = vessel.transform.rotation;
                 Vector3 relativePosition = CoMTransform.InverseTransformPoint(part.transform.position);
                 if (relativePosition.y < 0)
-                {                    
+                {
                     isInFrontOfCoM = false;
                 }
                 else
-                {                 
+                {
                     isInFrontOfCoM = true;
                 }
 
@@ -586,7 +595,7 @@ class FSwing : PartModule
                 {
                     leadingEdgeCurrent += leadingEdgeSpeed;
                     if (leadingEdgeCurrent > 1f)
-                        leadingEdgeCurrent = 1f;                    
+                        leadingEdgeCurrent = 1f;
                 }
                 else if (leadingEdgeCurrent > leadingEdgeTarget)
                 {
@@ -603,18 +612,18 @@ class FSwing : PartModule
             {
                 float roll = ctrl.roll;
                 if (wingIsOnLeft) roll *= -1;
-                float amount = (ctrlSurfaceRange * ( (ctrl.pitch * pitchResponse) + (roll * rollResponse) + (ctrl.yaw * yawResponse) )) + (flapCurrent * flapResponse);
-                if (wingIsOnLeft) amount *= -1;                
+                float amount = (ctrlSurfaceRange * ((ctrl.pitch * pitchResponse) + (roll * rollResponse) + (ctrl.yaw * yawResponse))) + (flapCurrent * flapResponse);
+                if (wingIsOnLeft) amount *= -1;
                 controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis));
             }
 
             //if (useFlap)
             //{
-                updateFlap();
+            updateFlap();
             //}
 
         }
-        #endregion        
+        #endregion
     }
 
     public void Update()
@@ -633,7 +642,7 @@ class FSwing : PartModule
             float amount = (((testAxis.x * pitchResponse) + (testAxis.y * rollResponse) + (testAxis.z * yawResponse)) * ctrlSurfaceRange) + (testAxis.w * flapResponse * flapMax);
             //controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis));
             if (doTestSymmetry)
-                testAxisOnSymmetry(amount);
+                testAxisOnSymmetry(amount, invertAxisTest);
 
         }
 
@@ -732,7 +741,9 @@ public class WingAxisSection : PopupSection
             collapseElement.buttons[0].toggleState = true;
         }
 
-        responseElement = new PopupElement("Response Direction", response.ToString());
+        responseElement = new PopupElement("Amount/Direction", response.ToString());
+        responseElement.titleSize = FSGUIwindowID.standardRect.width - 115f;
+        responseElement.inputSize = 80f;
         elements.Add(responseElement);
     }
 
