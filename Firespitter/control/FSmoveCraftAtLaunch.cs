@@ -50,7 +50,7 @@ public class FSmoveCraftAtLaunch : PartModule
             //}
         }
         popup = new FSGUIPopup(part, "FSmoveCraftAtLaunch", 0, FSGUIwindowID.moveCraftAtLaunch, new Rect(600f, 300f, 200f, 60f), "Move to the water at launch?", new PopupElement(new PopupButton("Yes", "No", 0f, toggleMoveAtLaunch)));
-        popup.elementList[0].buttons[0].toggle(moveAtLaunch);
+        popup.sections[0].elements[0].buttons[0].toggle(moveAtLaunch);
 
         //partPosition = new GameObject().transform;
         //partPosition.position = part.transform.position;
@@ -90,7 +90,7 @@ public class FSmoveCraftAtLaunch : PartModule
     public void toggleMoveAtLaunch()
     {
         moveAtLaunch = !moveAtLaunch;        
-        popup.elementList[0].buttons[0].toggle(moveAtLaunch);        
+        popup.sections[0].elements[0].buttons[0].toggle(moveAtLaunch);        
     }
 
     public void Update() //TODO, check if this is the active vessel

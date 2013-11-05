@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 //using System.Threading.Tasks;
 
 public static class FSGUIwindowID
@@ -19,4 +20,7 @@ public static class FSGUIwindowID
     public static int textureSwitch = 5900; // 10 reserved
     public static int wheel = 5911;
     public static int partTurner = 5912;
+    public static int wing = 5913;
+
+    public static Rect standardRect = new Rect(500f, 300f, 250f, 100f);
 }

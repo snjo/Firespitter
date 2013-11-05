@@ -53,8 +53,9 @@
   <ItemGroup>
     <Compile Include="aero\FSliftSurface.cs" />
     <Compile Include="engine\FSanimateThrottle.cs" />
-    <Compile Include="FSgenericButtonHandler.cs" />
-    <Compile Include="FSrandomNumberGenerator.cs" />
+    <Compile Include="tools\FSgenericButtonHandler.cs" />
+    <Compile Include="tools\FSrandomNumberGenerator.cs" />
+    <Compile Include="tools\FStools.cs" />
     <Compile Include="water\FSbuoyancy.cs" />
     <Compile Include="gui\FSdebugMessages.cs" />
     <Compile Include="gui\FSGUIPopup.cs" />
@@ -65,7 +66,7 @@
     <Compile Include="internalprop\FSActionGroupSwitch.cs" />
     <Compile Include="animation\FSanimatedAirIntake.cs" />
     <Compile Include="animation\FSanimateManually.cs" />
-    <Compile Include="FSgenericButtonHandlerID.cs" />
+    <Compile Include="tools\FSgenericButtonHandlerID.cs" />
     <Compile Include="internalprop\FScameraToTV.cs" />
     <Compile Include="engine\FSengineHandCrank.cs" />
     <Compile Include="engine\FSengineMenuCleaner.cs" />
@@ -74,7 +75,7 @@
     <Compile Include="engine\FShoverThrottle.cs" />
     <Compile Include="gui\FSinfoPopup.cs" />
     <Compile Include="internalprop\FSmonitorScript.cs" />
-    <Compile Include="FSnodeLoader.cs" />
+    <Compile Include="tools\FSnodeLoader.cs" />
     <Compile Include="FSplaceStaticMesh.cs" />
     <Compile Include="engine\FSplanePropellerSpinner.cs" />
     <Compile Include="gui\FSradarAltitude.cs" />

@@ -46,8 +46,8 @@ class FStrimAdjustment : PartModule
     [KSPAction("Use Preset 1")]
     public void usePreset1Action(KSPActionParam param)
     {
-        if (popup.elementList.Count > 1)
-            setTrimValue(popup.elementList[1].buttons[0]);
+        if (popup.sections[0].elements.Count > 1)
+            setTrimValue(popup.sections[0].elements[1].buttons[0]);
     }
 
     [KSPAction("Increase Trim")]
@@ -161,13 +161,13 @@ class FStrimAdjustment : PartModule
     {
         PopupElement element = new PopupElement(axis, preset.ToString(), new PopupButton("Use", 0f, setTrimValue));
         element.buttons[0].popupElement = element;
-        popup.elementList.Add(element);
+        popup.sections[0].elements.Add(element);
     }
 
     private void removePresetLine()
     {
-        if (popup.elementList.Count > firstPresetLine)
-            popup.elementList.RemoveAt(popup.elementList.Count - 1);
+        if (popup.sections[0].elements.Count > firstPresetLine)
+            popup.sections[0].elements.RemoveAt(popup.sections[0].elements.Count - 1);
     }
 
     private void adjustTrim(float amount)
@@ -288,7 +288,7 @@ class FStrimAdjustment : PartModule
             popup.showMenu = true;
             elementShowOnFlightStart = new PopupElement("Show on Launch?", new PopupButton("Y", "N", 30f, toggleShowOnFlightStart));
             elementShowOnFlightStart.titleSize = 120f;
-            popup.elementList.Add(elementShowOnFlightStart);
+            popup.sections[0].elements.Add(elementShowOnFlightStart);
             elementShowOnFlightStart.buttons[0].toggle(showOnFlightStart);
             firstPresetLine = 2;
         }
@@ -352,15 +352,15 @@ class FStrimAdjustment : PartModule
         if (popup != null)
         {
             popup.popup();
-            if (popup.elementList.Count > firstPresetLine)
+            if (popup.sections[0].elements.Count > firstPresetLine)
             {
-                float.TryParse(popup.elementList[firstPresetLine].inputText, out presetTrim0);
-                if (popup.elementList.Count > firstPresetLine + 1)
+                float.TryParse(popup.sections[0].elements[firstPresetLine].inputText, out presetTrim0);
+                if (popup.sections[0].elements.Count > firstPresetLine + 1)
                 {
-                    float.TryParse(popup.elementList[firstPresetLine + 1].inputText, out presetTrim1);
-                    if (popup.elementList.Count > firstPresetLine + 2)
+                    float.TryParse(popup.sections[0].elements[firstPresetLine + 1].inputText, out presetTrim1);
+                    if (popup.sections[0].elements.Count > firstPresetLine + 2)
                     {
-                        float.TryParse(popup.elementList[firstPresetLine + 2].inputText, out presetTrim2);
+                        float.TryParse(popup.sections[0].elements[firstPresetLine + 2].inputText, out presetTrim2);
                     }
                 }
             }

@@ -32,6 +32,7 @@ class FSliftSurface : PartModule
     public float drag = 0f;
         
     public bool debugMode = true;
+    private bool initialized = false;
     private Vector2 liftAndDrag = new Vector2(0f, 0f);
     private float speed = 0f;
     private Vector3 velocity = Vector3.zero;
@@ -92,7 +93,8 @@ class FSliftSurface : PartModule
 
     public override void OnStart(PartModule.StartState state)
     {
- 	     base.OnStart(state);        
+ 	     base.OnStart(state);
+        initialized = true;
     
         if (liftTransformName == string.Empty)
         {
@@ -112,7 +114,7 @@ class FSliftSurface : PartModule
     public void FixedUpdate()
     {
        // base.OnUpdate();
-        if (!HighLogic.LoadedSceneIsFlight) return;
+        if (!HighLogic.LoadedSceneIsFlight || !initialized) return;
 
         airDensity = (float)vessel.atmDensity;
         liftAndDrag = getLiftAndDrag();

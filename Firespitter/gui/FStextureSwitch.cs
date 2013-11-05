@@ -123,7 +123,7 @@ class FStextureSwitch : PartModule
         popup = new FSGUIPopup(part, "FStextureSwitch", moduleID, FSGUIwindowID.textureSwitch + moduleID, new Rect(500f, 500f, 200f, 100f), displayName, new PopupElement(new PopupButton("Next texture", 0f, nextTextureEvent)));
         if (showListButton)
         {
-            popup.elementList.Add(new PopupElement(new PopupButton("List objects", 0f, listAllObjects)));
+            popup.sections[0].elements.Add(new PopupElement(new PopupButton("List objects", 0f, listAllObjects)));
         }
     }
 

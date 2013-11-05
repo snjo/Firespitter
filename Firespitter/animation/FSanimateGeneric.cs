@@ -198,14 +198,14 @@ public class FSanimateGeneric : PartModule
 
         windowRect = new Rect(defaultWindowRect.x, defaultWindowRect.y, defaultWindowRect.z, defaultWindowRect.w);
         popup = new FSGUIPopup(part, "FSanimateGeneric", moduleID, FSGUIwindowID.animateGeneric + moduleID, windowRect, startDeployedString, new PopupElement(new PopupButton("Yes", "No", 0f, guiToggleEvent)));
-        popup.elementList[0].useTitle = false;
-        popup.elementList[0].buttons[0].toggle(reverseAnimation);
+        popup.sections[0].elements[0].useTitle = false;
+        popup.sections[0].elements[0].buttons[0].toggle(reverseAnimation);
     }
 
     public void guiToggleEvent()
     {
         toggleEvent();
-        popup.elementList[0].buttons[0].toggle(startDeployed);
+        popup.sections[0].elements[0].buttons[0].toggle(startDeployed);
     }
 
     public void Update()

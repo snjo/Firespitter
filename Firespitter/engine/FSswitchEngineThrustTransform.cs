@@ -79,8 +79,8 @@ using UnityEngine;
             }
 
             popup = new FSGUIPopup(part, "FSswitchEngineThrustTransform", moduleID, FSGUIwindowID.switchEngineThrustTransform, windowRect, "Start Engine Reversed?", new PopupElement(new PopupButton("Yes","No",0f,toggleIsReversed)));
-            popup.elementList.Add(new PopupElement("Settings affect symmetry group"));
-            popup.elementList[0].useTitle = false;
+            popup.sections[0].elements.Add(new PopupElement("Settings affect symmetry group"));
+            popup.sections[0].elements[0].useTitle = false;
         }
 
         [KSPAction("Toggle Thrust Reverser")]
@@ -176,7 +176,7 @@ using UnityEngine;
         public void toggleIsReversed()
         {
             isReversed = !isReversed;
-            popup.elementList[0].buttons[0].toggle(isReversed);
+            popup.sections[0].elements[0].buttons[0].toggle(isReversed);
 
             foreach (Part p in part.symmetryCounterparts)
             {
@@ -184,7 +184,7 @@ using UnityEngine;
                 if (switcher != null)
                 {
                     switcher.isReversed = isReversed;
-                    switcher.popup.elementList[0].buttons[0].toggle(isReversed);
+                    switcher.popup.sections[0].elements[0].buttons[0].toggle(isReversed);
                 }
             }
         }

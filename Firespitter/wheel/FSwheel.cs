@@ -567,13 +567,13 @@ class FSwheel : PartModule
             popup.useInFlight = true;
             suspensionSpringElement = new PopupElement("Spring", suspensionSpring.ToString());
             suspensionDamperElement = new PopupElement("Damper", suspensionDamper.ToString());
-            suspensionTargetPositionElement = new PopupElement("Target pos", suspensionTargetPosition.ToString());            
-            popup.elementList.Add(suspensionSpringElement);
-            popup.elementList.Add(suspensionDamperElement);
-            popup.elementList.Add(suspensionTargetPositionElement);
+            suspensionTargetPositionElement = new PopupElement("Target pos", suspensionTargetPosition.ToString());
+            popup.sections[0].elements.Add(suspensionSpringElement);
+            popup.sections[0].elements.Add(suspensionDamperElement);
+            popup.sections[0].elements.Add(suspensionTargetPositionElement);
             
             suspensionUpdateElement = new PopupElement(new PopupButton("Update", 0f, popupUpdateSuspension));
-            popup.elementList.Add(suspensionUpdateElement);
+            popup.sections[0].elements.Add(suspensionUpdateElement);
 
             #endregion
 
@@ -633,9 +633,9 @@ class FSwheel : PartModule
 
             motorToggleElement = new PopupElement("Motor", new PopupButton("On", "Off", 0f, popupToggleMotor));            
             popup = new FSGUIPopup(part, "FSwheel", moduleID, FSGUIwindowID.wheel, new Rect(500f, 300f, 250f, 100f), "Wheel settings", new PopupElement("Settings affect symmetry group"));
-            popup.elementList.Add(motorToggleElement);
+            popup.sections[0].elements.Add(motorToggleElement);
             motorReverseElement = new PopupElement("Reverse Motor", new PopupButton("On", "Off", 0f, popupToggleReverseMotor));
-            popup.elementList.Add(motorReverseElement);
+            popup.sections[0].elements.Add(motorReverseElement);
 
             motorToggleElement.buttons[0].toggle(motorEnabled);
             motorReverseElement.buttons[0].toggle(motorStartsReversed);

@@ -245,22 +245,22 @@ public class FSVTOLrotator : PartModule
         {                                   
             elementInfoText = new PopupElement("Presets set to 0 are excluded.");
             popup = new FSGUIPopup(part, "FSVTOLrotator", 0, FSGUIwindowID.VTOLrotator, new Rect(550f, 200f, 325f, 150f), "VTOL presets", elementInfoText);
-            popup.elementList.Add(new PopupElement("Settings are per engine!"));
+            popup.sections[0].elements.Add(new PopupElement("Settings are per engine!"));
 
             elementTestAngle = new PopupElement(new PopupButton("Use Preset " + selectedListAngle, 100f, testUseAngle));
-            popup.elementList.Add(elementTestAngle);
+            popup.sections[0].elements.Add(elementTestAngle);
             elementTestAngle.buttons.Add(new PopupButton("Next", 40f, testNextAngle));
             elementTestAngle.buttons.Add(new PopupButton("Reset", 50f, testReset));
 
             elementStepSize = new PopupElement("Step size", stepAngle.ToString());
             elementStepSize.titleSize = 135f;
             elementStepSize.inputSize = 55f;
-            popup.elementList.Add(elementStepSize);
+            popup.sections[0].elements.Add(elementStepSize);
 
             elementMaxDownAngle = new PopupElement("Max negative rot.,", maxDownAngle.ToString());
             elementMaxDownAngle.titleSize = 135f;
             elementMaxDownAngle.inputSize = 55f;
-            popup.elementList.Add(elementMaxDownAngle);
+            popup.sections[0].elements.Add(elementMaxDownAngle);
 
             for (int i = 0; i <= 5; i++) // ------------- hard coded ---------------------------
             {
@@ -273,15 +273,15 @@ public class FSVTOLrotator : PartModule
                 elementPresets[i] = new PopupElement("Preset " + i, presetAngle.ToString());
                 elementPresets[i].titleSize = 135f;
                 elementPresets[i].inputSize = 55f;
-                popup.elementList.Add(elementPresets[i]);
+                popup.sections[0].elements.Add(elementPresets[i]);
             }
 
-            popup.elementList.Add(new PopupElement("--- VTOL steering ---"));
-            popup.elementList.Add(elementVTOLSteeringMode);
-            popup.elementList.Add(elementSteerRoll);
-            popup.elementList.Add(elementSteerYaw);
-            popup.elementList.Add(elementSteerPitch);
-            popup.elementList.Add(elementSteerPitchType);            
+            popup.sections[0].elements.Add(new PopupElement("--- VTOL steering ---"));
+            popup.sections[0].elements.Add(elementVTOLSteeringMode);
+            popup.sections[0].elements.Add(elementSteerRoll);
+            popup.sections[0].elements.Add(elementSteerYaw);
+            popup.sections[0].elements.Add(elementSteerPitch);
+            popup.sections[0].elements.Add(elementSteerPitchType);            
             updateButtonTexts();
 
             popup.useInFlight = false;
@@ -295,9 +295,9 @@ public class FSVTOLrotator : PartModule
             atmosphericNerf = part.Modules.OfType<FSpropellerAtmosphericNerf>().FirstOrDefault();
             // --- moved the element creation to the top, for use in both editor and flight
             popup = new FSGUIPopup(part, "FSVTOLrotator", 0, FSGUIwindowID.VTOLrotator, new Rect(500f, 300f, 250f, 100f), "VTOL steering", elementSteerRoll);
-            popup.elementList.Add(elementSteerYaw);
-            popup.elementList.Add(elementSteerPitch);
-            popup.elementList.Add(elementSteerPitchType);            
+            popup.sections[0].elements.Add(elementSteerYaw);
+            popup.sections[0].elements.Add(elementSteerPitch);
+            popup.sections[0].elements.Add(elementSteerPitchType);            
             
             popup.useInFlight = true;
             popup.useInActionEditor = false;
@@ -336,12 +336,12 @@ public class FSVTOLrotator : PartModule
             {
                 elementSteerPitchType.buttons[1].buttonText = "Auto";
             }
-            elementSteerPitchType.buttons[1].runFunction = toggleSteerPitchLocation;
+            elementSteerPitchType.buttons[1].genericFunction = toggleSteerPitchLocation;
         }
         else
         {
             elementSteerPitchType.buttons[1].buttonText = "N/A";
-            elementSteerPitchType.buttons[1].runFunction = emptyFunction;
+            elementSteerPitchType.buttons[1].genericFunction = emptyFunction;
         }
     }
 
@@ -412,12 +412,12 @@ public class FSVTOLrotator : PartModule
         if (steerThrottlePitch)
         {            
             elementSteerPitchType.buttons[1].toggle(isInFrontOfCoM);
-            elementSteerPitchType.buttons[1].runFunction = toggleSteerPitchLocation;            
+            elementSteerPitchType.buttons[1].genericFunction = toggleSteerPitchLocation;            
         }
         else
         {            
             elementSteerPitchType.buttons[1].buttonText = "N/A";
-            elementSteerPitchType.buttons[1].runFunction = emptyFunction;
+            elementSteerPitchType.buttons[1].genericFunction = emptyFunction;
         }
         updateSteeringSetup(steerPitch, steerYaw, steerRoll, steerThrottlePitch);
     }

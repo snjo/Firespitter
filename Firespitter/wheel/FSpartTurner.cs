@@ -223,8 +223,8 @@ using UnityEngine;
                 elementSteeringRange = new PopupElement("Range", steerMultiplier.ToString());
                 popup = new FSGUIPopup(part, "FSpartTurner", moduleID, FSGUIwindowID.partTurner, new Rect(753f, 300f, 250f, 100f), "Steering", elementSteeringEnabled);
                 //popup.elementList.Add(elementSteeringEnabled);
-                popup.elementList.Add(elementInvertSteering);
-                popup.elementList.Add(elementSteeringRange);                
+                popup.sections[0].elements.Add(elementInvertSteering);
+                popup.sections[0].elements.Add(elementSteeringRange);                
 
                 #endregion
             }

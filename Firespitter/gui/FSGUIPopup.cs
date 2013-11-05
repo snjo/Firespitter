@@ -9,13 +9,14 @@ public class FSGUIPopup
 {
     public bool showMenu = false;
     public Rect windowRect = new Rect(500f, 300f, 150f, 100f);
-    public Vector2 elementSize = new Vector2(130f, 25f);
-    public float lastElementTop = 0f;
+    //public Vector2 elementSize = new Vector2(130f, 25f);    
+    public float elementWidth = 130f;
     public float marginLeft = 10f;
     public float marginRight = 10f;
     public float marginTop = 22f;
     public float marginBottom = 10f;
     public float subElementSpacing = 8f;
+    public float lineSpacing = 8f;
     //public bool optionEnabled = false;
     public bool showCloseButton = true;
     public string optionEnabledString = "On";
@@ -28,10 +29,15 @@ public class FSGUIPopup
 
     public bool useInActionEditor = true;
     public bool useInFlight = false;
-    //public delegate void RunFunction();
-    //private RunFunction run;
 
-    public List<PopupElement> elementList = new List<PopupElement>();
+    public delegate void HideMenuEvent();
+    public HideMenuEvent hideMenuEvent;
+
+    private float lastSectionTop = 0f;
+    private float lastElementTop = 0f;
+
+    public List<PopupSection> sections = new List<PopupSection>();
+    //public List<PopupElement> elementList = new List<PopupElement>();
 
     //private string currentOptionString;    
 
@@ -45,7 +51,21 @@ public class FSGUIPopup
     /// <param name="windowDimensions">Left, Top, Width and Height of the GUI window. These are not static, but changed by dragging the window and by resizing functions.</param>
     public FSGUIPopup(Part part, string module, int ID, int Windowlayer, Rect windowDimensions, string windowName, PopupElement defaultElement)    
     {
-        elementList.Add(defaultElement);
+        sections = new List<PopupSection>();
+        sections.Add(new PopupSection());
+        sections[0].elements.Add(defaultElement);
+        //elementList.Add(defaultElement);
+        parentPart = part;
+        moduleName = module;
+        moduleID = ID;
+        GUIlayer = Windowlayer;
+        windowRect = windowDimensions;
+        windowTitle = windowName;
+        windowRect.y += (moduleID * windowRect.height) + 20;        
+    }
+
+    public FSGUIPopup(Part part, string module, int ID, int Windowlayer, Rect windowDimensions, string windowName)
+    {
         parentPart = part;
         moduleName = module;
         moduleID = ID;
@@ -53,62 +73,83 @@ public class FSGUIPopup
         windowRect = windowDimensions;
         windowTitle = windowName;
         windowRect.y += (moduleID * windowRect.height) + 20;
-        //run = function;
     }
 
     private void drawElement(PopupElement element)
-    {        
-        int activeElements = 0;
-        if (element.useTitle) activeElements++;
-        if (element.useInput) activeElements++;        
-        activeElements += element.buttons.Count;
-
-        if (activeElements < 1)
-            return;
-        
-        Rect subElementRect = new Rect(marginLeft, marginTop + lastElementTop, element.titleSize, elementSize.y);
-        
-        if (element.useTitle)
+    {
+        if (element.showElement)
         {
-            if (subElementRect.width == 0)
-                subElementRect.width = (elementSize.x / activeElements) - (subElementSpacing);
-            GUI.Label(subElementRect, element.titleText);
-            subElementRect.x += subElementRect.width + subElementSpacing;
-        }
+            int activeElements = 0;
+            if (element.useTitle) activeElements++;
+            if (element.useInput) activeElements++;
+            activeElements += element.buttons.Count;
 
-        if (element.useInput)
-        {
-            subElementRect.width = element.inputSize;
-            if (subElementRect.width == 0)
-                subElementRect.width = (elementSize.x / activeElements) - (subElementSpacing);
-            element.inputText = GUI.TextField(subElementRect, element.inputText);
-            subElementRect.x += subElementRect.width + subElementSpacing;
-        }
+            if (activeElements < 1)
+                return;
 
-        for (int i = 0; i < element.buttons.Count; i++)
-        {
-            subElementRect.width = element.buttons[i].buttonWidth;
-            if (subElementRect.width == 0)
-                subElementRect.width = (elementSize.x / activeElements) - (subElementSpacing);
+            Rect subElementRect = new Rect(marginLeft, marginTop + lastSectionTop + lastElementTop, element.titleSize, element.height);
 
-            if (element.buttons[i].style == null)
+            if (element.useTitle)
             {
-                element.buttons[i].style = new GUIStyle(GUI.skin.button);
+                if (subElementRect.width == 0)
+                    subElementRect.width = (elementWidth / activeElements) - (subElementSpacing);
+                GUI.Label(subElementRect, element.titleText);
+                subElementRect.x += subElementRect.width + subElementSpacing;
             }
-            if (GUI.Button(subElementRect, element.buttons[i].buttonText, element.buttons[i].style))
-            {
-                if (element.buttons[i].runFunction != null)
-                    element.buttons[i].runFunction();
-                if (element.buttons[i].buttonSpecificFunction != null)
-                    element.buttons[i].buttonSpecificFunction(element.buttons[i]);
-            }
-            subElementRect.x += subElementRect.width + subElementSpacing;
-        }
 
-        lastElementTop += elementSize.y + subElementSpacing;
+            if (element.useInput)
+            {
+                subElementRect.width = element.inputSize;
+                if (subElementRect.width == 0)
+                    subElementRect.width = (elementWidth / activeElements) - (subElementSpacing);
+                element.inputText = GUI.TextField(subElementRect, element.inputText);
+                subElementRect.x += subElementRect.width + subElementSpacing;
+            }
+
+            for (int i = 0; i < element.buttons.Count; i++)
+            {
+                subElementRect.width = element.buttons[i].buttonWidth;
+                if (subElementRect.width == 0)
+                    subElementRect.width = (elementWidth / activeElements) - (subElementSpacing);
+
+                if (element.buttons[i].style == null)
+                {
+                    if (element.buttons[i].isGUIToggle)
+                        element.buttons[i].style = new GUIStyle(GUI.skin.toggle);
+                    else
+                        element.buttons[i].style = new GUIStyle(GUI.skin.button);
+                }
+
+                bool resultTrue = false;
+                if (element.buttons[i].isGUIToggle)
+                {
+                    resultTrue = GUI.Toggle(subElementRect, element.buttons[i].toggleState, element.buttons[i].buttonText, element.buttons[i].style);
+                    element.buttons[i].toggleState = resultTrue;
+                }
+                else
+                {
+                    resultTrue = GUI.Button(subElementRect, element.buttons[i].buttonText, element.buttons[i].style);
+                }
+
+                if (resultTrue)
+                {
+                    if (element.buttons[i].genericFunction != null)
+                        element.buttons[i].genericFunction();
+                    if (element.buttons[i].buttonSpecificFunction != null)
+                        element.buttons[i].buttonSpecificFunction(element.buttons[i]);
+                    if (element.buttons[i].IDfunctionInt != null)
+                        element.buttons[i].IDfunctionInt(element.buttons[i].buttonIDInt);
+                    if (element.buttons[i].IDfunctionString != null)
+                        element.buttons[i].IDfunctionString(element.buttons[i].buttonIDString);                    
+                }
+                subElementRect.x += subElementRect.width + subElementSpacing;
+            }
+
+            lastElementTop += element.height + lineSpacing;
+        }
     }
 
-    private void drawWindow(int windowID)
+   /* private void drawWindow(int windowID)
     {
         lastElementTop = 0f;
         elementSize.x = windowRect.width - marginLeft - marginRight + subElementSpacing;
@@ -125,6 +166,50 @@ public class FSGUIPopup
             }
         }
         GUI.DragWindow();        
+    }*/
+
+    private void drawWindow(int windowID)
+    {
+        windowRect.height = marginTop + marginBottom - lineSpacing;
+        lastSectionTop = 0f;
+        foreach (PopupSection section in sections)
+        {
+            drawSection(section);
+            lastSectionTop += lastElementTop;
+        }
+
+        if (showCloseButton)
+        {
+            if (GUI.Button(new Rect(windowRect.width - 18f, 2f, 16f, 16f), ""))
+            {
+                showMenu = false;
+            }
+        }
+
+        GUI.DragWindow();
+    }
+
+    private void drawSection(PopupSection section)
+    {
+        if (section.showSection)
+        {
+            lastElementTop = 0f;
+            elementWidth = windowRect.width - marginLeft - marginRight + subElementSpacing;
+            //windowRect.height = ((float)section.elements.Count * (elementSize.y + lineSpacing)) + marginTop + marginBottom;
+            for (int i = 0; i < section.elements.Count; i++)
+            {
+                drawElement(section.elements[i]);
+                windowRect.height += section.elements[i].height + lineSpacing;
+            }
+        }
+        //if (showCloseButton)
+        //{
+        //    if (GUI.Button(new Rect(windowRect.width - 18f, 2f, 16f, 16f), ""))
+        //    {
+        //        showMenu = false;
+        //        hideMenuEvent();
+        //    }
+        //}
     }
 
     public void popup()
@@ -172,15 +257,26 @@ public class FSGUIPopup
     }
 }
 
+public class PopupSection
+{
+    public bool showSection = true;
+    public List<PopupElement> elements = new List<PopupElement>();
+    public void AddElement(PopupElement element, float height)
+    {
+        element.height = height;
+        elements.Add(element);
+    }
+}
+
 public class PopupElement
-{        
+{
+    public bool showElement = true;
     public string titleText = "";
     public string inputText = "";
     public List<PopupButton> buttons = new List<PopupButton>();
-
+    public float height = 25f;
     public float titleSize = 0f;
-    public float inputSize = 0f;
-    
+    public float inputSize = 0f;        
 
     public bool useTitle = false;
     public bool useInput = false;
@@ -228,21 +324,50 @@ public class PopupElement
 public class PopupButton
 {
     public delegate void RunFunction();
-    public RunFunction runFunction;
+    public RunFunction genericFunction;
     public delegate void RunButtonSpecificFunction(PopupButton button);
     public RunButtonSpecificFunction buttonSpecificFunction;
+    public delegate void RunIDFunctionInt(int ID);
+    public RunIDFunctionInt IDfunctionInt;
+    public delegate void RunIDFunctionString(string ID);
+    public RunIDFunctionString IDfunctionString;
+    public int buttonIDInt;
+    public string buttonIDString;
     public string buttonText;
     public string buttonTextOn;
     public string buttonTextOff;
+    public Texture2D texture;
     public float buttonWidth;
     public bool isToggleButton;
     public bool toggleState;
     public PopupElement popupElement;
+    public bool isGUIToggle = false;
 
     public GUIStyle style; // GUIStyle(GUI.skin.button);
     Color selectedColor = Color.red;
     Color normalColor = Color.white;
     Color disabledColor = Color.gray;
+
+    public void setupGUIStyle()
+    {
+        style = new GUIStyle(); //GUI.skin.GetStyle("Button"));
+        //style.normal.background = texture;
+        //style.border = new RectOffset(1,1,1,1);
+        style.alignment = TextAnchor.LowerCenter;
+    }
+
+    public void setTexture(Texture2D normalTexture, Texture2D hoverTexture, Texture2D focusedTexture, Texture2D activeTexture)
+    {
+        style.normal.background = normalTexture;
+        style.hover.background = hoverTexture;
+        style.focused.background = focusedTexture;
+        style.active.background = activeTexture;
+    }
+
+    public void setTexture(Texture2D allStatesTextures)
+    {
+        setTexture(allStatesTextures, allStatesTextures, allStatesTextures, allStatesTextures);
+    }
 
     private bool _styleSelected;
     public bool styleSelected
@@ -288,14 +413,14 @@ public class PopupButton
 
     public PopupButton()
     {
-
+        //setupGUIStyle();
     }
 
     public PopupButton(string text, float width, RunFunction function)
     {
         buttonText = text;
         buttonWidth = width;
-        runFunction = function;
+        genericFunction = function;
         isToggleButton = false;
     }
 
@@ -306,7 +431,14 @@ public class PopupButton
         buttonTextOff = textOff;
         isToggleButton = true;
         buttonWidth = width;
-        runFunction = function;
+        genericFunction = function;
+    }
+    
+    public PopupButton(string toggleTitle, float width)
+    {
+        buttonText = toggleTitle;        
+        isGUIToggle = true;
+        buttonWidth = width;        
     }
 
     public PopupButton(string text, float width, RunButtonSpecificFunction function)
@@ -314,6 +446,24 @@ public class PopupButton
         buttonText = text;
         buttonWidth = width;
         buttonSpecificFunction = function;
+    }
+
+    public PopupButton(string text, float width, RunIDFunctionInt function, int ID)
+    {
+        buttonText = text;
+        buttonWidth = width;
+        IDfunctionInt = function;
+        buttonIDInt = ID;
+        //setupGUIStyle();
+    }
+
+    public PopupButton(string text, float width, RunIDFunctionString function, string ID)
+    {
+        buttonText = text;
+        buttonWidth = width;
+        IDfunctionString = function;
+        buttonIDString = ID;
+        //setupGUIStyle();
     }
 
     public void toggle(bool newState)
