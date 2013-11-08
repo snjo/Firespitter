@@ -103,6 +103,18 @@ public class FScopterThrottle : PartModule
         if (hoverHeight < 0f) hoverHeight = 0f;
     }
 
+    [KSPAction("Increase Hover Height")]
+    public void increaseHeightAction(KSPActionParam param)
+    {
+        increaseHeightEvent();
+    }
+
+    [KSPAction("Decrease Hover Height")]
+    public void decreaseHeightAction(KSPActionParam param)
+    {
+        decreaseHeightEvent();
+    }
+
     private float getHoverThrottle(float radarAlt, float verticalSpeed)
     {
         float minimumThrust = 0.001f;            

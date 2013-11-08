@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="aero\FSliftSurface.cs" />
+    <Compile Include="cockpit\FSkerbalPuppet.cs" />
     <Compile Include="engine\FSanimateThrottle.cs" />
     <Compile Include="tools\FSgenericButtonHandler.cs" />
     <Compile Include="tools\FSrandomNumberGenerator.cs" />
@@ -63,30 +64,30 @@
     <Compile Include="animation\FSanimateGeneric.cs" />
     <Compile Include="engine\FSchangeControlDirection.cs" />
     <Compile Include="engine\FScopterThrottle.cs" />
-    <Compile Include="internalprop\FSActionGroupSwitch.cs" />
+    <Compile Include="cockpit\FSActionGroupSwitch.cs" />
     <Compile Include="animation\FSanimatedAirIntake.cs" />
     <Compile Include="animation\FSanimateManually.cs" />
     <Compile Include="tools\FSgenericButtonHandlerID.cs" />
-    <Compile Include="internalprop\FScameraToTV.cs" />
+    <Compile Include="cockpit\FScameraToTV.cs" />
     <Compile Include="engine\FSengineHandCrank.cs" />
     <Compile Include="engine\FSengineMenuCleaner.cs" />
     <Compile Include="wheel\FSexternalLandingGearControl.cs" />
     <Compile Include="gui\FSGUIwindowID.cs" />
     <Compile Include="engine\FShoverThrottle.cs" />
     <Compile Include="gui\FSinfoPopup.cs" />
-    <Compile Include="internalprop\FSmonitorScript.cs" />
+    <Compile Include="cockpit\FSmonitorScript.cs" />
     <Compile Include="tools\FSnodeLoader.cs" />
     <Compile Include="FSplaceStaticMesh.cs" />
     <Compile Include="engine\FSplanePropellerSpinner.cs" />
     <Compile Include="gui\FSradarAltitude.cs" />
     <Compile Include="control\FSremoteControl.cs" />
-    <Compile Include="internalprop\FSresourceDial.cs" />
+    <Compile Include="cockpit\FSresourceDial.cs" />
     <Compile Include="water\FSrudder.cs" />
     <Compile Include="engine\FSengineSounds.cs" />
-    <Compile Include="internalprop\FSswitchButtonHandler.cs" />
+    <Compile Include="cockpit\FSswitchButtonHandler.cs" />
     <Compile Include="engine\FSswitchEngineThrustTransform.cs" />
-    <Compile Include="internalprop\FSinternalPropRotator.cs" />
-    <Compile Include="internalprop\FSmonitorInterface.cs" />
+    <Compile Include="cockpit\FSinternalPropRotator.cs" />
+    <Compile Include="cockpit\FSmonitorInterface.cs" />
     <Compile Include="engine\FSmultiAxisEngine.cs" />
     <Compile Include="wheel\FSpartTurner.cs" />
     <Compile Include="engine\FSpropellerAtmosphericNerf.cs" />

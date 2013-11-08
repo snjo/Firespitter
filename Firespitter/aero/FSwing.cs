@@ -27,6 +27,8 @@ class FSwing : PartModule
     [KSPField]
     public string leadingEdgeBottomExtendedName = "leadingEdgeExtended";
     [KSPField]
+    public bool leadingEdgeCanRotate = true; // if true, the edge will not only be moved between transforms, but also rotated.
+    [KSPField]
     public float leadingEdgeSpeed = 0.01f;
     [KSPField]
     public float leadingEdgeDrag = 3f;
@@ -65,6 +67,8 @@ class FSwing : PartModule
     [KSPField(isPersistant = true)]
     public float flapResponse = 0f;
 
+    [KSPField]
+    public bool allowInvertOnLeft = true;
     [KSPField(isPersistant = true)]
     public bool wingIsOnLeft = true; // used to determine leading edge to use, etc. Sniffed on first launch.
     [KSPField(isPersistant = true)]
@@ -90,6 +94,8 @@ class FSwing : PartModule
 
     [KSPField]
     public int moduleID = 0;
+    [KSPField]
+    public string windowTitle = "Wing Settings";
     
     #endregion
 
@@ -143,6 +149,20 @@ class FSwing : PartModule
     private float oldFlapResponse;
 
     private bool invertAxisTest;
+
+    private enum keys
+    {
+        pitchUp,
+        pitchDown,
+        rollLeft,
+        rollRight,
+        yawLeft,
+        yawRight,
+        flapPlus,
+        flapMinus,
+        reset,
+    }
+    private Vector4 oldTestAmount = Vector4.zero;
 
     #endregion
 
@@ -251,10 +271,14 @@ class FSwing : PartModule
             if (wingIsOnLeft && leadingEdgeBottom != null)
             {
                 leadingEdgeBottom.localPosition = Vector3.Lerp(leadingEdgeBottomRetracted.localPosition, leadingEdgeBottomExtended.localPosition, leadingEdgeCurrent);
+                if (leadingEdgeCanRotate)
+                    leadingEdgeBottom.localRotation = Quaternion.Lerp(leadingEdgeBottomRetracted.localRotation, leadingEdgeBottomExtended.localRotation, leadingEdgeCurrent);
             }
             else if (leadingEdgeTop != null)
             {
                 leadingEdgeTop.localPosition = Vector3.Lerp(leadingEdgeTopRetracted.localPosition, leadingEdgeTopExtended.localPosition, leadingEdgeCurrent);
+                if (leadingEdgeCanRotate)
+                    leadingEdgeTop.localRotation = Quaternion.Lerp(leadingEdgeTopRetracted.localRotation, leadingEdgeTopExtended.localRotation, leadingEdgeCurrent);
             }
         }
     }
@@ -320,20 +344,23 @@ class FSwing : PartModule
 
     public PopupSection createTestSection()
     {
+        float buttonWidth = 30f;
         PopupSection newSection = new PopupSection();
 
-        PopupElement testElement = new PopupElement("Test", new PopupButton("P ^", 0f, testFunction, 0));
-        testElement.buttons.Add(new PopupButton("P v", 0f, testFunction, 1));
-        testElement.buttons.Add(new PopupButton("R <", 0f, testFunction, 2));
-        testElement.buttons.Add(new PopupButton("R >", 0f, testFunction, 3));
+        PopupElement testElement = new PopupElement("Test", new PopupButton("Q", buttonWidth, testFunction, (int)keys.rollLeft));
+        testElement.useTitle = false;
+        testElement.buttons.Add(new PopupButton("W", buttonWidth, testFunction, (int)keys.pitchDown));
+        testElement.buttons.Add(new PopupButton("E", buttonWidth, testFunction, (int)keys.rollRight));
+        testElement.buttons.Add(new PopupButton("Fl.+", buttonWidth, testFunction, (int)keys.flapPlus));
 
-        PopupElement testElement2 = new PopupElement("", new PopupButton("Y <", 0f, testFunction, 4));
+        PopupElement testElement2 = new PopupElement("", new PopupButton("A", buttonWidth, testFunction, (int)keys.yawLeft));
         testElement2.useTitle = false;
-        testElement2.buttons.Add(new PopupButton("Y >", 0f, testFunction, 5));
-        testElement2.buttons.Add(new PopupButton("F ^", 0f, testFunction, 6));
-        testElement2.buttons.Add(new PopupButton("F v", 0f, testFunction, 7));
-        testElement2.buttons.Add(new PopupButton("Reset", 0f, testFunction, 8));
+        testElement2.buttons.Add(new PopupButton("S", buttonWidth, testFunction, (int)keys.pitchUp));
+        testElement2.buttons.Add(new PopupButton("D", buttonWidth, testFunction, (int)keys.yawRight));
+        testElement2.buttons.Add(new PopupButton("Fl.-", buttonWidth, testFunction, (int)keys.flapMinus));
+        testElement2.buttons.Add(new PopupButton("Reset", buttonWidth*2, testFunction, (int)keys.reset));
 
+        newSection.elements.Add(new PopupElement("Test settings"));
         newSection.elements.Add(testElement);
         newSection.elements.Add(testElement2);
 
@@ -344,36 +371,40 @@ class FSwing : PartModule
     {
         doTestSymmetry = true;
         testAxis = Vector4.zero;
-        invertAxisTest = true;
-        switch (ID)
+        //invertAxisTest = true;
+
+        if (ID > (int)keys.reset || ID < 0) ID = (int)keys.reset;
+        keys IDasKey = (keys)ID;
+
+        switch (IDasKey)
         {
-            case 0: // Pitch ^
+            case keys.pitchUp: // Pitch ^
                 testAxis.x = 1; 
                 break;
-            case 1: // Pitch v
+            case keys.pitchDown: // Pitch v
                 testAxis.x = -1;
                 break;
-            case 2:// Roll <
+            case keys.rollLeft:// Roll <
                 testAxis.y = 1;
-                invertAxisTest = true;
+                //invertAxisTest = false;
                 break;
-            case 3: // Roll >
+            case keys.rollRight: // Roll >
                 testAxis.y = -1;
-                invertAxisTest = true;
+                //invertAxisTest = false;
                 break;
-            case 4: // Yaw <
-                testAxis.z = 1;
-                break;
-            case 5: // Yaw >
+            case keys.yawLeft: // Yaw <
                 testAxis.z = -1;
                 break;
-            case 6: // Flap ^
+            case keys.yawRight: // Yaw >
+                testAxis.z = 1;
+                break;
+            case keys.flapPlus: // Flap ^
                 testAxis.w = 1;
                 break;
-            case 7: // Flap v
+            case keys.flapMinus: // Flap v
                 testAxis.w = -1;
                 break;
-            case 8: // Reset
+            case keys.reset: // Reset
                 testAxis = Vector4.zero;
                 break;
         }
@@ -430,8 +461,8 @@ class FSwing : PartModule
         #endregion
     }
 
-    public void testAxisOnSymmetry(float amount, bool allowInvert)
-    {
+    public void testAxisOnSymmetry(Vector4 inputAxis) //, bool allowInvert)
+    {        
         try
         {
 
@@ -445,13 +476,15 @@ class FSwing : PartModule
                 {
                     //wing.targetAngle = availableAnglesList[selectedListAngle];
                     float dot = Vector3.Dot(wing.part.transform.right, Vector3.right);
-                    if (dot < 0f && allowInvert) // check for orientation of the part, relative to world directions, since there is no vessel transfrom to compare to
+                    if (dot < 0f && allowInvertOnLeft) // check for orientation of the part, relative to world directions, since there is no vessel transfrom to compare to
                     {
-                        invert = -1f;
+                        inputAxis.x *= -1; //invert pitch, yaw and flap, but not roll.
+                        inputAxis.z *= -1;
+                        inputAxis.w *= -1;                        
                     }
 
-                    wing.popup.windowTitle = "wing invert " + invert;
-                    wing.controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis * invert));
+                    float amount = (((inputAxis.x * pitchResponse) + (inputAxis.y * rollResponse) + (inputAxis.z * yawResponse)) * ctrlSurfaceRange) + (inputAxis.w * flapResponse * flapMax);                    
+                    wing.controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis));
                 }
             }
         }
@@ -517,7 +550,7 @@ class FSwing : PartModule
 
         if (HighLogic.LoadedSceneIsEditor)
         {
-            popup = new FSGUIPopup(part, "FSwing", moduleID, FSGUIwindowID.wing, windowRect, "Wing Settings");
+            popup = new FSGUIPopup(part, "FSwing", moduleID, FSGUIwindowID.wing, windowRect, windowTitle);
             axisPitchSection = new WingAxisSection("Pitch Response", pitchResponse);
             axisRollSection = new WingAxisSection("Roll Response", rollResponse);
             axisYawSection = new WingAxisSection("Yaw Response", yawResponse);
@@ -610,10 +643,14 @@ class FSwing : PartModule
 
             if (useCtrlSrf)
             {
-                float roll = ctrl.roll;
-                if (wingIsOnLeft) roll *= -1;
-                float amount = (ctrlSurfaceRange * ((ctrl.pitch * pitchResponse) + (roll * rollResponse) + (ctrl.yaw * yawResponse))) + (flapCurrent * flapResponse);
-                if (wingIsOnLeft) amount *= -1;
+                Vector4 input = new Vector4(ctrl.pitch, -ctrl.roll, ctrl.yaw, flapCurrent);
+                if (wingIsOnLeft && allowInvertOnLeft)
+                {
+                    input.x *= -1;
+                    input.z *= -1;
+                    input.w *= -1;
+                }
+                float amount = (ctrlSurfaceRange * ((input.x * pitchResponse) + (input.y * rollResponse) + (input.z * yawResponse))) + (input.w * flapResponse);                
                 controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis));
             }
 
@@ -630,6 +667,8 @@ class FSwing : PartModule
     {
         #region editor
 
+        if (popup == null) return;
+
         if (HighLogic.LoadedSceneIsEditor)
         {
             //Debug.Log("editor " + testAxis);
@@ -639,10 +678,32 @@ class FSwing : PartModule
                 editorTransformsFound = true;
             }
 
-            float amount = (((testAxis.x * pitchResponse) + (testAxis.y * rollResponse) + (testAxis.z * yawResponse)) * ctrlSurfaceRange) + (testAxis.w * flapResponse * flapMax);
-            //controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis));
-            if (doTestSymmetry)
-                testAxisOnSymmetry(amount, invertAxisTest);
+            EditorLogic editor = EditorLogic.fetch;
+            if (editor)
+            {
+                if (editor.editorScreen == EditorLogic.EditorScreen.Actions && popup.showMenu)
+                {
+                    Vector4 inputAxis = Vector4.zero;
+
+                    if (Input.GetKey(KeyCode.S)) inputAxis.x += 1f; //GameSettings.PITCH_UP.primary
+                    if (Input.GetKey(KeyCode.W)) inputAxis.x -= 1f;
+                    if (Input.GetKey(KeyCode.Q)) inputAxis.y += 1f;
+                    if (Input.GetKey(KeyCode.E)) inputAxis.y -= 1f;
+                    if (Input.GetKey(KeyCode.A)) inputAxis.z -= 1f;
+                    if (Input.GetKey(KeyCode.D)) inputAxis.z += 1f;
+                    
+                    inputAxis += testAxis;                    
+                    // todo: limit the max
+                    
+                    Vector4 testAmount = Vector4.Lerp(oldTestAmount, inputAxis, 0.2f);
+                    oldTestAmount = testAmount;
+                    //controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis));
+
+                    //if (doTestSymmetry)
+                    testAxisOnSymmetry(testAmount); //, invertAxisTest);
+                }
+            }
+        
 
         }
 
