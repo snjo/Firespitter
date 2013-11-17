@@ -124,7 +124,7 @@ public class FSengineSounds : PartModule
     public FXGroup warningGroup;
     public bool warningAssigned;
 
-    private AudioHighPassFilter highPassFilter;
+    //private AudioHighPassFilter highPassFilter;
     private float highPassTest = 100.0f;
 
     /// <summary>
@@ -151,17 +151,14 @@ public class FSengineSounds : PartModule
             group.audio.playOnAwake = false;
             
 
-            highPassFilter = group.audio.GetComponent<AudioHighPassFilter>();            
+            //highPassFilter = group.audio.GetComponent<AudioHighPassFilter>();            
             return true;
         }
         return false;
     }
 
-    //private void OnDestroy()
-    //{
-    //    GameEvents.onGamePause.Remove(new EventVoid.OnEvent(OnPause));
-    //    GameEvents.onGameUnpause.Remove(new EventVoid.OnEvent(OnResume));        
-    //}
+    //GameEvents.onGamePause.Add(new EventVoid.OnEvent(OnPause));
+    //GameEvents.onGameUnpause.Add(new EventVoid.OnEvent(OnResume)); 
 
     public void OnPause()
     {
@@ -205,12 +202,12 @@ public class FSengineSounds : PartModule
             else
                 OnResume();
         }
-        if (highPassFilter != null)
-        {
-            highPassTest += 10f;
-            highPassFilter.enabled = true;
-            highPassFilter.cutoffFrequency = highPassTest;
-        }
+        //if (highPassFilter != null)
+        //{
+        //    highPassTest += 10f;
+        //    highPassFilter.enabled = true;
+        //    highPassFilter.cutoffFrequency = highPassTest;
+        //}
     }
 
     public void FixedUpdate()

@@ -466,7 +466,7 @@ class FSwing : PartModule
         try
         {
 
-            float invert = 1f;
+            //float invert = 1f;
             List<Part> wings = new List<Part>(part.symmetryCounterparts);
             wings.Add(part);            
             foreach (Part p in wings)

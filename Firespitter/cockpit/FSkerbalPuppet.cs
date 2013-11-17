@@ -18,11 +18,17 @@ public class FSkerbalPuppet : PartModule
     public bool showInEditor = true;
     [KSPField]
     public string objectName = "kerbalPuppet"; //multiple objects can have the same name to be hidden together.
+    [KSPField]
+    public bool checkSeat = true;
+    [KSPField]
+    public int seatNumber = 0;
 
     public bool showPuppet = true;
     private Transform[] puppetTransforms;    
     private CameraManager.CameraMode cameraMode;
     private bool doUpdate = true;
+    private bool seatStatus = false;
+    private bool oldSeatStatus = true;
 
     private CameraManager.CameraMode oldCameraMode;
 
@@ -56,6 +62,11 @@ public class FSkerbalPuppet : PartModule
         return true;          
     }
 
+    private bool checkSeatOccupied()
+    {
+        return part.internalModel.seats[seatNumber].taken;
+    }
+
     private void updatePuppetActive()
     {
         if (doUpdate)
@@ -80,6 +91,15 @@ public class FSkerbalPuppet : PartModule
         if (HighLogic.LoadedSceneIsFlight)
         {            
             showPuppet = checkCamMode();
+            if (showPuppet && checkSeat)
+            {
+                seatStatus = checkSeatOccupied();
+                showPuppet = seatStatus;
+                if (seatStatus != oldSeatStatus)
+                    doUpdate = true;
+                oldSeatStatus = seatStatus;
+                //Debug.Log("seat occupied: " + checkSeatOccupied());
+            }            
             updatePuppetActive();
         }
     }

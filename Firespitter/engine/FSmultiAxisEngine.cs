@@ -51,6 +51,9 @@ public class FSmultiAxisEngine : PartModule // This if for the swamp engine, and
     [KSPField]
     public float gimbalResponseSpeed = 0.1f;
 
+    [KSPField]
+    public bool lockWhenEngineIdle = false;
+
     private bool usePitch;
     private bool useRoll;
     private bool useYaw;
@@ -61,6 +64,8 @@ public class FSmultiAxisEngine : PartModule // This if for the swamp engine, and
     private Transform pitchGimbalExtreme = new GameObject().transform;
     private Transform rollGimbalExtreme = new GameObject().transform;
     private Transform yawGimbalExtreme = new GameObject().transform;
+
+    private ModuleEngines engine;
 
     private Quaternion gimbalDefaultRotation = new Quaternion();
 
@@ -130,7 +135,12 @@ public class FSmultiAxisEngine : PartModule // This if for the swamp engine, and
     }
 
     private void rotateParts(Vector3 rotation)
-    {        
+    {
+        if (lockWhenEngineIdle)
+        {
+            if (engine.flameout || !engine.EngineIgnited || engine.currentThrottle < 0.01f)
+                rotation = Vector3.zero;
+        }
         if (usePitch)
         {           
             //pitchTransform.localRotation = Quaternion.Euler(new Vector3(0, rotation.x, 0) + pitchDefaultRotation);
@@ -206,6 +216,13 @@ public class FSmultiAxisEngine : PartModule // This if for the swamp engine, and
                     Debug.Log("FSmultiAxisEngine: gimbal transform not found: " + gimbalTransformName);
                 }
             }
+        }
+
+        if (lockWhenEngineIdle)
+        {
+            engine = part.Modules.OfType<ModuleEngines>().FirstOrDefault();
+            if (engine == null)
+                lockWhenEngineIdle = false;
         }
     }
 

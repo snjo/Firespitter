@@ -56,6 +56,7 @@ public class FSmonitorInterface : InternalModule
     private delegate void MenuStateHandler();
 
     private MenuStateHandler menuState;
+    private Firespitter.ShipHeading shipHeadingTool;
 
     //ActionGroupList actionGroupList;
 
@@ -97,6 +98,7 @@ public class FSmonitorInterface : InternalModule
     string hoverString = "";
     float hoverHeight = 0f;
     double displaySpeed = 0D;
+    Transform refTransform;
 
     // action group number ints
     int gearGroupNumber;
@@ -269,6 +271,11 @@ public class FSmonitorInterface : InternalModule
         useInfoPopup = getInfoPopupObject();
 
         menuState = menuSplashScreen;
+
+        refTransform = new GameObject().transform;        
+        refTransform.parent = part.transform;
+        refTransform.rotation = Quaternion.LookRotation(vessel.ReferenceTransform.up, -vessel.ReferenceTransform.forward);
+        shipHeadingTool = new Firespitter.ShipHeading(refTransform);
     }
 
     public override void OnUpdate()
@@ -401,6 +408,29 @@ public class FSmonitorInterface : InternalModule
         textArray[++i] = "speed    : " + speedString;
         textArray[++i] = "heading  : " + Math.Round(FlightGlobals.ship_heading, 1).ToString().PadLeft(6) + " deg";
         textArray[++i] = "hover ht.: " + hoverString;
+
+        //Vector3 orientation = Firespitter.Tools.ShipHeading.orientation(vessel);
+        Vector3 worldUp = Firespitter.Tools.WorldUp(vessel);
+        refTransform.position = vessel.ReferenceTransform.position; // part.transform.position;
+        
+//        refTransform.rotation = Quaternion.LookRotation(vessel.ReferenceTransform.up, -vessel.ReferenceTransform.forward);        
+        //refTransform.rotation = vessel.ReferenceTransform.rotation; // part.transform.rotation;
+
+        //Vector3 pitch = shipHeadingTool.getPitchRaw(refTransform, worldUp);
+        //Vector3 roll = shipHeadingTool.getRollRaw(refTransform, worldUp);
+
+        float pitch = shipHeadingTool.getPitch(refTransform, worldUp);
+        float roll = shipHeadingTool.getRoll(refTransform, worldUp);
+
+        textArray[++i] = "pitch" + Math.Round(pitch, 1).ToString().PadLeft(6) + " deg";
+        textArray[++i] = "roll" + Math.Round(roll, 1).ToString().PadLeft(6) + " deg";
+
+        //textArray[++i] = "pitchX" + Math.Round(pitch.x, 1).ToString().PadLeft(6) + " deg";
+        //textArray[++i] = "pitcY" + Math.Round(pitch.y, 1).ToString().PadLeft(6) + " deg";
+        //textArray[++i] = "pitchZ" + Math.Round(pitch.z, 1).ToString().PadLeft(6) + " deg";        
+
+        //textArray[++i] = "yaw" + Math.Round(orientation.y, 1).ToString().PadLeft(6) + " deg";
+        
         i++;
 
         foreach (KeyValuePair<string, Vector2d> kvp in resourceDictionary)

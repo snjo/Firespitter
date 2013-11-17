@@ -66,7 +66,7 @@ public class FScameraToTV : InternalModule
     public void Start()
     {        
 
-        newTex = new RenderTexture(256, 256, 0);
+        newTex = new RenderTexture(256, 256, 24);
         newTex.isPowerOfTwo = true;
         newTex.Create();
         newMat = new Material(Shader.Find("Diffuse"));
@@ -99,9 +99,9 @@ public class FScameraToTV : InternalModule
                 TVcam.targetTexture = newTex;
                 TVcam.farClipPlane = 40000f;
                 //TVcam.cullingMask = 32771;
-                TVcam.cullingMask = Camera.main.cullingMask;                
+                TVcam.cullingMask = Camera.main.cullingMask;
 
-                TVcam.clearFlags = CameraClearFlags.SolidColor;
+                TVcam.clearFlags = CameraClearFlags.Skybox; // CameraClearFlags.SolidColor;
                 TVcam.backgroundColor = Color.magenta;
                 //TVcam.transparencySortMode = TransparencySortMode.Default;
                 //Debug.Log("FS: found camera ");
@@ -119,7 +119,7 @@ public class FScameraToTV : InternalModule
             if (FlightGlobals.fetch.vesselTargetMode != FlightGlobals.VesselTargetModes.None)
             {
                 ITargetable target = FlightGlobals.fetch.VesselTarget;                
-                TVcam.transform.LookAt(target.GetTransform());
+                TVcam.transform.LookAt(target.GetTransform(), Firespitter.Tools.WorldUp(vessel));
                 //TVcam.transform.localRotation = Quaternion.Euler(new Vector3(TVcam.transform.localRotation.eulerAngles.x, TVcam.transform.localRotation.eulerAngles.z, 0f));
                 TVcam.fov = Mathf.Lerp(TVcam.fov, 5f, lerpProgress);
                 if (lerpProgress < 1f) lerpProgress += 0.01f;

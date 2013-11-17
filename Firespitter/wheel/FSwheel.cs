@@ -59,7 +59,7 @@ class FSwheel : PartModule
     [KSPField]
     public float motorTorque = 2f;
     [KSPField]
-    public float nerfNegativeTorque = 0.3f;
+    public float nerfNegativeTorque = 1.0f;
     [KSPField]
     public float maxSpeed = 30f;
     [KSPField]

@@ -22,6 +22,8 @@ class FSliftSurface : PartModule
     public float dragMultiplier = 1f;
     [KSPField]
     public float zeroLiftDrag = 0.0161f; // p-51 Mustang: 0.0161. sopwith camel: 0.0378
+    [KSPField]
+    public int moduleID = 0;
 
     private Transform liftTransform;
     private Rigidbody commonRigidBody;
@@ -35,6 +37,7 @@ class FSliftSurface : PartModule
     private Vector2 liftAndDrag = new Vector2(0f, 0f);
     private float speed = 0f;
     private Vector3 velocity = Vector3.zero;
+    private List<FSliftSurface> liftSurfaces;
 
     public Vector3 GetVelocity(Rigidbody rigidbody, Vector3 refPoint) // from Ferram
     {
@@ -106,7 +109,12 @@ class FSliftSurface : PartModule
         if (liftTransform == null)
         {
             Debug.Log("FSliftSurface: Can't find lift transform " + liftTransformName);
-        }                
+        }
+        //if (moduleID == 0)
+        //{
+            liftSurfaces = part.GetComponents<FSliftSurface>().ToList();
+            liftSurfaces.Add(this);
+        //}        
     }
 
     public void FixedUpdate()
@@ -126,10 +134,48 @@ class FSliftSurface : PartModule
 
     public void OnCenterOfLiftQuery(CenterOfLiftQuery qry)
     {
-        Vector3 testVelocity = qry.refVector;            
+        //Debug.Log("query: moduleID " + moduleID);
+
+        if (moduleID == 0)
+        {
+            CoLqueryData queryData = new CoLqueryData();
+            queryData.refVector = qry.refVector;          
+            //List<CenterOfLiftQuery> queryList = new List<CenterOfLiftQuery>();
+            for (int i = 0; i < liftSurfaces.Count; i++)
+            {
+                //qry = liftSurfaces[i].liftQuery(qry);
+                CoLqueryData newQuery = liftSurfaces[i].liftQuery(queryData.refVector);                
+                float influence = new Vector2(queryData.dir.magnitude, newQuery.dir.magnitude).normalized.y;
+                queryData.pos = Vector3.Lerp(queryData.pos, newQuery.pos, influence);
+                queryData.lift += newQuery.lift;
+                queryData.dir = Vector3.Lerp(queryData.dir, newQuery.dir, influence);
+                //queryData.dir += newQuery.dir * newQuery.lift;
+            }
+
+            queryData.dir.Normalize();
+
+            qry.dir = queryData.dir;
+            qry.lift = queryData.lift;
+            qry.pos = queryData.pos;
+
+            //qry = liftQuery(qry);
+            //liftQuery(queryData);
+
+            //qry.pos = liftTransform.position;
+            //qry.dir = -liftTransform.up * lift;
+            //qry.lift = qry.dir.magnitude;
+            //qry.dir.Normalize();
+        }        
+    }
+
+    public CoLqueryData liftQuery(Vector3 refVector)
+    {
+        CoLqueryData qry = new CoLqueryData();
+        //Vector3 testVelocity = qry.refVector;
+        Vector3 testVelocity = refVector;
         speed = testVelocity.magnitude;
         float angleOfAttackRad = 0f;
-        if (liftTransform != null) 
+        if (liftTransform != null)
             angleOfAttackRad = CalculateAoA(liftTransform, testVelocity);
         float liftCoeff = 2f * Mathf.PI * angleOfAttackRad;
         lift = 0.5f * liftCoeff * airDensity * (speed * speed) * wingArea;
@@ -140,10 +186,19 @@ class FSliftSurface : PartModule
         lift *= power;
         drag *= power;
 
-        qry.pos = liftTransform.position;
-        qry.dir = -liftTransform.up * lift;
-        qry.lift = qry.dir.magnitude;
-        qry.dir.Normalize();
+        qry.pos += liftTransform.position;
+        qry.dir += -liftTransform.up * lift;
+        qry.lift += qry.dir.magnitude;
+        //qry.dir.Normalize();
+
+        return qry;
     }
 }
 
+public class CoLqueryData
+{
+    public Vector3 refVector = Vector3.zero;
+    public Vector3 pos = Vector3.zero;
+    public Vector3 dir = Vector3.zero;
+    public float lift = 0f;
+}

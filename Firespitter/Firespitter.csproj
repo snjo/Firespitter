@@ -53,10 +53,14 @@
   <ItemGroup>
     <Compile Include="aero\FSliftSurface.cs" />
     <Compile Include="cockpit\FSkerbalPuppet.cs" />
+    <Compile Include="engine\FSparticleFX.cs" />
+    <Compile Include="engine\FSvelocityController.cs" />
+    <Compile Include="tools\ShipHeading.cs" />
     <Compile Include="engine\FSanimateThrottle.cs" />
     <Compile Include="tools\FSgenericButtonHandler.cs" />
     <Compile Include="tools\FSrandomNumberGenerator.cs" />
     <Compile Include="tools\FStools.cs" />
+    <Compile Include="transformTest.cs" />
     <Compile Include="water\FSbuoyancy.cs" />
     <Compile Include="gui\FSdebugMessages.cs" />
     <Compile Include="gui\FSGUIPopup.cs" />
