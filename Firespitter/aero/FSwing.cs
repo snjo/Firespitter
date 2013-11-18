@@ -476,7 +476,7 @@ class FSwing : PartModule
                 {
                     //wing.targetAngle = availableAnglesList[selectedListAngle];
                     float dot = Vector3.Dot(wing.part.transform.right, Vector3.right);
-                    if (dot < 0f && allowInvertOnLeft) // check for orientation of the part, relative to world directions, since there is no vessel transfrom to compare to
+                    if (dot < -0.01f && allowInvertOnLeft) // check for orientation of the part, relative to world directions, since there is no vessel transfrom to compare to
                     {
                         inputAxis.x *= -1; //invert pitch, yaw and flap, but not roll.
                         inputAxis.z *= -1;
@@ -598,7 +598,9 @@ class FSwing : PartModule
                     isInFrontOfCoM = true;
                 }
 
-                if (relativePosition.x < 0)
+                float dot = Vector3.Dot(part.transform.right, vessel.ReferenceTransform.right);
+                //if (relativePosition.x < 0.001f)
+                if (dot < -0.01f && allowInvertOnLeft)                
                 {
                     //Debug.Log("FSwing: part is on the left: " + relativePosition);
                     wingIsOnLeft = true;
