@@ -141,14 +141,16 @@ class FSwing : PartModule
     private Rect windowRect = FSGUIwindowID.standardRect;
     public Vector4 testAxis = Vector4.zero;
     private bool editorTransformsFound = false;
-    private bool doTestSymmetry = false;
+    //private bool doTestSymmetry = false;
 
     private float oldPitchResponse;
     private float oldRollResponse;
     private float oldYawResponse;
     private float oldFlapResponse;
 
-    private bool invertAxisTest;
+    //private bool invertAxisTest;
+    //private bool debugStep = false;
+    //private bool debugStepMode = false;
 
     private enum keys
     {
@@ -369,7 +371,7 @@ class FSwing : PartModule
 
     private void testFunction(int ID)
     {
-        doTestSymmetry = true;
+        //doTestSymmetry = true;
         testAxis = Vector4.zero;
         //invertAxisTest = true;
 
@@ -462,29 +464,46 @@ class FSwing : PartModule
     }
 
     public void testAxisOnSymmetry(Vector4 inputAxis) //, bool allowInvert)
-    {        
+    {
+        //if (debugStepMode)
+        //{
+        //    if (!debugStep) return;
+        //    Debug.Log("testAxisSymmetry steps tarting");
+        //    debugStep = false;
+        //}
         try
         {
 
             //float invert = 1f;
             List<Part> wings = new List<Part>(part.symmetryCounterparts);
-            wings.Add(part);            
+            wings.Add(part);
+
+            //test
+            //if (debugStepMode) Debug.Log("wings: " + wings.Count);
+
             foreach (Part p in wings)
             {
                 FSwing wing = p.GetComponent<FSwing>();
                 if (wing != null)
                 {
+                    Vector4 applyAxis = new Vector4(inputAxis.x, inputAxis.y, inputAxis.z, inputAxis.w);
                     //wing.targetAngle = availableAnglesList[selectedListAngle];
-                    float dot = Vector3.Dot(wing.part.transform.right, Vector3.right);
+                    float dot = Vector3.Dot(p.transform.right, Vector3.right);
+
+                    //if (debugStepMode) Debug.Log("wing dot: " + dot);
+
                     if (dot < -0.01f && allowInvertOnLeft) // check for orientation of the part, relative to world directions, since there is no vessel transfrom to compare to
                     {
-                        inputAxis.x *= -1; //invert pitch, yaw and flap, but not roll.
-                        inputAxis.z *= -1;
-                        inputAxis.w *= -1;                        
+                        applyAxis.x *= -1; //invert pitch, yaw and flap, but not roll.
+                        applyAxis.z *= -1;
+                        applyAxis.w *= -1;
+                        //if (debugStepMode) Debug.Log("wing axis reversed");
                     }
 
-                    float amount = (((inputAxis.x * pitchResponse) + (inputAxis.y * rollResponse) + (inputAxis.z * yawResponse)) * ctrlSurfaceRange) + (inputAxis.w * flapResponse * flapMax);                    
+                    float amount = (((applyAxis.x * pitchResponse) + (applyAxis.y * rollResponse) + (applyAxis.z * yawResponse)) * ctrlSurfaceRange) + (applyAxis.w * flapResponse * flapMax);
+                    //if (debugStepMode) Debug.Log("wing rotation amount: " + amount);
                     wing.controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis));
+                    //if (debugStepMode) Debug.Log("wing localRot: " + wing.controlSurface.localRotation);
                 }
             }
         }
@@ -669,10 +688,26 @@ class FSwing : PartModule
     {
         #region editor
 
+        
+
         if (popup == null) return;
 
         if (HighLogic.LoadedSceneIsEditor)
         {
+            #region debug step tests
+            //if (Input.GetKeyDown(KeyCode.O))
+            //{
+            //    debugStepMode = !debugStepMode;
+            //    Debug.Log("debugStepMode " + debugStepMode);
+            //}
+
+            //if (Input.GetKeyDown(KeyCode.P))
+            //{
+            //    debugStep = true;
+            //    Debug.Log("FSwing step");
+            //}
+            #endregion
+
             //Debug.Log("editor " + testAxis);
             if (!editorTransformsFound)
             {
@@ -702,7 +737,8 @@ class FSwing : PartModule
                     //controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis));
 
                     //if (doTestSymmetry)
-                    testAxisOnSymmetry(testAmount); //, invertAxisTest);
+                    if (popup.partSelected)
+                        testAxisOnSymmetry(testAmount); //, invertAxisTest);
                 }
             }
         
@@ -717,7 +753,7 @@ class FSwing : PartModule
         if (HighLogic.LoadedSceneIsEditor && popup != null)
         {
             //testAxis = Vector4.zero;
-            doTestSymmetry = false;
+            //doTestSymmetry = false;
             popup.popup();
             updateValuesFromGUI();
         }

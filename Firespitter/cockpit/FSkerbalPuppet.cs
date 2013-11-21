@@ -22,6 +22,8 @@ public class FSkerbalPuppet : PartModule
     public bool checkSeat = true;
     [KSPField]
     public int seatNumber = 0;
+    [KSPField(isPersistant=true)]
+    public bool lastOccupiedState = false;
 
     public bool showPuppet = true;
     private Transform[] puppetTransforms;    
@@ -64,7 +66,9 @@ public class FSkerbalPuppet : PartModule
 
     private bool checkSeatOccupied()
     {
-        return part.internalModel.seats[seatNumber].taken;
+        if (part.internalModel != null)
+            lastOccupiedState = part.internalModel.seats[seatNumber].taken;
+        return lastOccupiedState;
     }
 
     private void updatePuppetActive()

@@ -8,6 +8,7 @@ using UnityEngine;
 public class FSGUIPopup
 {
     public bool showMenu = false;
+    public bool partSelected = true;
     public Rect windowRect = new Rect(500f, 300f, 150f, 100f);
     //public Vector2 elementSize = new Vector2(130f, 25f);    
     public float elementWidth = 130f;
@@ -224,6 +225,7 @@ public class FSGUIPopup
                 }
 
                 showMenu = false;
+                partSelected = false;
 
                 EditorLogic editor = EditorLogic.fetch;
                 if (editor)
@@ -238,6 +240,7 @@ public class FSGUIPopup
                                 if (partlist[0].Modules.Contains(moduleName))
                                 {
                                     showMenu = true;
+                                    partSelected = true;
                                 }
                             }
                         }

@@ -17,7 +17,13 @@ class FSliftSurface : PartModule
     [KSPField]
     public string displayName = "Aileron"; 
     [KSPField]
-    public float efficiency = 1f; // wright's plane 0.7f
+    public float efficiency = 1f;   //Wright's plane 0.7f
+                                    //Ideal: 1.0
+                                    //Boeing 247D: 0.75
+                                    //DC-3: 0.785   
+                                    //P-51D: 0.69
+                                    //L1049G: 0.75
+                                    //Piper Cherokee: 0.76
     [KSPField]
     public float dragMultiplier = 1f;
     [KSPField]
@@ -37,7 +43,7 @@ class FSliftSurface : PartModule
     private Vector2 liftAndDrag = new Vector2(0f, 0f);
     private float speed = 0f;
     private Vector3 velocity = Vector3.zero;
-    private List<FSliftSurface> liftSurfaces;
+    private List<FSliftSurface> liftSurfaces = new List<FSliftSurface>();
 
     public Vector3 GetVelocity(Rigidbody rigidbody, Vector3 refPoint) // from Ferram
     {
@@ -94,8 +100,7 @@ class FSliftSurface : PartModule
 
     public override void OnStart(PartModule.StartState state)
     {
- 	     base.OnStart(state);
-        initialized = true;
+ 	     base.OnStart(state);        
     
         if (liftTransformName == string.Empty)
         {
@@ -113,7 +118,7 @@ class FSliftSurface : PartModule
         //if (moduleID == 0)
         //{
             liftSurfaces = part.GetComponents<FSliftSurface>().ToList();
-            liftSurfaces.Add(this);
+            //liftSurfaces.Add(this); // uhm, what?
         //}        
     }
 
@@ -132,24 +137,25 @@ class FSliftSurface : PartModule
         commonRigidBody.AddForceAtPosition(liftAndDrag.y * dragMultiplier * -commonRigidBody.GetPointVelocity(liftTransform.position).normalized, liftTransform.position);
     }
 
-    public void OnCenterOfLiftQuery(CenterOfLiftQuery qry)
+    public override void OnUpdate()
     {
-        //Debug.Log("query: moduleID " + moduleID);
+        base.OnUpdate();
+        initialized = true;
+    }
 
+    public void OnCenterOfLiftQuery(CenterOfLiftQuery qry)
+    {        
         if (moduleID == 0)
         {
             CoLqueryData queryData = new CoLqueryData();
-            queryData.refVector = qry.refVector;          
-            //List<CenterOfLiftQuery> queryList = new List<CenterOfLiftQuery>();
+            queryData.refVector = qry.refVector;
             for (int i = 0; i < liftSurfaces.Count; i++)
             {
-                //qry = liftSurfaces[i].liftQuery(qry);
-                CoLqueryData newQuery = liftSurfaces[i].liftQuery(queryData.refVector);                
+                CoLqueryData newQuery = liftSurfaces[i].liftQuery(queryData.refVector);
                 float influence = new Vector2(queryData.dir.magnitude, newQuery.dir.magnitude).normalized.y;
                 queryData.pos = Vector3.Lerp(queryData.pos, newQuery.pos, influence);
                 queryData.lift += newQuery.lift;
                 queryData.dir = Vector3.Lerp(queryData.dir, newQuery.dir, influence);
-                //queryData.dir += newQuery.dir * newQuery.lift;
             }
 
             queryData.dir.Normalize();
@@ -157,21 +163,12 @@ class FSliftSurface : PartModule
             qry.dir = queryData.dir;
             qry.lift = queryData.lift;
             qry.pos = queryData.pos;
-
-            //qry = liftQuery(qry);
-            //liftQuery(queryData);
-
-            //qry.pos = liftTransform.position;
-            //qry.dir = -liftTransform.up * lift;
-            //qry.lift = qry.dir.magnitude;
-            //qry.dir.Normalize();
-        }        
+        }
     }
 
     public CoLqueryData liftQuery(Vector3 refVector)
     {
         CoLqueryData qry = new CoLqueryData();
-        //Vector3 testVelocity = qry.refVector;
         Vector3 testVelocity = refVector;
         speed = testVelocity.magnitude;
         float angleOfAttackRad = 0f;
