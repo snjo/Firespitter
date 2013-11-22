@@ -105,7 +105,7 @@ class FStextureSwitch : PartModule
         foreach (String targetObjectName in objectList)
         {
             Transform targetObjectTransform = part.FindModelTransform(targetObjectName);
-            if (targetObjectTransform != null)
+            if (targetObjectTransform != null && targetObjectTransform.gameObject.renderer != null) // check for if the object even has a mesh. otherwise part list loading crashes
             {                
                 Material targetMat = targetObjectTransform.gameObject.renderer.material;
                 if (targetMat != null)
