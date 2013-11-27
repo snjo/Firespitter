@@ -168,6 +168,7 @@ class FSwheel : PartModule
 
     [KSPField]
     public bool debugMode = false;
+    
     #endregion    
 
     #region Actions and Events
@@ -1049,7 +1050,7 @@ class WheelList
         for (int i = 0; i < wheels.Count; i++)
         {
             wheels[i].wheelCollider.forwardFriction = forwardFriction;
-            wheels[i].wheelCollider.forwardFriction = sidewaysFriction;
+            wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
         }        
     }
 }

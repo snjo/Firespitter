@@ -21,6 +21,7 @@ public static class FSGUIwindowID
     public static int wheel = 5911;
     public static int partTurner = 5912;
     public static int wing = 5913;
+    public static int flightPath = 5916; // 5 reserved
 
     public static Rect standardRect = new Rect(500f, 300f, 300f, 100f);
 }
