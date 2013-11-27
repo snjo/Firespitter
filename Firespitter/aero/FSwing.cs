@@ -96,9 +96,12 @@ class FSwing : PartModule
     public int moduleID = 0;
     [KSPField]
     public string windowTitle = "Wing Settings";
+    [KSPField]
+    public bool debugMode = false;
     
     #endregion
 
+    FSdebugMessages debug = new FSdebugMessages(false, FSdebugMessages.OutputMode.log, 2f);
     //public bool useMainSrf;
     public bool useCtrlSrf;
     public bool useFlap;
@@ -410,7 +413,7 @@ class FSwing : PartModule
                 testAxis = Vector4.zero;
                 break;
         }
-        Debug.Log("test axis: " + testAxis);
+        debug.debugMessage("test axis: " + testAxis);
     }
 
     private void findTransforms(bool verboseErrors)
@@ -418,7 +421,7 @@ class FSwing : PartModule
         #region find transforms
         controlSurface = part.FindModelTransform(controlSurfaceName);
         if (controlSurface != null) useCtrlSrf = true;
-        else if (verboseErrors) Debug.Log("FSwing: did not find controlSurface " + controlSurfaceName);
+        else if (verboseErrors) debug.debugMessage("FSwing: did not find controlSurface " + controlSurfaceName);
 
         flap = part.FindModelTransform(flapName);
         if (flap != null)
@@ -426,33 +429,33 @@ class FSwing : PartModule
             useFlap = true;
             flapDefRot = flap.localRotation.eulerAngles;
         }
-        else if (verboseErrors) Debug.Log("FSwing: did not find flap " + flapName);
+        else if (verboseErrors) debug.debugMessage("FSwing: did not find flap " + flapName);
 
         leadingEdgeTop = part.FindModelTransform(leadingEdgeTopName);
-        if (leadingEdgeTop == null && verboseErrors) Debug.Log("FSwing: did not find leadingEdgeTop " + leadingEdgeTopName);
+        if (leadingEdgeTop == null && verboseErrors) debug.debugMessage("FSwing: did not find leadingEdgeTop " + leadingEdgeTopName);
         leadingEdgeBottom = part.FindModelTransform(leadingEdgeBottomName);
-        if (leadingEdgeBottom == null&& verboseErrors) Debug.Log("FSwing: did not find leadingEdgeBottom " + leadingEdgeBottomName);
+        if (leadingEdgeBottom == null && verboseErrors) debug.debugMessage("FSwing: did not find leadingEdgeBottom " + leadingEdgeBottomName);
         if (leadingEdgeTop != null) useLeadingEdge = true;
 
         flapRetracted = part.FindModelTransform(flapRetractedName);
-        if (flapRetracted == null && verboseErrors) Debug.Log("FSwing: did not find flapRetracted " + flapRetractedName);
+        if (flapRetracted == null && verboseErrors) debug.debugMessage("FSwing: did not find flapRetracted " + flapRetractedName);
         flapExtended = part.FindModelTransform(flapExtendedName);
-        if (flapExtended == null && verboseErrors) Debug.Log("FSwing: did not find flapExtended " + flapExtendedName);
+        if (flapExtended == null && verboseErrors) debug.debugMessage("FSwing: did not find flapExtended " + flapExtendedName);
 
         leadingEdgeTopExtended = part.FindModelTransform(leadingEdgeTopExtendedName);
-        if (leadingEdgeTopExtended == null && verboseErrors) Debug.Log("FSwing: did not find leadingEdgeTopExtended " + leadingEdgeTopExtendedName);
+        if (leadingEdgeTopExtended == null && verboseErrors) debug.debugMessage("FSwing: did not find leadingEdgeTopExtended " + leadingEdgeTopExtendedName);
         leadingEdgeTopRetracted = part.FindModelTransform(leadingEdgeTopRetractedName);
-        if (leadingEdgeTopRetracted == null && verboseErrors) Debug.Log("FSwing: did not find leadingEdgeTopRetracted " + leadingEdgeTopRetractedName);
+        if (leadingEdgeTopRetracted == null && verboseErrors) debug.debugMessage("FSwing: did not find leadingEdgeTopRetracted " + leadingEdgeTopRetractedName);
 
         leadingEdgeBottomExtended = part.FindModelTransform(leadingEdgeBottomExtendedName);
-        if (leadingEdgeBottomExtended == null && verboseErrors) Debug.Log("FSwing: did not find leadingEdgeBottomExtended " + leadingEdgeBottomExtendedName);
+        if (leadingEdgeBottomExtended == null && verboseErrors) debug.debugMessage("FSwing: did not find leadingEdgeBottomExtended " + leadingEdgeBottomExtendedName);
         leadingEdgeBottomRetracted = part.FindModelTransform(leadingEdgeBottomRetractedName);
-        if (leadingEdgeBottomRetracted == null && verboseErrors) Debug.Log("FSwing: did not find leadingEdgeBottomRetracted " + leadingEdgeBottomRetractedName);
+        if (leadingEdgeBottomRetracted == null && verboseErrors) debug.debugMessage("FSwing: did not find leadingEdgeBottomRetracted " + leadingEdgeBottomRetractedName);
 
         controlSurface = part.FindModelTransform(controlSurfaceName);
         if (controlSurface == null)
         {
-            if (verboseErrors) Debug.Log("FSwing: did not find controlSurface " + controlSurfaceName);
+            if (verboseErrors) debug.debugMessage("FSwing: did not find controlSurface " + controlSurfaceName);
         }
         else
         {
@@ -515,7 +518,7 @@ class FSwing : PartModule
 
     public override void OnStart(PartModule.StartState state)
     {
-        base.OnStart(state);
+        debug.debugMode = debugMode;
 
         #region fligth mode
 
@@ -535,7 +538,7 @@ class FSwing : PartModule
                 }
                 else
                 {
-                    Debug.Log("FSwing: did not Find stock wing module");
+                    debug.debugMessage("FSwing: did not Find stock wing module");
                     affectStockWingModule = false;
                 }
             }
@@ -554,7 +557,7 @@ class FSwing : PartModule
                         break;
                     }
                 }
-                if (mainLift == null) Debug.Log("FSwing: leading edge missing main FSliftSurface: " + leadingEdgeLiftSurface);
+                if (mainLift == null) debug.debugMessage("FSwing: leading edge missing main FSliftSurface: " + leadingEdgeLiftSurface);
             }
 
             if (!useLeadingEdge || autoDeployLeadingEdge)

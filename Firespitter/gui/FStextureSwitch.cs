@@ -19,6 +19,8 @@ class FStextureSwitch : PartModule
     public bool showListButton = false;
     [KSPField]
     public bool debugMode = false;
+    [KSPField]
+    public bool switchableInFlight = false;
     //[KSPField]
     //public string targetObjectName = "mountCasing";
     
@@ -58,7 +60,7 @@ class FStextureSwitch : PartModule
         return childList;
     }
 
-    //[KSPEvent(guiActive = true, guiName = "Next Texture")]
+    [KSPEvent(guiActive = false, guiName = "Next Texture")]
     public void nextTextureEvent()
     {
         selectedTexture++;
@@ -82,7 +84,7 @@ class FStextureSwitch : PartModule
             if (GameDatabase.Instance.ExistsTexture(texList[selectedTexture]))
             {
                 debug.debugMessage("assigning texture: " + texList[selectedTexture]);
-                targetMat.mainTexture = GameDatabase.Instance.GetTexture(texList[selectedTexture], false);
+                targetMat.mainTexture = GameDatabase.Instance.GetTexture(texList[selectedTexture], false);                
             }
             else
             {
@@ -96,9 +98,11 @@ class FStextureSwitch : PartModule
         base.OnStart(state);
         debug.debugMode = debugMode;
         textureNode = new FSnodeLoader(part, moduleName, moduleID.ToString(), textureNodeName, textureValueName);
+        textureNode.debugMode = debugMode;
         texList = textureNode.OnStart();
 
         objectNode = new FSnodeLoader(part, moduleName, moduleID.ToString(), objectNodeName, objectValueName);
+        objectNode.debugMode = debugMode;
         objectList = objectNode.OnStart();
         debug.debugMessage("FStextureSwitch found " + texList.Count + " textures, using number " + selectedTexture + ", found " + objectList.Count + " objects");
 
@@ -125,6 +129,8 @@ class FStextureSwitch : PartModule
         {
             popup.sections[0].elements.Add(new PopupElement(new PopupButton("List objects", 0f, listAllObjects)));
         }
+
+        if (switchableInFlight) Events["nextTextureEvent"].guiActive = true;
     }
 
     public void OnGUI()
