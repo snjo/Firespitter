@@ -70,7 +70,9 @@ class FSwing : PartModule
     [KSPField]
     public bool allowInvertOnLeft = true;
     [KSPField(isPersistant = true)]
-    public bool wingIsOnLeft = true; // used to determine leading edge to use, etc. Sniffed on first launch.
+    public bool wingIsPointingLeft = true; // used to determine leading edge to use, etc. Sniffed on first launch.
+    [KSPField(isPersistant = true)]
+    public bool wingIsPointingUp = true; // used to determine leading edge to use, etc. Sniffed on first launch.
     [KSPField(isPersistant = true)]
     public bool isInFrontOfCoM;
     [KSPField(isPersistant = true)]
@@ -219,7 +221,7 @@ class FSwing : PartModule
         }
 
         float invert = 1f;
-        if (wingIsOnLeft) invert = -1f;
+        if (wingIsPointingLeft) invert = -1f;
 
         if (useFlap)
             flap.localRotation = Quaternion.Euler(ctrllSrfDefRot + (controlSurfaceAxis * flapCurrent * invert));
@@ -273,7 +275,7 @@ class FSwing : PartModule
     {
         if (leadingEdgeTarget != leadingEdgeCurrent)
         {
-            if (wingIsOnLeft && leadingEdgeBottom != null)
+            if (wingIsPointingLeft && leadingEdgeBottom != null)
             {
                 leadingEdgeBottom.localPosition = Vector3.Lerp(leadingEdgeBottomRetracted.localPosition, leadingEdgeBottomExtended.localPosition, leadingEdgeCurrent);
                 if (leadingEdgeCanRotate)
@@ -491,16 +493,21 @@ class FSwing : PartModule
                 {
                     Vector4 applyAxis = new Vector4(inputAxis.x, inputAxis.y, inputAxis.z, inputAxis.w);
                     //wing.targetAngle = availableAnglesList[selectedListAngle];
-                    float dot = Vector3.Dot(p.transform.right, Vector3.right);
+                    float dotRight = Vector3.Dot(p.transform.right, Vector3.right);
+                    float dotUp = Vector3.Dot(p.transform.right, Vector3.up);
 
                     //if (debugStepMode) Debug.Log("wing dot: " + dot);
 
-                    if (dot < -0.01f && allowInvertOnLeft) // check for orientation of the part, relative to world directions, since there is no vessel transfrom to compare to
+                    if (dotRight < -0.01f && allowInvertOnLeft) // check for orientation of the part, relative to world directions, since there is no vessel transfrom to compare to
                     {
                         applyAxis.x *= -1; //invert pitch, yaw and flap, but not roll.
-                        applyAxis.z *= -1;
+                        //applyAxis.z *= -1;
                         applyAxis.w *= -1;
                         //if (debugStepMode) Debug.Log("wing axis reversed");
+                    }
+                    if (dotUp > 0f)
+                    {
+                        applyAxis.z *= -1;
                     }
 
                     float amount = (((applyAxis.x * pitchResponse) + (applyAxis.y * rollResponse) + (applyAxis.z * yawResponse)) * ctrlSurfaceRange) + (applyAxis.w * flapResponse * flapMax);
@@ -620,18 +627,30 @@ class FSwing : PartModule
                     isInFrontOfCoM = true;
                 }
 
-                float dot = Vector3.Dot(part.transform.right, vessel.ReferenceTransform.right);
-                //if (relativePosition.x < 0.001f)
-                if (dot < -0.01f && allowInvertOnLeft)                
+                float dotRight = Vector3.Dot(part.transform.right, vessel.ReferenceTransform.right);                
+                if (dotRight < -0.01f && allowInvertOnLeft)                
                 {
                     //Debug.Log("FSwing: part is on the left: " + relativePosition);
-                    wingIsOnLeft = true;
+                    wingIsPointingLeft = true;
                 }
                 else
                 {
                     //Debug.Log("FSwing: part is on the right: " + relativePosition);
-                    wingIsOnLeft = false;
+                    wingIsPointingLeft = false;
                 }
+
+                float dotUp = Vector3.Dot(part.transform.right, vessel.ReferenceTransform.forward); //forward is up! ugh!
+                if (dotUp > 0f)
+                {
+                    //Debug.Log("FSwing: part is on the left: " + relativePosition);
+                    wingIsPointingUp = true;
+                }
+                else
+                {
+                    //Debug.Log("FSwing: part is on the right: " + relativePosition);
+                    wingIsPointingUp = false;
+                }
+
 
                 positionOnVesselSet = true;
             }
@@ -668,12 +687,15 @@ class FSwing : PartModule
             if (useCtrlSrf)
             {
                 Vector4 input = new Vector4(ctrl.pitch, -ctrl.roll, ctrl.yaw, flapCurrent);
-                if (wingIsOnLeft && allowInvertOnLeft)
+                if (wingIsPointingLeft && allowInvertOnLeft)
                 {
                     input.x *= -1;
-                    input.z *= -1;
+                    //input.z *= -1;
                     input.w *= -1;
                 }
+                if (!wingIsPointingUp)
+                    input.z *= -1;
+
                 float amount = (ctrlSurfaceRange * ((input.x * pitchResponse) + (input.y * rollResponse) + (input.z * yawResponse))) + (input.w * flapResponse);                
                 controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis));
             }

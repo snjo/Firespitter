@@ -484,11 +484,13 @@ class FSwheel : PartModule
             }
 
             // set the motor direction based on the first found wheelColliders orientation
+            //Debug.Log("FSwheel: wheelist count is " + wheelList.wheels.Count);
             if (wheelList.wheels.Count > 0)
             {
+                Debug.Log("FSwheel: reversemotorset: " + reverseMotorSet);
                 if (!reverseMotorSet) //run only the first time the craft is loaded
                 {
-                    float dot = Vector3.Dot(wheelList.wheels[0].wheelCollider.transform.forward, vessel.ReferenceTransform.forward);
+                    float dot = Vector3.Dot(wheelList.wheels[0].wheelCollider.transform.forward, vessel.ReferenceTransform.up); // up is forward
                     if (dot < 0) // below 0 means the engine is on the left side of the craft
                     {
                         reverseMotor = true;
@@ -496,6 +498,7 @@ class FSwheel : PartModule
                     }
                     else
                     {
+                        reverseMotor = false;
                         //Debug.Log("FSwheel: Motor reversing skipped, dot: " + dot);
                     }
                     if (motorStartsReversed)
