@@ -258,6 +258,71 @@ public class FSGUIPopup
         }
         //return optionEnabled;        
     }
+
+    /// <summary>
+    /// Combines together popup sections from different modules. Must be hard coded in per module type currently. Child modules must be listed in the cfg before the parent module, or they will return an empty list.
+    /// The target module must have a list of sections called popupSections
+    /// </summary>
+    /// <param name="part"></param>
+    public void addGUIChildSections(Part part)
+    {
+        foreach (PartModule module in part.Modules)
+        {
+            if (module is FStextureSwitch)
+            {
+                //Debug.Log("adding gui from texture switcher to this gui");
+                FStextureSwitch target = (module as FStextureSwitch);
+                //Debug.Log("target guichild is " + target.GUIchild);
+                if (target.GUIchild)
+                {
+                    //Debug.Log("section count before: " + sections.Count);
+                    sections.AddRange(target.popupSections);
+                    //Debug.Log("section count after: " + sections.Count);
+                }                                
+            }
+        }
+    }
+}
+
+/*
+     public void addGUIChildSections(Part part)
+    {
+        foreach (PartModule module in part.Modules)
+        {
+            try
+            {
+                Debug.Log("trying to add gui from module " + module.name + " / " + module.moduleName);
+                ProxyModuleWithGUI target = (module as ProxyModuleWithGUI);
+                Debug.Log("target is " + target);
+                Debug.Log("target guichild is " + target.GUIchild);
+                if (target.GUIchild)
+                {
+                    Debug.Log("section count before: " + sections.Count);
+                    sections.AddRange(target.popupSections);
+                    Debug.Log("section count after: " + sections.Count);
+                }                
+            }
+            catch (Exception e)
+            {
+                Debug.Log("FSGUIpopup: skipped adding module with no GUI to sections: " + e.ToString());
+            }
+        }
+    }
+}
+
+public class ProxyModuleWithGUI : PartModule
+{
+    public bool GUIchild = false;
+    public bool GUIparent = false;
+    public List<PopupSection> popupSections;
+} 
+ */
+
+public class ProxyModuleWithGUI : PartModule
+{
+    public bool GUIchild = false;
+    public bool GUIparent = false;
+    public List<PopupSection> popupSections;
 }
 
 public class PopupSection

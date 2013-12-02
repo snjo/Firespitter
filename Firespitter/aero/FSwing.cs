@@ -99,6 +99,10 @@ class FSwing : PartModule
     [KSPField]
     public string windowTitle = "Wing Settings";
     [KSPField]
+    public bool GUIchild = false;
+    [KSPField]
+    public bool GUIparent = false;
+    [KSPField]
     public bool debugMode = false;
     
     #endregion
@@ -293,10 +297,10 @@ class FSwing : PartModule
     private void updateValuesFromGUI()
     {        
         if (axisPitchSection == null) return;
-        axisPitchSection.updateCollapseStatus();
-        axisRollSection.updateCollapseStatus();
-        axisYawSection.updateCollapseStatus();
-        axisFlapSection.updateCollapseStatus();
+        //axisPitchSection.updateCollapseStatus();
+        //axisRollSection.updateCollapseStatus();
+        //axisYawSection.updateCollapseStatus();
+        //axisFlapSection.updateCollapseStatus();
 
         try
         {
@@ -589,8 +593,19 @@ class FSwing : PartModule
             popup.sections.Add(axisYawSection);
             popup.sections.Add(axisFlapSection);
 
-            testAxisSection = createTestSection();
-            popup.sections.Add(testAxisSection);
+            //testAxisSection = createTestSection();
+            //popup.sections.Add(testAxisSection);
+            popup.lineSpacing = 5f;
+            PopupSection testDescriptionSection = new PopupSection();
+            PopupElement testDescription1 = new PopupElement("To test settings, press WASDQE to see roll,");
+            PopupElement testDescription2 = new PopupElement("pitch and yaw response. Just like in flight.");
+            PopupElement testDescription3 = new PopupElement("Press F to see full flap response");
+            testDescription1.height = 21f;
+            testDescription2.height = 21f;
+            testDescriptionSection.elements.Add(testDescription1);
+            testDescriptionSection.elements.Add(testDescription2);
+            testDescriptionSection.elements.Add(testDescription3);  
+            popup.sections.Add(testDescriptionSection);
 
             popup.showCloseButton = false;
             popup.useInActionEditor = true;
@@ -601,6 +616,8 @@ class FSwing : PartModule
             oldYawResponse = yawResponse;
             oldFlapResponse = flapResponse;
 
+            if (GUIparent)
+                popup.addGUIChildSections(part);
         }
         #endregion
     }
@@ -753,6 +770,7 @@ class FSwing : PartModule
                     if (Input.GetKey(KeyCode.E)) inputAxis.y -= 1f;
                     if (Input.GetKey(KeyCode.A)) inputAxis.z -= 1f;
                     if (Input.GetKey(KeyCode.D)) inputAxis.z += 1f;
+                    if (Input.GetKey(KeyCode.F)) inputAxis.w += 1f;
                     
                     inputAxis += testAxis;                    
                     // todo: limit the max
@@ -851,21 +869,21 @@ public class WingAxisSection : PopupSection
     {
         displayName = title;
         response = axisResponse;
-        collapseElement = new PopupElement(new PopupButton(title, 0f));
-        collapseElement.buttons[0].isGUIToggle = true;
-        elements.Add(collapseElement);
-        if (axisResponse == 0f)
-        {
-            collapseSection = true;
-            collapseElement.buttons[0].toggleState = false;
-        }
-        else
-        {
-            collapseSection = false;
-            collapseElement.buttons[0].toggleState = true;
-        }
+        //collapseElement = new PopupElement(new PopupButton(title, 0f));
+        //collapseElement.buttons[0].isGUIToggle = true;
+        //elements.Add(collapseElement);
+        //if (axisResponse == 0f)
+        //{
+        //    collapseSection = true;
+        //    collapseElement.buttons[0].toggleState = false;
+        //}
+        //else
+        //{
+        //    collapseSection = false;
+        //    collapseElement.buttons[0].toggleState = true;
+        //}
 
-        responseElement = new PopupElement("Amount/Direction", response.ToString());
+        responseElement = new PopupElement(title, response.ToString());
         responseElement.titleSize = FSGUIwindowID.standardRect.width - 115f;
         responseElement.inputSize = 80f;
         elements.Add(responseElement);

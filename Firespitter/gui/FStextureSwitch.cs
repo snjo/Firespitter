@@ -21,6 +21,12 @@ class FStextureSwitch : PartModule
     public bool debugMode = false;
     [KSPField]
     public bool switchableInFlight = false;
+    [KSPField]
+    public Vector4 GUIposition = new Vector4(FSGUIwindowID.standardRect.x, FSGUIwindowID.standardRect.y, FSGUIwindowID.standardRect.width, FSGUIwindowID.standardRect.height);
+    [KSPField]
+    public bool GUIchild = false;
+    [KSPField]
+    public bool GUIparent = false;
     //[KSPField]
     //public string targetObjectName = "mountCasing";
     
@@ -38,6 +44,8 @@ class FStextureSwitch : PartModule
     private List<String> objectList = new List<string>();
     FSdebugMessages debug = new FSdebugMessages(false, FSdebugMessages.OutputMode.both, 2f); //set to true for debug
     FSGUIPopup popup;
+    PopupSection popupSection;
+    public List<PopupSection> popupSections = new List<PopupSection>();
 
     public void listAllObjects()
     {
@@ -124,12 +132,19 @@ class FStextureSwitch : PartModule
 
         useTextureAll();
 
-        popup = new FSGUIPopup(part, "FStextureSwitch", moduleID, FSGUIwindowID.textureSwitch + moduleID, new Rect(500f, 500f, 200f, 100f), displayName, new PopupElement(new PopupButton("Next texture", 0f, nextTextureEvent)));
+        popupSection = new PopupSection();
+        popupSection.elements.Add(new PopupElement(new PopupButton("Next texture", 0f, nextTextureEvent)));
         if (showListButton)
-        {
-            popup.sections[0].elements.Add(new PopupElement(new PopupButton("List objects", 0f, listAllObjects)));
-        }
+        {            
+            popupSection.elements.Add(new PopupElement(new PopupButton("List objects", 0f, listAllObjects)));
+        }        
+        popupSections.Add(popupSection);
 
+        if (!GUIchild)
+        {
+            popup = new FSGUIPopup(part, "FStextureSwitch", moduleID, FSGUIwindowID.textureSwitch + moduleID, new Rect(GUIposition.x, GUIposition.y, GUIposition.z, GUIposition.w), displayName);
+            popup.sections.Add(popupSection);
+        }
         if (switchableInFlight) Events["nextTextureEvent"].guiActive = true;
     }
 
