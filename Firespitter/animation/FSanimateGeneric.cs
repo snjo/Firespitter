@@ -57,10 +57,10 @@ public class FSanimateGeneric : PartModule
     public string startDeployedString = "Start Deployed?";
 
     private Animation anim;
-    private FSGUIPopup popup;
+    //private FSGUIPopup popup;
 
     //private bool showMenu = false;
-    private Rect windowRect; // = new Rect(550f, 300f, 150f, 100f);
+    //private Rect windowRect; // = new Rect(550f, 300f, 150f, 100f);
 
     [KSPAction("Toggle")]
     public void toggleAction(KSPActionParam param)
@@ -68,7 +68,7 @@ public class FSanimateGeneric : PartModule
         toggleEvent();        
     }
 
-    [KSPEvent(name = "toggleEvent", guiName = "Deploy", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f)]
+    [KSPEvent(name = "toggleEvent", guiName = "Deploy", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor=true)]
     public void toggleEvent()
     {
         Events["toggleEvent"].active = false; //see if this removes the button when clicking
@@ -120,6 +120,7 @@ public class FSanimateGeneric : PartModule
     public override void OnStart(PartModule.StartState state)
     {
         base.OnStart(state);
+        
         anim = part.FindModelAnimators(animationName).FirstOrDefault();
         if (anim != null)
         {
@@ -196,17 +197,17 @@ public class FSanimateGeneric : PartModule
 
         //windowRect.y += (moduleID * windowRect.height) + 20;
 
-        windowRect = new Rect(defaultWindowRect.x, defaultWindowRect.y, defaultWindowRect.z, defaultWindowRect.w);
-        popup = new FSGUIPopup(part, "FSanimateGeneric", moduleID, FSGUIwindowID.animateGeneric + moduleID, windowRect, startDeployedString, new PopupElement(new PopupButton("Yes", "No", 0f, guiToggleEvent)));
-        popup.sections[0].elements[0].useTitle = false;
-        popup.sections[0].elements[0].buttons[0].toggle(reverseAnimation);
+        //windowRect = new Rect(defaultWindowRect.x, defaultWindowRect.y, defaultWindowRect.z, defaultWindowRect.w);
+        //popup = new FSGUIPopup(part, "FSanimateGeneric", moduleID, FSGUIwindowID.animateGeneric + moduleID, windowRect, startDeployedString, new PopupElement(new PopupButton("Yes", "No", 0f, guiToggleEvent)));
+        //popup.sections[0].elements[0].useTitle = false;
+        //popup.sections[0].elements[0].buttons[0].toggle(reverseAnimation);
     }
 
-    public void guiToggleEvent()
-    {
-        toggleEvent();
-        popup.sections[0].elements[0].buttons[0].toggle(startDeployed);
-    }
+    //public void guiToggleEvent()
+    //{
+    //    toggleEvent();
+    //    popup.sections[0].elements[0].buttons[0].toggle(startDeployed);
+    //}
 
     public void Update()
     {
@@ -241,11 +242,11 @@ public class FSanimateGeneric : PartModule
         }
     }
 
-    public void OnGUI()
-    {
-        if (!HighLogic.LoadedSceneIsEditor)
-           return;
+    //public void OnGUI()
+    //{
+    //    if (!HighLogic.LoadedSceneIsEditor)
+    //       return;
 
-        popup.popup();
-    }
+    //    popup.popup();
+    //}
 }

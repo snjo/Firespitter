@@ -32,8 +32,8 @@ using UnityEngine;
         public int moduleID = 0;
 
         //private bool showMenu = false;
-        private Rect windowRect = new Rect(500f, 250f, 250f, 50f);
-        private FSGUIPopup popup;
+        //private Rect windowRect = new Rect(500f, 250f, 250f, 50f);
+        //private FSGUIPopup popup;
 
         public override void OnStart(PartModule.StartState state)
         {            
@@ -78,9 +78,9 @@ using UnityEngine;
                 animateThrottleMode = animateThrottle.modeList.Count - 1;
             }
 
-            popup = new FSGUIPopup(part, "FSswitchEngineThrustTransform", moduleID, FSGUIwindowID.switchEngineThrustTransform, windowRect, "Start Engine Reversed?", new PopupElement(new PopupButton("Yes","No",0f,toggleIsReversed)));
-            popup.sections[0].elements.Add(new PopupElement("Settings affect symmetry group"));
-            popup.sections[0].elements[0].useTitle = false;
+            //popup = new FSGUIPopup(part, "FSswitchEngineThrustTransform", moduleID, FSGUIwindowID.switchEngineThrustTransform, windowRect, "Start Engine Reversed?", new PopupElement(new PopupButton("Yes","No",0f,toggleIsReversed)));
+            //popup.sections[0].elements.Add(new PopupElement("Settings affect symmetry group"));
+            //popup.sections[0].elements[0].useTitle = false;
         }
 
         [KSPAction("Toggle Thrust Reverser")]
@@ -101,13 +101,13 @@ using UnityEngine;
             setTTReverseState(false);
         }
 
-        [KSPEvent(name = "reverseTT", active = true, guiActive = true, guiName = "Set Reverse Thrust")]
+        [KSPEvent(name = "reverseTT", active = true, guiActive = true, guiName = "Set Reverse Thrust", guiActiveEditor=true)]
         public void reverseTTEvent()
         {
             setTTReverseState(true);            
         }
 
-        [KSPEvent(name = "normalTT", active = true, guiActive = false, guiName = "Set Normal Thrust")]
+        [KSPEvent(name = "normalTT", active = true, guiActive = false, guiName = "Set Normal Thrust", guiActiveEditor=true)]
         public void normalTTEvent()
         {
             setTTReverseState(false);
@@ -157,6 +157,8 @@ using UnityEngine;
                 }
                 Events["normalTTEvent"].guiActive = doReverse;
                 Events["reverseTTEvent"].guiActive = !doReverse;
+                Events["normalTTEvent"].guiActiveEditor = doReverse;
+                Events["reverseTTEvent"].guiActiveEditor = !doReverse;
 
                 if (animateThrottle != null)
                 {
@@ -176,7 +178,7 @@ using UnityEngine;
         public void toggleIsReversed()
         {
             isReversed = !isReversed;
-            popup.sections[0].elements[0].buttons[0].toggle(isReversed);
+            //popup.sections[0].elements[0].buttons[0].toggle(isReversed);
 
             foreach (Part p in part.symmetryCounterparts)
             {
@@ -184,57 +186,16 @@ using UnityEngine;
                 if (switcher != null)
                 {
                     switcher.isReversed = isReversed;
-                    switcher.popup.sections[0].elements[0].buttons[0].toggle(isReversed);
+                    //switcher.popup.sections[0].elements[0].buttons[0].toggle(isReversed);
                 }
             }
         }
 
-        //private void drawWindow(int windowID)
+        //public void OnGUI()
         //{
-        //    string startReversedString;
-        //    if (isReversed)
-        //    {
-        //        startReversedString = "Yes";
-        //    }
-        //    else
-        //    {
-        //        startReversedString = "No";
-        //    }
-        //    if (GUI.Button(new Rect(25f, 25f, 65f, 22f), startReversedString))
-        //    {
-        //        isReversed = !isReversed;
-        //    }
-        //    GUI.DragWindow();
+        //    if (!HighLogic.LoadedSceneIsEditor)
+        //        return;
+
+        //    popup.popup();
         //}
-
-        public void OnGUI()
-        {
-            if (!HighLogic.LoadedSceneIsEditor)
-                return;
-
-            popup.popup();
-
-            //if (showMenu)
-            //{
-            //    windowRect = GUI.Window(FSGUIwindowID.switchEngineThrustTransform, windowRect, drawWindow, "Start Reversed?");
-            //}
-
-            //showMenu = false;
-
-            //EditorLogic editor = EditorLogic.fetch;
-            //if (editor.editorScreen == EditorLogic.EditorScreen.Actions)
-            //{
-            //    List<Part> partlist = EditorActionGroups.Instance.GetSelectedParts();
-            //    if (partlist.Count > 0)
-            //    {
-            //        if (partlist[0] == part)
-            //        {
-            //            if (partlist[0].Modules.Contains("FSswitchEngineThrustTransform"))
-            //            {
-            //                showMenu = true;
-            //            }
-            //        }
-            //    }
-            //}
-        }
     }

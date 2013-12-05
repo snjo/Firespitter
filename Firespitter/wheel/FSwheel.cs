@@ -205,18 +205,25 @@ class FSwheel : PartModule
         reverseMotor = !reverseMotor;
     }
 
-    [KSPEvent(guiName = "Enable Reverse Motor", guiActive = true)]
-    public void ReverseMotorEvent()
+    [KSPEvent(guiName = "Enable Reverse Motor", guiActive = true, guiActiveEditor=true)]
+    public void EnableReverseMotorEvent()
     {
-        reverseMotor = !reverseMotor;
-        if (reverseMotor)
-        {
-            Events["ReverseMotorEvent"].guiName = "Disable Reverse Motor";
-        }
-        else
-        {
-            Events["ReverseMotorEvent"].guiName = "Enable Reverse Motor";
-        }
+        reverseMotor = true;
+        Events["EnableReverseMotorEvent"].guiActive = false;
+        Events["EnableReverseMotorEvent"].guiActiveEditor = false;
+        Events["DisableReverseMotorEvent"].guiActive = true;
+        Events["DisableReverseMotorEvent"].guiActiveEditor = true;
+                
+    }
+
+    [KSPEvent(guiName = "Disable Reverse Motor", guiActive = true, guiActiveEditor = true)]
+    public void DisableReverseMotorEvent()
+    {
+        reverseMotor = false;
+        Events["DisableReverseMotorEvent"].guiActive = false;
+        Events["DisableReverseMotorEvent"].guiActiveEditor = false;
+        Events["EnableReverseMotorEvent"].guiActive = true;
+        Events["EnableReverseMotorEvent"].guiActiveEditor = true;
     }
 
     [KSPAction("Toggle Motor")]
@@ -232,20 +239,24 @@ class FSwheel : PartModule
         }        
     }
 
-    [KSPEvent(guiName = "Enable Motor", guiActive = true)]
+    [KSPEvent(guiName = "Enable Motor", guiActive = true, guiActiveEditor=true)]
     public void EnableMotorEvent()
     {
         motorEnabled = true;
         Events["EnableMotorEvent"].guiActive = false;
         Events["DisableMotorEvent"].guiActive = true;
+        Events["EnableMotorEvent"].guiActiveEditor = false;
+        Events["DisableMotorEvent"].guiActiveEditor = true;
     }
 
-    [KSPEvent(guiName = "Disable Motor", guiActive = false)]
+    [KSPEvent(guiName = "Disable Motor", guiActive = false, guiActiveEditor=true)]
     public void DisableMotorEvent()
     {
         motorEnabled = false;
         Events["EnableMotorEvent"].guiActive = true;
         Events["DisableMotorEvent"].guiActive = false;
+        Events["EnableMotorEvent"].guiActiveEditor = true;
+        Events["DisableMotorEvent"].guiActiveEditor = false;
     }
 
     private void animate(string mode)
@@ -313,6 +324,8 @@ class FSwheel : PartModule
         setBrakeLight(BrakeStatus.on);
         Events["brakesOnEvent"].guiActive = false;
         Events["brakesOffEvent"].guiActive = true;
+        Events["brakesOnEvent"].guiActiveEditor = false;
+        Events["brakesOffEvent"].guiActiveEditor = true;
     }
 
     [KSPEvent(name = "brakesOff", guiActive = true, active = true, guiName = "Brakes Off", externalToEVAOnly = true, unfocusedRange = 6f, guiActiveUnfocused = true)]
@@ -322,6 +335,8 @@ class FSwheel : PartModule
         setBrakeLight(BrakeStatus.off);
         Events["brakesOnEvent"].guiActive = true;
         Events["brakesOffEvent"].guiActive = false;
+        Events["brakesOnEvent"].guiActiveEditor = true;
+        Events["brakesOffEvent"].guiActiveEditor = false;
     }
 
     [KSPEvent(guiName = "increase friction (d)", guiActive = false)]
@@ -579,48 +594,7 @@ class FSwheel : PartModule
             suspensionUpdateElement = new PopupElement(new PopupButton("Update", 0f, popupUpdateSuspension));
             popup.sections[0].elements.Add(suspensionUpdateElement);
 
-            #endregion
-
-            #region GUI element changes
-            Events["RaiseGear"].guiActiveUnfocused = guiActiveUnfocused;
-            Events["RaiseGear"].unfocusedRange = unfocusedRange;
-            Events["LowerGear"].guiActiveUnfocused = guiActiveUnfocused;
-            Events["LowerGear"].unfocusedRange = unfocusedRange;
-            Events["EnableMotorEvent"].guiActive = !motorEnabled;
-            Events["DisableMotorEvent"].guiActive = motorEnabled;
-            Events["brakesOnEvent"].guiActive = !brakesEngaged;
-            Events["brakesOffEvent"].guiActive = brakesEngaged;
-            Events["brakesOnEvent"].guiActiveUnfocused = guiActiveUnfocused;
-            Events["brakesOffEvent"].guiActiveUnfocused = guiActiveUnfocused;
-            if (!hasMotor)
-            {
-                //Events["EnableMotorEvent"].guiActive = false;
-                //Events["DisableMotorEvent"].guiActive = false;
-                Events["EnableMotorEvent"].active = false;
-                Events["DisableMotorEvent"].active = false;
-                Events["ReverseMotorEvent"].active = false;
-            }
-            if (!hasAnimation)
-            {
-                Events["RaiseGear"].active = false;
-                Events["LowerGear"].active = false;
-            }
-            if (debugMode)
-            {
-                Events["increaseFrictionEvent"].guiActive = true;
-                Events["decreaseFrictionEvent"].guiActive = true;
-                Events["suspensionGUIEvent"].guiActive = true;
-            }
-
-            if (reverseMotor)
-            {
-                Events["ReverseMotorEvent"].guiName = "Disable Reverse Motor";
-            }
-            else
-            {
-                Events["ReverseMotorEvent"].guiName = "Enable Reverse Motor";
-            }
-            #endregion
+           
 
             if (brakeEmissiveObjectName != string.Empty)
             {
@@ -631,23 +605,74 @@ class FSwheel : PartModule
         }
         #endregion
         #region In Editor
-        else if (HighLogic.LoadedSceneIsEditor)
+        //else if (HighLogic.LoadedSceneIsEditor)
+        //{
+        //    #region GUI popup
+
+        //    motorToggleElement = new PopupElement("Motor", new PopupButton("On", "Off", 0f, popupToggleMotor));            
+        //    popup = new FSGUIPopup(part, "FSwheel", moduleID, FSGUIwindowID.wheel, new Rect(500f, 300f, 250f, 100f), "Wheel settings", new PopupElement("Settings affect symmetry group"));
+        //    popup.sections[0].elements.Add(motorToggleElement);
+        //    motorReverseElement = new PopupElement("Reverse Motor", new PopupButton("On", "Off", 0f, popupToggleReverseMotor));
+        //    popup.sections[0].elements.Add(motorReverseElement);
+
+        //    motorToggleElement.buttons[0].toggle(motorEnabled);
+        //    motorReverseElement.buttons[0].toggle(motorStartsReversed);
+
+        //    #endregion
+
+        //    setBrakeLight(BrakeStatus.off);
+        //}
+        #endregion
+
+        #endregion
+
+        #region GUI element changes
+        Events["RaiseGear"].guiActiveUnfocused = guiActiveUnfocused;
+        Events["RaiseGear"].unfocusedRange = unfocusedRange;
+
+        Events["LowerGear"].guiActiveUnfocused = guiActiveUnfocused;
+        Events["LowerGear"].unfocusedRange = unfocusedRange;
+
+        Events["EnableMotorEvent"].guiActive = !motorEnabled;
+        Events["DisableMotorEvent"].guiActive = motorEnabled;
+        Events["EnableMotorEvent"].guiActiveEditor = !motorEnabled;
+        Events["DisableMotorEvent"].guiActiveEditor = motorEnabled;
+
+        Events["brakesOnEvent"].guiActive = !brakesEngaged;
+        Events["brakesOffEvent"].guiActive = brakesEngaged;
+        Events["brakesOnEvent"].guiActiveEditor = !brakesEngaged;
+        Events["brakesOffEvent"].guiActiveEditor = brakesEngaged;
+
+        Events["EnableReverseMotorEvent"].guiActive = !reverseMotor;
+        Events["DisableReverseMotorEvent"].guiActive = reverseMotor;
+        Events["EnableReverseMotorEvent"].guiActiveEditor = !reverseMotor;
+        Events["DisableReverseMotorEvent"].guiActiveEditor = reverseMotor;
+
+        Events["brakesOnEvent"].guiActiveUnfocused = guiActiveUnfocused;
+        Events["brakesOffEvent"].guiActiveUnfocused = guiActiveUnfocused;
+
+        if (!hasMotor)
         {
-            #region GUI popup
-
-            motorToggleElement = new PopupElement("Motor", new PopupButton("On", "Off", 0f, popupToggleMotor));            
-            popup = new FSGUIPopup(part, "FSwheel", moduleID, FSGUIwindowID.wheel, new Rect(500f, 300f, 250f, 100f), "Wheel settings", new PopupElement("Settings affect symmetry group"));
-            popup.sections[0].elements.Add(motorToggleElement);
-            motorReverseElement = new PopupElement("Reverse Motor", new PopupButton("On", "Off", 0f, popupToggleReverseMotor));
-            popup.sections[0].elements.Add(motorReverseElement);
-
-            motorToggleElement.buttons[0].toggle(motorEnabled);
-            motorReverseElement.buttons[0].toggle(motorStartsReversed);
-
-            #endregion
-
-            setBrakeLight(BrakeStatus.off);
+            //Events["EnableMotorEvent"].guiActive = false;
+            //Events["DisableMotorEvent"].guiActive = false;
+            Events["EnableMotorEvent"].active = false;
+            Events["DisableMotorEvent"].active = false;
+            Events["EnableReverseMotorEvent"].active = false;
+            Events["DisableReverseMotorEvent"].active = false;
         }
+        if (!hasAnimation)
+        {
+            Events["RaiseGear"].active = false;
+            Events["LowerGear"].active = false;
+        }
+        if (debugMode)
+        {
+            Events["increaseFrictionEvent"].guiActive = true;
+            Events["decreaseFrictionEvent"].guiActive = true;
+            Events["suspensionGUIEvent"].guiActive = true;
+        }               
+        
+        
         #endregion
     }    
 
@@ -842,14 +867,14 @@ class FSwheel : PartModule
         }
     }
 
-    public void OnGUI()
-    {
-        if (HighLogic.LoadedSceneIsEditor || HighLogic.LoadedSceneIsFlight)
-        {
-            if (popup != null)
-                popup.popup();
-        }
-    }
+    //public void OnGUI()
+    //{
+    //    if (HighLogic.LoadedSceneIsEditor || HighLogic.LoadedSceneIsFlight)
+    //    {
+    //        if (popup != null)
+    //            popup.popup();
+    //    }
+    //}
 
 }
 

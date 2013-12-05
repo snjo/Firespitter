@@ -28,7 +28,17 @@ public class FSGUIPopup
     public int GUIlayer = 5878;
     public int moduleID = 0;    
 
+    /// <summary>
+    /// Popup will only be displayed if the part is highlighted in the Action Groups setup
+    /// </summary>
     public bool useInActionEditor = true;
+    /// <summary>
+    /// Popup can be shown in the regular SPH/VAB Craft Editor, if showMenu is true. Beware window ID conflicts from multiple popup sources
+    /// </summary>
+    public bool useInEditor = false;
+    /// <summary>
+    /// Popup can be shown in the the flight scene, if showMenu is true. Beware window ID conflicts from multiple popup sources
+    /// </summary>
     public bool useInFlight = false;
 
     public delegate void HideMenuEvent();
@@ -214,33 +224,43 @@ public class FSGUIPopup
     }
 
     public void popup()
-    {        
-        if (useInActionEditor && HighLogic.LoadedSceneIsEditor)
+    {
+        if (HighLogic.LoadedSceneIsEditor)
         {
-            if (parentPart != null)
-            {                
+            if (useInEditor)
+            {
                 if (showMenu)
                 {
                     windowRect = GUI.Window(GUIlayer, windowRect, drawWindow, windowTitle);
                 }
-
-                showMenu = false;
-                partSelected = false;
-
-                EditorLogic editor = EditorLogic.fetch;
-                if (editor)
+            }
+            else if (useInActionEditor)
+            {
+                if (parentPart != null)
                 {
-                    if (editor.editorScreen == EditorLogic.EditorScreen.Actions)
+                    if (showMenu)
                     {
-                        List<Part> partlist = EditorActionGroups.Instance.GetSelectedParts();
-                        if (partlist.Count > 0)
+                        windowRect = GUI.Window(GUIlayer, windowRect, drawWindow, windowTitle);
+                    }
+
+                    showMenu = false;
+                    partSelected = false;
+
+                    EditorLogic editor = EditorLogic.fetch;
+                    if (editor)
+                    {
+                        if (editor.editorScreen == EditorLogic.EditorScreen.Actions)
                         {
-                            if (partlist[0] == parentPart)
+                            List<Part> partlist = EditorActionGroups.Instance.GetSelectedParts();
+                            if (partlist.Count > 0)
                             {
-                                if (partlist[0].Modules.Contains(moduleName))
+                                if (partlist[0] == parentPart)
                                 {
-                                    showMenu = true;
-                                    partSelected = true;
+                                    if (partlist[0].Modules.Contains(moduleName))
+                                    {
+                                        showMenu = true;
+                                        partSelected = true;
+                                    }
                                 }
                             }
                         }
@@ -259,64 +279,30 @@ public class FSGUIPopup
         //return optionEnabled;        
     }
 
-    /// <summary>
-    /// Combines together popup sections from different modules. Must be hard coded in per module type currently. Child modules must be listed in the cfg before the parent module, or they will return an empty list.
-    /// The target module must have a list of sections called popupSections
-    /// </summary>
-    /// <param name="part"></param>
-    public void addGUIChildSections(Part part)
-    {
-        foreach (PartModule module in part.Modules)
-        {
-            if (module is FStextureSwitch)
-            {
-                //Debug.Log("adding gui from texture switcher to this gui");
-                FStextureSwitch target = (module as FStextureSwitch);
-                //Debug.Log("target guichild is " + target.GUIchild);
-                if (target.GUIchild)
-                {
-                    //Debug.Log("section count before: " + sections.Count);
-                    sections.AddRange(target.popupSections);
-                    //Debug.Log("section count after: " + sections.Count);
-                }                                
-            }
-        }
-    }
+    ///// <summary>
+    ///// Combines together popup sections from different modules. Must be hard coded in per module type currently. Child modules must be listed in the cfg before the parent module, or they will return an empty list.
+    ///// The target module must have a list of sections called popupSections
+    ///// </summary>
+    ///// <param name="part"></param>
+    //public void addGUIChildSections(Part part)
+    //{
+    //    foreach (PartModule module in part.Modules)
+    //    {
+    //        if (module is FStextureSwitch)
+    //        {
+    //            //Debug.Log("adding gui from texture switcher to this gui");
+    //            FStextureSwitch target = (module as FStextureSwitch);
+    //            //Debug.Log("target guichild is " + target.GUIchild);
+    //            if (target.GUIchild)
+    //            {
+    //                //Debug.Log("section count before: " + sections.Count);
+    //                sections.AddRange(target.popupSections);
+    //                //Debug.Log("section count after: " + sections.Count);
+    //            }                                
+    //        }
+    //    }
+    //}
 }
-
-/*
-     public void addGUIChildSections(Part part)
-    {
-        foreach (PartModule module in part.Modules)
-        {
-            try
-            {
-                Debug.Log("trying to add gui from module " + module.name + " / " + module.moduleName);
-                ProxyModuleWithGUI target = (module as ProxyModuleWithGUI);
-                Debug.Log("target is " + target);
-                Debug.Log("target guichild is " + target.GUIchild);
-                if (target.GUIchild)
-                {
-                    Debug.Log("section count before: " + sections.Count);
-                    sections.AddRange(target.popupSections);
-                    Debug.Log("section count after: " + sections.Count);
-                }                
-            }
-            catch (Exception e)
-            {
-                Debug.Log("FSGUIpopup: skipped adding module with no GUI to sections: " + e.ToString());
-            }
-        }
-    }
-}
-
-public class ProxyModuleWithGUI : PartModule
-{
-    public bool GUIchild = false;
-    public bool GUIparent = false;
-    public List<PopupSection> popupSections;
-} 
- */
 
 public class ProxyModuleWithGUI : PartModule
 {

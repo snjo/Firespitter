@@ -128,7 +128,7 @@ public class FSVTOLrotator : PartModule
         //updateSteeringSetup(VTOLSteeringMode);
     }
 
-    [KSPEvent(guiName = "Show custom steering setup", guiActive = false)]
+    [KSPEvent(guiName = "Control Setup", guiActive = false, guiActiveEditor=true)]
     public void showPopupEvent()
     {
         if (popup != null)
@@ -285,7 +285,8 @@ public class FSVTOLrotator : PartModule
             updateButtonTexts();
 
             popup.useInFlight = false;
-            popup.useInActionEditor = true;            
+            popup.useInEditor = true;
+            //popup.useInActionEditor = true;            
         }
         #endregion
 
@@ -636,7 +637,7 @@ public class FSVTOLrotator : PartModule
     {
         if (popup != null)
         {
-            if (HighLogic.LoadedSceneIsEditor && popup.useInActionEditor)
+            if (HighLogic.LoadedSceneIsEditor)
             {                
                 //elementCurrentAngle.inputText = "Current rot.: " + currentAngle;
                 popup.popup();

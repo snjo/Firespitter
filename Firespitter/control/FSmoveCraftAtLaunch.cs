@@ -27,7 +27,7 @@ public class FSmoveCraftAtLaunch : PartModule
     public float timer = 3f;
     public bool doQuickLoad = false;
     private bool isFixed = false;
-    public FSGUIPopup popup;
+    //public FSGUIPopup popup;
     //private Transform boundsTransform;
     //private Transform partPosition;
 
@@ -37,25 +37,28 @@ public class FSmoveCraftAtLaunch : PartModule
         Debug.Log("FSmoveCAL: part posistion is " + part.transform.position);
     }
 
+    [KSPEvent(guiActiveEditor=true, guiName="Launch on Runway")]
+    public void toggleMoveAtLaunchEvent()
+    {
+        moveAtLaunch = !moveAtLaunch;
+        setLaunchEventText();
+    }
+
+    private void setLaunchEventText()
+    {
+        if (moveAtLaunch)
+        {
+            Events["toggleMoveAtLaunchEvent"].guiName = "Launch on runway";
+        }
+        else
+        {
+            Events["toggleMoveAtLaunchEvent"].guiName = "Launch in water";
+        }
+    }
 
     public override void OnStart(PartModule.StartState state)
     {
-        if (HighLogic.LoadedSceneIsFlight && moveAtLaunch)
-        {
-            //Debug.Log("FSmoveCraftAtLaunch: moving craft");
-            //if (!hasLaunched)
-            //{
-            //    moveCraft();
-            //    timer = 3f;
-            //}
-        }
-        popup = new FSGUIPopup(part, "FSmoveCraftAtLaunch", 0, FSGUIwindowID.moveCraftAtLaunch, new Rect(600f, 300f, 200f, 60f), "Move to the water at launch?", new PopupElement(new PopupButton("Yes", "No", 0f, toggleMoveAtLaunch)));
-        popup.sections[0].elements[0].buttons[0].toggle(moveAtLaunch);
-
-        //partPosition = new GameObject().transform;
-        //partPosition.position = part.transform.position;
-        //boundsTransform = part.FindModelTransform("Bounds");
-        base.OnStart(state);
+        setLaunchEventText();
     }
 
     //public void moveCraft()
@@ -85,12 +88,6 @@ public class FSmoveCraftAtLaunch : PartModule
         vessel.landedAt = "";
         InputLockManager.ClearControlLocks();
         //ScreenMessages.PostScreenMessage(new ScreenMessage("Press F5 to Quicksave, then F9 to Quickload to get full control", 10f, ScreenMessageStyle.UPPER_CENTER));
-    }
-
-    public void toggleMoveAtLaunch()
-    {
-        moveAtLaunch = !moveAtLaunch;        
-        popup.sections[0].elements[0].buttons[0].toggle(moveAtLaunch);        
     }
 
     public void Update() //TODO, check if this is the active vessel
@@ -126,8 +123,8 @@ public class FSmoveCraftAtLaunch : PartModule
          
     }
 
-    public void OnGUI()
-    {
-            popup.popup();
-    }
+    //public void OnGUI()
+    //{
+    //        popup.popup();
+    //}
 }

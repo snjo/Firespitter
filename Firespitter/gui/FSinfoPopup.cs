@@ -66,7 +66,7 @@ public class FSinfoPopup : PartModule
     Rect windowRect = new Rect(300f, 300f, 320f, 320f);
 
 
-    [KSPEvent(name = "showInfo", active = true, guiActive = true, guiName = "Show Info")]
+    [KSPEvent(name = "showInfo", active = true, guiActive = true, guiActiveEditor=true, guiName = "Show Info")]
     public void showInfoEvent()
     {
         showInfo = true;
@@ -245,13 +245,13 @@ public class FSinfoPopup : PartModule
                     editorButtonCooldown = 20;
                 }
                 shownByUser = true;
-                if (editor.editorScreen == EditorLogic.EditorScreen.Actions)
-                {
-                    if (EditorActionGroups.Instance.GetSelectedParts().Find(p => p.Modules.Contains("FSinfoPopup")))
-                    {
-                        showInfo = true;
-                    }
-                }
+                //if (editor.editorScreen == EditorLogic.EditorScreen.Actions)
+                //{
+                //    if (EditorActionGroups.Instance.GetSelectedParts().Find(p => p.Modules.Contains("FSinfoPopup")))
+                //    {
+                //        showInfo = true;
+                //    }
+                //}
             }
         }
     }

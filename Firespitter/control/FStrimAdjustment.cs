@@ -37,7 +37,7 @@ class FStrimAdjustment : PartModule
         popup.showMenu = !popup.showMenu;
     }
 
-    [KSPEvent(guiName = "Toggle Popup", guiActive = true)]
+    [KSPEvent(guiName = "Toggle Popup", guiActive = true, guiActiveEditor=true)]
     public void togglePopupEvent()
     {
         popup.showMenu = !popup.showMenu;
@@ -285,7 +285,7 @@ class FStrimAdjustment : PartModule
         
         if (HighLogic.LoadedSceneIsEditor)
         {
-            popup.showMenu = true;
+            //popup.showMenu = true;
             elementShowOnFlightStart = new PopupElement("Show on Launch?", new PopupButton("Y", "N", 30f, toggleShowOnFlightStart));
             elementShowOnFlightStart.titleSize = 120f;
             popup.sections[0].elements.Add(elementShowOnFlightStart);
@@ -305,7 +305,8 @@ class FStrimAdjustment : PartModule
         }
 
         popup.useInFlight = false;
-        popup.useInActionEditor = true;
+        popup.useInEditor = true;
+        //popup.useInActionEditor = true;
 
         addPresetLine(presetTrim0);
         if (presetTrim1 != 0f)

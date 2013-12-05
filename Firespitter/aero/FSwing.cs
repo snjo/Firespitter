@@ -58,14 +58,14 @@ class FSwing : PartModule
     public string flapExtendedName = "flapExtended";        
     [KSPField]
     public Vector3 controlSurfaceAxis = Vector3.right;
-    [KSPField(isPersistant=true)]
+    [KSPField(isPersistant=true, guiName="Pitch Response", guiActiveEditor=true, guiActive=true), UI_FloatRange(minValue=-2f, maxValue=2f, stepIncrement=0.025f)]
     public float pitchResponse = 0f;
-    [KSPField(isPersistant = true)]
+    [KSPField(isPersistant = true, guiName="Roll Response", guiActiveEditor=true, guiActive=true), UI_FloatRange(minValue=-2f, maxValue=2f, stepIncrement=0.025f)]
     public float rollResponse = 0f;
-    [KSPField(isPersistant = true)]
+    [KSPField(isPersistant = true, guiName="Yaw Response", guiActiveEditor=true, guiActive=true), UI_FloatRange(minValue=-2f, maxValue=2f, stepIncrement=0.025f)]
     public float yawResponse = 0f;
-    [KSPField(isPersistant = true)]
-    public float flapResponse = 0f;
+    [KSPField(isPersistant = true, guiName="Flap Response", guiActiveEditor=true, guiActive=true), UI_FloatRange(minValue=-2f, maxValue=2f, stepIncrement=0.025f)]
+    public float flapResponse = 0f;    
 
     [KSPField]
     public bool allowInvertOnLeft = true;
@@ -98,10 +98,10 @@ class FSwing : PartModule
     public int moduleID = 0;
     [KSPField]
     public string windowTitle = "Wing Settings";
-    [KSPField]
-    public bool GUIchild = false;
-    [KSPField]
-    public bool GUIparent = false;
+    //[KSPField]
+    //public bool GUIchild = false;
+    //[KSPField]
+    //public bool GUIparent = false;
     [KSPField]
     public bool debugMode = false;
     
@@ -178,6 +178,12 @@ class FSwing : PartModule
     #endregion
 
     #region events and actions
+
+    [KSPEvent(guiName = "Help", guiActiveEditor = true)]
+    public void showHelpEvent()
+    {
+
+    }
 
     [KSPEvent(guiActive = true, guiName = "Toggle Leading Edge")]
     public void toggleLeadingEdgeEvent()
@@ -616,8 +622,8 @@ class FSwing : PartModule
             oldYawResponse = yawResponse;
             oldFlapResponse = flapResponse;
 
-            if (GUIparent)
-                popup.addGUIChildSections(part);
+            //if (GUIparent)
+            //    popup.addGUIChildSections(part);
         }
         #endregion
     }
@@ -736,21 +742,6 @@ class FSwing : PartModule
 
         if (HighLogic.LoadedSceneIsEditor)
         {
-            #region debug step tests
-            //if (Input.GetKeyDown(KeyCode.O))
-            //{
-            //    debugStepMode = !debugStepMode;
-            //    Debug.Log("debugStepMode " + debugStepMode);
-            //}
-
-            //if (Input.GetKeyDown(KeyCode.P))
-            //{
-            //    debugStep = true;
-            //    Debug.Log("FSwing step");
-            //}
-            #endregion
-
-            //Debug.Log("editor " + testAxis);
             if (!editorTransformsFound)
             {
                 findTransforms(false);
@@ -760,7 +751,7 @@ class FSwing : PartModule
             EditorLogic editor = EditorLogic.fetch;
             if (editor)
             {
-                if (editor.editorScreen == EditorLogic.EditorScreen.Actions && popup.showMenu)
+                if (editor.editorScreen == EditorLogic.EditorScreen.Actions)// && popup.showMenu)
                 {
                     Vector4 inputAxis = Vector4.zero;
 
@@ -776,11 +767,9 @@ class FSwing : PartModule
                     // todo: limit the max
                     
                     Vector4 testAmount = Vector4.Lerp(oldTestAmount, inputAxis, 0.2f);
-                    oldTestAmount = testAmount;
-                    //controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis));
-
-                    //if (doTestSymmetry)
-                    if (popup.partSelected)
+                    oldTestAmount = testAmount;                    
+                    
+                    //if (popup.partSelected)
                         testAxisOnSymmetry(testAmount); //, invertAxisTest);
                 }
             }
@@ -797,8 +786,9 @@ class FSwing : PartModule
         {
             //testAxis = Vector4.zero;
             //doTestSymmetry = false;
-            popup.popup();
-            updateValuesFromGUI();
+
+            //popup.popup();
+            //updateValuesFromGUI();
         }
     }
 }
