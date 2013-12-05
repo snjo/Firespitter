@@ -73,7 +73,9 @@ class FStrimAdjustment : PartModule
     {
         adjustTrim(-buttonIncrements * MoreTrimActionMultiplier);
     }
-    
+
+    public int popupWindowID = 0;
+
     #region trim actions
 
     /*
@@ -274,13 +276,14 @@ class FStrimAdjustment : PartModule
     public override void OnStart(PartModule.StartState state)
     {
         base.OnStart(state);
-
+        if (popupWindowID == 0)
+            popupWindowID = FSGUIwindowID.getNextID();
         firstPresetLine = 1;
         PopupElement element = new PopupElement(new PopupButton("+", 25f, adjustTrimFromButton));        
         element.buttons.Add(new PopupButton("-", 25f, adjustTrimFromButton));
         element.buttons.Add(new PopupButton("Add", 43f, addPresetLine));
         element.buttons.Add(new PopupButton("Del", 43f, removePresetLine));
-        popup = new FSGUIPopup(part, "FStrimAdjustment", moduleID, FSGUIwindowID.trimAdjustment + moduleID, new Rect(100f, 200f, 180f, 150f), axis + " Trim Adjustment", element);
+        popup = new FSGUIPopup(part, "FStrimAdjustment", moduleID, popupWindowID, new Rect(100f, 200f, 180f, 150f), axis + " Trim Adjustment", element);//FSGUIwindowID.trimAdjustment + moduleID
 
         
         if (HighLogic.LoadedSceneIsEditor)
@@ -367,7 +370,8 @@ class FStrimAdjustment : PartModule
             }
             if (popup.showMenu)
             {
-                popup.windowTitle = axis + ": " + Math.Round(trim*100f, 3);
+                if(HighLogic.LoadedSceneIsFlight)
+                    popup.windowTitle = axis + ": " + Math.Round(trim*100f, 3);
             }
         }
     }

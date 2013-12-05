@@ -64,6 +64,10 @@ using UnityEngine;
                 {
                     setTTReverseState(true);
                 }
+                else
+                {
+                    setTTReverseState(false);
+                }
             }
             else
             {
@@ -77,10 +81,6 @@ using UnityEngine;
                 animateThrottle.modeList.Add(new mode(animateThrottleRange.x, animateThrottleRange.y));
                 animateThrottleMode = animateThrottle.modeList.Count - 1;
             }
-
-            //popup = new FSGUIPopup(part, "FSswitchEngineThrustTransform", moduleID, FSGUIwindowID.switchEngineThrustTransform, windowRect, "Start Engine Reversed?", new PopupElement(new PopupButton("Yes","No",0f,toggleIsReversed)));
-            //popup.sections[0].elements.Add(new PopupElement("Settings affect symmetry group"));
-            //popup.sections[0].elements[0].useTitle = false;
         }
 
         [KSPAction("Toggle Thrust Reverser")]

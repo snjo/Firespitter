@@ -47,7 +47,8 @@ public class FSVTOLrotator : PartModule
     PopupElement elementSteerPitch;
     PopupElement elementSteerPitchType;
     PopupElement elementVTOLSteeringMode;
-    List<PopupElement> elementPresets = new List<PopupElement>();    
+    List<PopupElement> elementPresets = new List<PopupElement>();
+    public int popupWindowID = 0;
 
     [KSPField(guiName="VTOL steering mode", isPersistant = true, guiActive = true)]
     public string VTOLSteeringMode = "Off";
@@ -225,6 +226,12 @@ public class FSVTOLrotator : PartModule
     {
         base.OnStart(state);
 
+        if (popupWindowID == 0)
+        {
+            popupWindowID = FSGUIwindowID.getNextID();
+            //Debug.Log("Assigned window ID: " + popupWindowID);
+        }
+
         partTransform = part.FindModelTransform(targetPartObject);
         buildAngleList();
 
@@ -244,7 +251,7 @@ public class FSVTOLrotator : PartModule
         if (HighLogic.LoadedSceneIsEditor)
         {                                   
             elementInfoText = new PopupElement("Presets set to 0 are excluded.");
-            popup = new FSGUIPopup(part, "FSVTOLrotator", 0, FSGUIwindowID.VTOLrotator, new Rect(550f, 200f, 325f, 150f), "VTOL presets", elementInfoText);
+            popup = new FSGUIPopup(part, "FSVTOLrotator", 0, popupWindowID, new Rect(550f, 200f, 325f, 150f), "VTOL presets", elementInfoText); //FSGUIwindowID.VTOLrotator
             popup.sections[0].elements.Add(new PopupElement("Settings are per engine!"));
 
             elementTestAngle = new PopupElement(new PopupButton("Use Preset " + selectedListAngle, 100f, testUseAngle));
@@ -295,7 +302,7 @@ public class FSVTOLrotator : PartModule
         {
             atmosphericNerf = part.Modules.OfType<FSpropellerAtmosphericNerf>().FirstOrDefault();
             // --- moved the element creation to the top, for use in both editor and flight
-            popup = new FSGUIPopup(part, "FSVTOLrotator", 0, FSGUIwindowID.VTOLrotator, new Rect(500f, 300f, 250f, 100f), "VTOL steering", elementSteerRoll);
+            popup = new FSGUIPopup(part, "FSVTOLrotator", 0, popupWindowID, new Rect(500f, 300f, 250f, 100f), "VTOL steering", elementSteerRoll); //FSGUIwindowID.VTOLrotator
             popup.sections[0].elements.Add(elementSteerYaw);
             popup.sections[0].elements.Add(elementSteerPitch);
             popup.sections[0].elements.Add(elementSteerPitchType);            
