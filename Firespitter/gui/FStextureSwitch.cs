@@ -15,6 +15,8 @@ class FStextureSwitch : PartModule
     public int moduleID = 0;
     [KSPField(isPersistant = true)]
     public int selectedTexture = 0;
+    [KSPField(isPersistant = true)]
+    public string selectedTextureURL = string.Empty;
     [KSPField]
     public bool showListButton = false;
     [KSPField]
@@ -23,17 +25,9 @@ class FStextureSwitch : PartModule
     public bool switchableInFlight = false;
     [KSPField]
     public Vector4 GUIposition = new Vector4(FSGUIwindowID.standardRect.x, FSGUIwindowID.standardRect.y, FSGUIwindowID.standardRect.width, FSGUIwindowID.standardRect.height);
-    //[KSPField]
-    //public bool GUIchild = false;
-    //[KSPField]
-    //public bool GUIparent = false;
-    ////[KSPField]
-    //public string targetObjectName = "mountCasing";
-    
-    //Transform targetObjectTransform;
+
     List<Transform> targetObjectTransforms = new List<Transform>();
     List<Material> targetMats = new List<Material>();
-    //Material targetMat;
     FSnodeLoader textureNode;
     private string textureNodeName = "textures";
     private string textureValueName = "name";
@@ -43,9 +37,6 @@ class FStextureSwitch : PartModule
     private string objectValueName = "name";
     private List<String> objectList = new List<string>();
     FSdebugMessages debug = new FSdebugMessages(false, FSdebugMessages.OutputMode.both, 2f); //set to true for debug
-    //FSGUIPopup popup;
-    //PopupSection popupSection;
-    //public List<PopupSection> popupSections = new List<PopupSection>();
 
     [KSPEvent(guiActive=false, guiActiveEditor=false, guiName="Debug: Log Objects")]
     public void listAllObjects()
@@ -93,13 +84,19 @@ class FStextureSwitch : PartModule
             if (GameDatabase.Instance.ExistsTexture(texList[selectedTexture]))
             {
                 debug.debugMessage("assigning texture: " + texList[selectedTexture]);
-                targetMat.mainTexture = GameDatabase.Instance.GetTexture(texList[selectedTexture], false);                
+                targetMat.mainTexture = GameDatabase.Instance.GetTexture(texList[selectedTexture], false);
+                selectedTextureURL = texList[selectedTexture];
             }
             else
             {
                 debug.debugMessage("no such texture: " + texList[selectedTexture]);
             }
         }
+    }
+
+    public override string GetInfo()
+    {
+        return "Alternate textures are available. Use the Next Texture button on the right click menu.";
     }
 
     public override void OnStart(PartModule.StartState state)
@@ -131,32 +128,11 @@ class FStextureSwitch : PartModule
             }
         }        
 
+
+
         useTextureAll();
 
-        //popupSection = new PopupSection();
-        //popupSection.elements.Add(new PopupElement(new PopupButton("Next texture", 0f, nextTextureEvent)));
-        //if (showListButton)
-        //{            
-        //    popupSection.elements.Add(new PopupElement(new PopupButton("List objects", 0f, listAllObjects)));
-        //}        
-        //popupSections.Add(popupSection);
-
-        //if (!GUIchild)
-        //{
-        //    popup = new FSGUIPopup(part, "FStextureSwitch", moduleID, FSGUIwindowID.textureSwitch + moduleID, new Rect(GUIposition.x, GUIposition.y, GUIposition.z, GUIposition.w), displayName);
-        //    popup.sections.Add(popupSection);
-        //}
         if (switchableInFlight) Events["nextTextureEvent"].guiActive = true;
         if (showListButton) Events["listAllObjects"].guiActiveEditor = true;
     }
-
-    //public void OnGUI()
-    //{
-    //    if (!HighLogic.LoadedSceneIsEditor)
-    //        return;
-
-    //    if (popup != null)
-    //        popup.popup();
-    //}
-
 }

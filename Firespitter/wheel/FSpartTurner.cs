@@ -35,7 +35,7 @@ using UnityEngine;
         public float defaultRotationY = 0f;
         [KSPField]
         public float defaultRotationZ = 0f;
-        [KSPField(guiActive = true, guiName = "Steering Multiplier", isPersistant = true)]
+        [KSPField(guiActive = true, guiActiveEditor=true, guiName = "Steering Multiplier", isPersistant = true), UI_FloatRange(minValue=0f, maxValue=50f, stepIncrement=0.02f)]
         public float steerMultiplier = 10f;
         [KSPField]
         public float steerMaxSpeed = 15f;
@@ -63,10 +63,10 @@ using UnityEngine;
         private Vector3 steeringInput;
         private List<Transform> partTransforms = new List<Transform>();
 
-        public FSGUIPopup popup;
-        public PopupElement elementSteeringEnabled;
-        public PopupElement elementInvertSteering;
-        public PopupElement elementSteeringRange;
+        //public FSGUIPopup popup;
+        //public PopupElement elementSteeringEnabled;
+        //public PopupElement elementInvertSteering;
+        //public PopupElement elementSteeringRange;
 
         private float oldSteerMultiplier = 0f;
 
@@ -82,10 +82,46 @@ using UnityEngine;
             reversedInput = !reversedInput;
         }
 
-        [KSPEvent(name = "toggleSteering", active = true, guiActive = true, guiName = "Toggle Steering")]
+        [KSPEvent(active = true, guiActive = true, guiActiveEditor=true, guiName = "Toggle Steering")]
         public void toggleSteering()
         {
             steeringEnabled = !steeringEnabled;
+            if (steeringEnabled)
+            {
+                Events["toggleSteering"].guiName = "Lock Steering";
+            }
+            else
+            {
+                Events["toggleSteering"].guiName = "Enable Steering";
+            }
+        }
+
+        [KSPEvent(name = "toggleReverseInput", active = true, guiActive = true, guiActiveEditor=true, guiName = "Toggle Reverse Steering")]
+        public void toggleReverseInput()
+        {
+            reversedInput = !reversedInput;
+            if (reversedInput)
+            {
+                Events["toggleReverseInput"].guiName = "Set Normal Steering";
+            }
+            else
+            {
+                Events["toggleReverseInput"].guiName = "Reverse Steering";
+            }
+        }
+
+        [KSPEvent(name = "ToggleSpeedAdjustedSteering", active = true, guiActive = true, guiActiveEditor = true, guiName = "Dynamic Steering")]
+        public void toggleSpeedAdjustedSteeringEvent()
+        {
+            speedAdjustedSteering = !speedAdjustedSteering;
+            if (speedAdjustedSteering)
+            {
+                Events["toggleSpeedAdjustedSteeringEvent"].guiName = "Disable Dynamic Steering";
+            }
+            else
+            {
+                Events["toggleSpeedAdjustedSteeringEvent"].guiName = "Enable Dynamic Steering";
+            }
         }
 
         [KSPEvent(name = "toggleAltInputMode", active = true, guiActive = true, guiName = "QE or AD to steer")]
@@ -100,31 +136,19 @@ using UnityEngine;
             ignoreTrim = !ignoreTrim;
         }
 
-        [KSPEvent(name = "toggleReverseInput", active = true, guiActive = true, guiName = "Toggle Reverse Steering")]
-        public void toggleReverseInput()
-        {
-            reversedInput = !reversedInput;
-        }
-
-        [KSPEvent(name = "increaseSteering", active = true, guiActive = true, guiName = "Increase Steering")]
+        [KSPEvent(name = "increaseSteering", active = true, guiActive = false, guiActiveEditor=false, guiName = "Increase Steering")]
         public void increaseSteering()
         {
             steerMultiplier += 1f;
             if (steerMultiplier > 90f) steerMultiplier = 90f;
         }
 
-        [KSPEvent(name = "decreaseSteering", active = true, guiActive = true, guiName = "Decrease Steering")]
+        [KSPEvent(name = "decreaseSteering", active = true, guiActive = false, guiActiveEditor=false, guiName = "Decrease Steering")]
         public void decreaseSteering()
         {
             steerMultiplier -= 1;
             if (steerMultiplier < 1f) steerMultiplier = 1f;
-        }
-
-        [KSPEvent(name = "ToggleSpeedAdjustedSteering", active = true, guiActive = true, guiName = "Dynamic Steering")]
-        public void toggleSpeedAdjustedSteeringEvent()
-        {
-            speedAdjustedSteering = !speedAdjustedSteering;
-        }
+        }        
 
         public void steerPart(float direction)
         {
@@ -147,37 +171,37 @@ using UnityEngine;
             }
         }
 
-        private void popupToggleSteering()
-        {
-            toggleSteering();
-            elementSteeringEnabled.buttons[0].toggle(steeringEnabled);
+        //private void popupToggleSteering()
+        //{
+        //    toggleSteering();
+        //    elementSteeringEnabled.buttons[0].toggle(steeringEnabled);
 
-            foreach (Part p in part.symmetryCounterparts)
-            {
-                FSpartTurner wheel = p.GetComponent<FSpartTurner>();
-                if (wheel != null)
-                {
-                    wheel.steeringEnabled = steeringEnabled;
-                    wheel.elementSteeringEnabled.buttons[0].toggle(steeringEnabled);
-                }
-            }
-        }
+        //    foreach (Part p in part.symmetryCounterparts)
+        //    {
+        //        FSpartTurner wheel = p.GetComponent<FSpartTurner>();
+        //        if (wheel != null)
+        //        {
+        //            wheel.steeringEnabled = steeringEnabled;
+        //            wheel.elementSteeringEnabled.buttons[0].toggle(steeringEnabled);
+        //        }
+        //    }
+        //}
 
-        private void popupToggleReverseInput()
-        {
-            toggleReverseInput();
-            elementInvertSteering.buttons[0].toggle(reversedInput);
+        //private void popupToggleReverseInput()
+        //{
+        //    toggleReverseInput();
+        //    elementInvertSteering.buttons[0].toggle(reversedInput);
 
-            foreach (Part p in part.symmetryCounterparts)
-            {
-                FSpartTurner wheel = p.GetComponent<FSpartTurner>();
-                if (wheel != null)
-                {
-                    wheel.reversedInput = reversedInput;
-                    wheel.elementInvertSteering.buttons[0].toggle(reversedInput);
-                }
-            }
-        }
+        //    foreach (Part p in part.symmetryCounterparts)
+        //    {
+        //        FSpartTurner wheel = p.GetComponent<FSpartTurner>();
+        //        if (wheel != null)
+        //        {
+        //            wheel.reversedInput = reversedInput;
+        //            wheel.elementInvertSteering.buttons[0].toggle(reversedInput);
+        //        }
+        //    }
+        //}
 
         private void addTransformToList(string targetName)
         {
@@ -201,33 +225,64 @@ using UnityEngine;
                 addTransformToList(targetPartObject3);
                 addTransformToList(targetPartObject4);
                 addTransformToList(targetPartObject5);
-                addTransformToList(targetPartObject6);
-
-                if (useWheelSteeringAxis)
-                {
-                    Events["toggleIgnoreTrim"].guiActive = false;
-                    Events["toggleAltInputMode"].guiActive = false;
-                    Fields["altInputModeEnabled"].guiActive = false;
-                    Fields["ignoreTrim"].guiActive = false;
-                }                
+                addTransformToList(targetPartObject6);                
             }
+          
+            #region GUI event updates
 
-            if (HighLogic.LoadedSceneIsEditor)
+            if (useWheelSteeringAxis)
             {
-                #region GUI popup
-
-                elementSteeringEnabled = new PopupElement("Enabled", new PopupButton("Yes", "No", 0f, popupToggleSteering));
-                elementSteeringEnabled.buttons[0].toggle(steeringEnabled);
-                elementInvertSteering = new PopupElement("Steer Inverted", new PopupButton("Yes", "No", 0f, popupToggleReverseInput));
-                elementInvertSteering.buttons[0].toggle(reversedInput);
-                elementSteeringRange = new PopupElement("Range", steerMultiplier.ToString());
-                popup = new FSGUIPopup(part, "FSpartTurner", moduleID, FSGUIwindowID.partTurner, new Rect(753f, 300f, 250f, 100f), "Steering", elementSteeringEnabled);
-                //popup.elementList.Add(elementSteeringEnabled);
-                popup.sections[0].elements.Add(elementInvertSteering);
-                popup.sections[0].elements.Add(elementSteeringRange);                
-
-                #endregion
+                Events["toggleIgnoreTrim"].guiActive = false;
+                Events["toggleAltInputMode"].guiActive = false;
+                Fields["altInputModeEnabled"].guiActive = false;
+                Fields["ignoreTrim"].guiActive = false;
             }
+
+            if (steeringEnabled)
+            {
+                Events["toggleSteering"].guiName = "Lock Steering";
+            }
+            else
+            {
+                Events["toggleSteering"].guiName = "Enable Steering";
+            }
+            
+            if (reversedInput)
+            {
+                Events["toggleReverseInput"].guiName = "Set Normal Steering";
+            }
+            else
+            {
+                Events["toggleReverseInput"].guiName = "Reverse Steering";
+            }
+            
+            if (speedAdjustedSteering)
+            {
+                Events["toggleSpeedAdjustedSteeringEvent"].guiName = "Disable Dynamic Steering";
+            }
+            else
+            {
+                Events["toggleSpeedAdjustedSteeringEvent"].guiName = "Enable Dynamic Steering";
+            }
+
+            #endregion
+
+            //if (HighLogic.LoadedSceneIsEditor)
+            //{
+            //    #region GUI popup
+
+            //    elementSteeringEnabled = new PopupElement("Enabled", new PopupButton("Yes", "No", 0f, popupToggleSteering));
+            //    elementSteeringEnabled.buttons[0].toggle(steeringEnabled);
+            //    elementInvertSteering = new PopupElement("Steer Inverted", new PopupButton("Yes", "No", 0f, popupToggleReverseInput));
+            //    elementInvertSteering.buttons[0].toggle(reversedInput);
+            //    elementSteeringRange = new PopupElement("Range", steerMultiplier.ToString());
+            //    popup = new FSGUIPopup(part, "FSpartTurner", moduleID, FSGUIwindowID.partTurner, new Rect(753f, 300f, 250f, 100f), "Steering", elementSteeringEnabled);
+            //    //popup.elementList.Add(elementSteeringEnabled);
+            //    popup.sections[0].elements.Add(elementInvertSteering);
+            //    popup.sections[0].elements.Add(elementSteeringRange);                
+
+            //    #endregion
+            //}
 
             oldSteerMultiplier = steerMultiplier;
         }
@@ -272,32 +327,32 @@ using UnityEngine;
             setPartRotation();
         }
 
-        public void OnGUI()
-        {
-            if (HighLogic.LoadedSceneIsEditor)
-            {
-                if (popup != null)
-                {                    
-                    popup.popup();
-                    steerMultiplier = float.Parse(elementSteeringRange.inputText);
-                    if (popup.showMenu)
-                    {                        
-                        if (oldSteerMultiplier != steerMultiplier)
-                        {
-                            foreach (Part p in part.symmetryCounterparts)
-                            {
-                                FSpartTurner wheel = p.GetComponent<FSpartTurner>();
-                                if (wheel != null)
-                                {
-                                    wheel.elementSteeringRange.inputText = steerMultiplier.ToString();
-                                    wheel.steerMultiplier = steerMultiplier;
-                                }
-                            }
-                        }
-                        oldSteerMultiplier = steerMultiplier;
-                    }
-                }
-            }
-        }
+        //public void OnGUI()
+        //{
+        //    if (HighLogic.LoadedSceneIsEditor)
+        //    {
+        //        if (popup != null)
+        //        {                    
+        //            popup.popup();
+        //            steerMultiplier = float.Parse(elementSteeringRange.inputText);
+        //            if (popup.showMenu)
+        //            {                        
+        //                if (oldSteerMultiplier != steerMultiplier)
+        //                {
+        //                    foreach (Part p in part.symmetryCounterparts)
+        //                    {
+        //                        FSpartTurner wheel = p.GetComponent<FSpartTurner>();
+        //                        if (wheel != null)
+        //                        {
+        //                            wheel.elementSteeringRange.inputText = steerMultiplier.ToString();
+        //                            wheel.steerMultiplier = steerMultiplier;
+        //                        }
+        //                    }
+        //                }
+        //                oldSteerMultiplier = steerMultiplier;
+        //            }
+        //        }
+        //    }
+        //}
     }
 

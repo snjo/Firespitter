@@ -73,7 +73,7 @@ class FSwheel : PartModule
     [KSPField(isPersistant = true)]
     public bool motorStartsReversed = false;   
     [KSPField]
-    public string brakeEmissiveObjectName; // for emissive textures to indicate brake status    
+    public string brakeEmissiveObjectName = string.Empty; // for emissive textures to indicate brake status    
     [KSPField]
     public Vector3 onEmissiveColor = new Vector3(1f, 0.3f, 0f);
     [KSPField]

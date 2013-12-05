@@ -15,7 +15,7 @@ class FSliftSurface : PartModule
     [KSPField]
     public float span = 6f;
     [KSPField]
-    public string displayName = "Aileron"; 
+    public string displayName = "Wing"; 
     [KSPField]
     public float efficiency = 1f;   //Wright's plane 0.7f
                                     //Ideal: 1.0
@@ -97,6 +97,16 @@ class FSliftSurface : PartModule
         Vector3 liftVector = liftDirection * liftAndDrag.x;
         return liftVector;
     } 
+
+    public override string GetInfo()
+    {
+        string info = string.Empty;
+        info = String.Concat("Aerodynamic surface\nName: ",
+            displayName, "\n",
+            "Area: ", wingArea);
+
+        return info;
+    }
 
     public override void OnStart(PartModule.StartState state)
     {

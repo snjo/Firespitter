@@ -121,12 +121,12 @@ public class FScameraToTV : InternalModule
                 ITargetable target = FlightGlobals.fetch.VesselTarget;                
                 TVcam.transform.LookAt(target.GetTransform(), Firespitter.Tools.WorldUp(vessel));
                 //TVcam.transform.localRotation = Quaternion.Euler(new Vector3(TVcam.transform.localRotation.eulerAngles.x, TVcam.transform.localRotation.eulerAngles.z, 0f));
-                TVcam.fov = Mathf.Lerp(TVcam.fov, 5f, lerpProgress);
+                TVcam.fieldOfView = Mathf.Lerp(TVcam.fieldOfView, 5f, lerpProgress);
                 if (lerpProgress < 1f) lerpProgress += 0.01f;
             }
             else
             {
-                TVcam.fov = 100f;
+                TVcam.fieldOfView = 100f;
                 lerpProgress = 0f;
             }
             TVcam.Render();

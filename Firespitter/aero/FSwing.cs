@@ -9,6 +9,8 @@ class FSwing : PartModule
 {
     #region kspfields
     [KSPField]
+    public string displayName = "Wing";
+    [KSPField]
     public string mainLiftSurfaceName = "obj_main";
     [KSPField]
     public string controlSurfaceName = "obj_ctrlSrf";
