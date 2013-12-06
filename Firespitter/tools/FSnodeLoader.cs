@@ -39,49 +39,28 @@ class FSnodeLoader
         }
     }
 
-    public void OnLoad(ConfigNode node)
-    {        
-        testOnloadMemory = true;
 
-        // ("OnLoad testOnLoadMemory set to " + testOnloadMemory);
 
-        ConfigNode[] existingNodes = node.GetNodes(nodeName);
-        if (existingNodes.Length > 0)
+    public List<String> ProcessNode(ConfigNode node)
+    {
+        List<String> resultList = new List<string>();
+        ConfigNode[] moduleNodeArray = node.GetNodes(nodeName);
+        debugMessage("moduleNodeArray.length " + moduleNodeArray.Length);
+        for (int k = 0; k < moduleNodeArray.Length; k++)
         {
-            debugMessage("OnLoad: Found " + existingNodes.Length + " " + nodeName + " nodes");
-            for (int i = 0; i < existingNodes.Length; i++)
+            debugMessage("found node");
+            string[] valueArray = moduleNodeArray[k].GetValues(valueName);
+            debugMessage("found " + valueArray.Length + " values");
+            for (int l = 0; l < valueArray.Length; l++)
             {
-
-
-                values = existingNodes[i].GetValues(valueName);
-                for (int j = 0; j < values.Length; j++)
-                {
-                    valueList.Add(values[j]);
-                    debugMessage("OnLoad: adding to list: " + values[j]);
-                }
-                //if (values.Length > 0)
-                if (valueList.Count > 0)
-                {
-                    foundExistingNodes = true;
-                    //trimArray = new float[trimList.Count];
-                    //for (int ta = 0; ta < trimList.Count; ta++)
-                    //{
-                    //    trimArray[ta] = trimList[ta];
-                    //}
-                }
-                else
-                {
-                    foundExistingNodes = false;
-                }
+                debugMessage("Adding value to node " + valueArray[l]);
+                resultList.Add(valueArray[l]);
             }
         }
-        else
-        {
-            debugMessage("OnLoad: Found no existing " + nodeName + " nodes");
-            foundExistingNodes = false;
-        }
+        return resultList;
     }
 
+    [Obsolete("Use processNode and fill a static list from OnLoad instead", true)]
     public List<String> OnStart()
     {        
         ConfigNode[] nodes;        
@@ -130,19 +109,20 @@ class FSnodeLoader
                                 if (correctModuleFound)
                                 {
                                     debugMessage("Found module with matching or blank ID, proceeding");
-                                    ConfigNode[] moduleNodeArray = nodes[j].GetNodes(nodeName);
-                                    debugMessage("moduleNodeArray.length " + moduleNodeArray.Length);
-                                    for (int k = 0; k < moduleNodeArray.Length; k++)
-                                    {
-                                        debugMessage("found node");
-                                        string[] valueArray = moduleNodeArray[k].GetValues(valueName);
-                                        debugMessage("found " + valueArray.Length + " values");
-                                        for (int l = 0; l < valueArray.Length; l++)
-                                        {
-                                            debugMessage("Adding value to node " + valueArray[l]);
-                                            valueList.Add(valueArray[l]);
-                                        }
-                                    }
+                                    valueList = ProcessNode(nodes[j]);
+                                    //ConfigNode[] moduleNodeArray = nodes[j].GetNodes(nodeName);
+                                    //debugMessage("moduleNodeArray.length " + moduleNodeArray.Length);
+                                    //for (int k = 0; k < moduleNodeArray.Length; k++)
+                                    //{
+                                    //    debugMessage("found node");
+                                    //    string[] valueArray = moduleNodeArray[k].GetValues(valueName);
+                                    //    debugMessage("found " + valueArray.Length + " values");
+                                    //    for (int l = 0; l < valueArray.Length; l++)
+                                    //    {
+                                    //        debugMessage("Adding value to node " + valueArray[l]);
+                                    //        valueList.Add(valueArray[l]);
+                                    //    }
+                                    //}
                                 }
                                 else
                                 {
@@ -159,6 +139,49 @@ class FSnodeLoader
             debugMessage("OnStart: found " + values.Length + " existing values, valueList.Count is " + valueList.Count);
         }
         return valueList;
+    }
+
+    public void OnLoad(ConfigNode node)
+    {
+        testOnloadMemory = true;
+
+        // ("OnLoad testOnLoadMemory set to " + testOnloadMemory);
+
+        ConfigNode[] existingNodes = node.GetNodes(nodeName);
+        if (existingNodes.Length > 0)
+        {
+            debugMessage("OnLoad: Found " + existingNodes.Length + " " + nodeName + " nodes");
+            for (int i = 0; i < existingNodes.Length; i++)
+            {
+
+
+                values = existingNodes[i].GetValues(valueName);
+                for (int j = 0; j < values.Length; j++)
+                {
+                    valueList.Add(values[j]);
+                    debugMessage("OnLoad: adding to list: " + values[j]);
+                }
+                //if (values.Length > 0)
+                if (valueList.Count > 0)
+                {
+                    foundExistingNodes = true;
+                    //trimArray = new float[trimList.Count];
+                    //for (int ta = 0; ta < trimList.Count; ta++)
+                    //{
+                    //    trimArray[ta] = trimList[ta];
+                    //}
+                }
+                else
+                {
+                    foundExistingNodes = false;
+                }
+            }
+        }
+        else
+        {
+            debugMessage("OnLoad: Found no existing " + nodeName + " nodes");
+            foundExistingNodes = false;
+        }
     }
 
     public ConfigNode OnSave(ConfigNode node)

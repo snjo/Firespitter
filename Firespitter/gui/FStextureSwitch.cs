@@ -28,7 +28,7 @@ class FStextureSwitch : PartModule
 
     List<Transform> targetObjectTransforms = new List<Transform>();
     List<Material> targetMats = new List<Material>();
-    FSnodeLoader textureNode;
+    private FSnodeLoader textureNode;
     private string textureNodeName = "textures";
     private string textureValueName = "name";
     private List<String> texList = new List<string>();
@@ -36,7 +36,10 @@ class FStextureSwitch : PartModule
     private string objectNodeName = "objects";
     private string objectValueName = "name";
     private List<String> objectList = new List<string>();
-    FSdebugMessages debug = new FSdebugMessages(false, FSdebugMessages.OutputMode.both, 2f); //set to true for debug
+    FSdebugMessages debug = new FSdebugMessages(false, FSdebugMessages.OutputMode.both, 2f); //set to true for debug   
+
+    public static Dictionary<String, List<String>> texListDictionary = new Dictionary<String,List<string>>();
+    public static Dictionary<String, List<String>> objectListDictionary = new Dictionary<String, List<string>>();
 
     [KSPEvent(guiActive=false, guiActiveEditor=false, guiName="Debug: Log Objects")]
     public void listAllObjects()
@@ -94,22 +97,54 @@ class FStextureSwitch : PartModule
         }
     }
 
-    public override string GetInfo()
+    public string uniqueModuleID
     {
-        return "Alternate textures are available. Use the Next Texture button on the right click menu.";
+        get
+        {
+            return part.name.Split('(')[0].Split(' ')[0] + moduleID; // parts have the suffix (Clone) in the Editor. In flight the first part has " (vesselName)" added
+        }
+    }
+
+    public override string GetInfo()
+    {                        
+        StringBuilder info = new StringBuilder();
+        info.AppendLine("Alternate textures available:");
+        if (texList.Count == 0)
+            info.AppendLine("None");
+        for (int i = 0; i < texList.Count; i++)
+        {
+            string[] splitString = texList[i].Split('/');
+            if (splitString.Length > 0)
+                info.AppendLine(splitString[splitString.Length-1]);
+        }
+        info.AppendLine("\nUse the Next Texture button on the right click menu.");
+        return info.ToString();
+    }
+
+    public override void OnLoad(ConfigNode node)
+    {                       
+        getNodeValues(node, textureNode, textureNodeName, textureValueName, texListDictionary, texList);
+        getNodeValues(node, objectNode, objectNodeName, objectValueName, objectListDictionary, objectList);
+    }
+
+    private void getNodeValues(ConfigNode node, FSnodeLoader nodeLoader, string nodeName, string valueName, Dictionary<String, List<String>> outputDict, List<String> outputList)
+    {
+        nodeLoader = new FSnodeLoader(part, moduleName, moduleID.ToString(), nodeName, valueName);
+        nodeLoader.debugMode = debugMode;
+        outputList = nodeLoader.ProcessNode(node);
+        if (!outputDict.ContainsKey(uniqueModuleID))
+            outputDict.Add(uniqueModuleID, outputList);
     }
 
     public override void OnStart(PartModule.StartState state)
-    {
-        base.OnStart(state);
+    {        
         debug.debugMode = debugMode;
-        textureNode = new FSnodeLoader(part, moduleName, moduleID.ToString(), textureNodeName, textureValueName);
-        textureNode.debugMode = debugMode;
-        texList = textureNode.OnStart();
 
-        objectNode = new FSnodeLoader(part, moduleName, moduleID.ToString(), objectNodeName, objectValueName);
-        objectNode.debugMode = debugMode;
-        objectList = objectNode.OnStart();
+        if (!texListDictionary.TryGetValue(uniqueModuleID, out texList))
+            debug.debugMessage("FStextureSwitch: No matching texture list key: " + uniqueModuleID);
+        if (!objectListDictionary.TryGetValue(uniqueModuleID, out objectList))
+            debug.debugMessage("FStextureSwitch: No matching object list key: " + uniqueModuleID);
+
         debug.debugMessage("FStextureSwitch found " + texList.Count + " textures, using number " + selectedTexture + ", found " + objectList.Count + " objects");
 
         foreach (String targetObjectName in objectList)
