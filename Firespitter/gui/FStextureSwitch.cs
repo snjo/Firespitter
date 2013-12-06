@@ -110,7 +110,17 @@ class FStextureSwitch : PartModule
         StringBuilder info = new StringBuilder();
         info.AppendLine("Alternate textures available:");
         if (texList.Count == 0)
-            info.AppendLine("None");
+        {
+            if (!texListDictionary.TryGetValue(uniqueModuleID, out texList))
+            {
+                info.AppendLine("None. Error reading Dictionary");
+            }
+            else
+            {
+                if (texList.Count == 0)
+                    info.AppendLine("None");
+            }
+        }
         for (int i = 0; i < texList.Count; i++)
         {
             string[] splitString = texList[i].Split('/');
