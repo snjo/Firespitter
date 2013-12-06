@@ -577,13 +577,7 @@ class FSwing : PartModule
                     }
                 }
                 if (mainLift == null) debug.debugMessage("FSwing: leading edge missing main FSliftSurface: " + leadingEdgeLiftSurface);
-            }
-
-            if (!useLeadingEdge || autoDeployLeadingEdge)
-            {
-                Events["toggleLeadingEdgeEvent"].guiActive = false;
-            }
-
+            }            
         }
         #endregion
 
@@ -628,6 +622,11 @@ class FSwing : PartModule
             //    popup.addGUIChildSections(part);
         }
         #endregion
+
+        if (!useLeadingEdge || autoDeployLeadingEdge)
+        {
+            Events["toggleLeadingEdgeEvent"].guiActive = false;
+        }
     }
 
     public override void OnUpdate()

@@ -187,13 +187,13 @@ class FSwheel : PartModule
         param.Cooldown = deploymentCooldown;
     }
 
-    [KSPEvent(guiName = "Raise Gear", guiActive = true, guiActiveUnfocused = true, unfocusedRange = 5f)]
+    [KSPEvent(guiName = "Raise Gear", guiActive = true, guiActiveEditor=true, guiActiveUnfocused = true, unfocusedRange = 5f)]
     public void RaiseGear()
     {
-        animate("Retract");        
+        animate("Retract");
     }
 
-    [KSPEvent(guiName = "Lower Gear", guiActive = true, guiActiveUnfocused = true, unfocusedRange = 5f)]
+    [KSPEvent(guiName = "Lower Gear", guiActive = true, guiActiveEditor=true, guiActiveUnfocused = true, unfocusedRange = 5f)]
     public void LowerGear()
     {
         animate("Deploy");
@@ -441,6 +441,30 @@ class FSwheel : PartModule
     public override void OnStart(PartModule.StartState state)
     {
         base.OnStart(state);
+
+        #region animation
+
+        anim = part.FindModelAnimators(animationName).FirstOrDefault();
+        if (anim != null)
+        {
+            hasAnimation = true;
+            anim[animationName].layer = animationLayer;
+            float startAnimTime = 0f;
+            if (deploymentState == "Retracted")
+            {
+                startAnimTime = 1f;
+                animSpeed = 1f;
+            }
+            else
+            {
+                animSpeed = -1f;
+            }
+            anim[animationName].normalizedTime = startAnimTime;
+            anim[animationName].speed = animSpeed;
+            anim.Play(animationName);
+        }
+        #endregion  
+
         #region In flight
         if (HighLogic.LoadedSceneIsFlight)
         {
@@ -557,28 +581,7 @@ class FSwheel : PartModule
 
             #endregion
 
-            #region animation
-
-            anim = part.FindModelAnimators(animationName).FirstOrDefault();
-            if (anim != null)
-            {
-                hasAnimation = true;
-                anim[animationName].layer = animationLayer;
-                float startAnimTime = 0f;
-                if (deploymentState == "Retracted")
-                {
-                    startAnimTime = 1f;
-                    animSpeed = 1f;
-                }
-                else
-                {
-                    animSpeed = -1f;
-                }
-                anim[animationName].normalizedTime = startAnimTime;
-                anim[animationName].speed = animSpeed;
-                anim.Play(animationName);
-            }
-            #endregion           
+                     
 
             #region GUI popup
 
@@ -678,6 +681,26 @@ class FSwheel : PartModule
 
     public void FixedUpdate()
     {
+        #region update deployment state
+        if (anim != null)
+        {
+
+            if (!anim.isPlaying)
+            {
+                if (deploymentState == "Deploying")
+                {
+                    deploymentState = "Deployed";
+                    setBrakeLight(brakesEngaged);
+                }
+                else if (deploymentState == "Retracting")
+                {
+                    deploymentState = "Retracted";
+                    setBrakeLight(brakesEngaged);
+                }
+            }
+        }
+        #endregion
+
         if (!HighLogic.LoadedSceneIsFlight)
             return;        
 
@@ -696,25 +719,7 @@ class FSwheel : PartModule
         }
         #endregion
 
-        #region update deployment state        
-        if (anim != null)
-        {
-            
-            if (!anim.isPlaying)
-            {
-                if (deploymentState == "Deploying")
-                {
-                    deploymentState = "Deployed";
-                    setBrakeLight(brakesEngaged);
-                }
-                else if (deploymentState == "Retracting")
-                {
-                    deploymentState = "Retracted";
-                    setBrakeLight(brakesEngaged);
-                }                
-            }
-        }
-        #endregion
+        
 
         #region update brake torque        
         if (brakesEngaged)
