@@ -65,7 +65,8 @@ public class FSanimateGeneric : PartModule
     [KSPAction("Toggle")]
     public void toggleAction(KSPActionParam param)
     {
-        toggleEvent();        
+        if (availableInVessel)
+            toggleEvent();
     }
 
     [KSPEvent(name = "toggleEvent", guiName = "Deploy", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor=true)]
@@ -187,6 +188,8 @@ public class FSanimateGeneric : PartModule
             Events["toggleEvent"].guiActiveUnfocused = availableInEVA;
             Events["toggleEvent"].guiActive = availableInVessel;
             Events["toggleEvent"].unfocusedRange = EVArange;
+            if (!availableInVessel)
+                Actions["toggleAction"].guiName = "Toggle (Disabled)";            
         }
         else
         {

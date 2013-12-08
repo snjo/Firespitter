@@ -51,6 +51,8 @@ class FSwheel : PartModule
     public float brakeSpeed = 0.5f;
     [KSPField(isPersistant=true)]
     public bool brakesEngaged = false;
+    [KSPField]
+    public bool brakesLockedOn = false;
 
     [KSPField]
     public bool hasMotor = true;
@@ -673,8 +675,15 @@ class FSwheel : PartModule
             Events["increaseFrictionEvent"].guiActive = true;
             Events["decreaseFrictionEvent"].guiActive = true;
             Events["suspensionGUIEvent"].guiActive = true;
-        }               
-        
+        }
+
+        if (brakesLockedOn)
+        {
+            Events["brakesOnEvent"].guiActive = false;
+            Events["brakesOffEvent"].guiActive = false;
+            Events["brakesOnEvent"].guiActiveUnfocused = false;
+            Events["brakesOffEvent"].guiActiveUnfocused = false;
+        }
         
         #endregion
     }    
@@ -722,8 +731,8 @@ class FSwheel : PartModule
         
 
         #region update brake torque        
-        if (brakesEngaged)
-        {
+        if (brakesEngaged || brakesLockedOn)
+        {            
             wheelList.brakeTorque = Mathf.Lerp(wheelList.brakeTorque, brakeTorque, TimeWarp.deltaTime * brakeSpeed);
         }
         else

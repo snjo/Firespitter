@@ -144,10 +144,10 @@ class FStextureSwitch : PartModule
         outputList = nodeLoader.ProcessNode(node);
         if (!outputDict.ContainsKey(uniqueModuleID))
             outputDict.Add(uniqueModuleID, outputList);
-    }
+    }    
 
     public override void OnStart(PartModule.StartState state)
-    {        
+    {               
         debug.debugMode = debugMode;
 
         if (!texListDictionary.TryGetValue(uniqueModuleID, out texList))
