@@ -144,6 +144,8 @@ class FSwheel : PartModule
     public float animTime = 0f;
     public float animSpeed = 0f;
 
+    private float finalBrakeTorque = 0f;
+
     private Animation anim;    
     private WheelList wheelList = new WheelList();
     private bool boundsColliderRemoved = false;
@@ -440,6 +442,17 @@ class FSwheel : PartModule
         }
     }
 
+    public override string GetInfo()
+    {
+        StringBuilder info = new StringBuilder();
+        if (hasMotor) info.Append("Motor Torque: ").AppendLine(motorTorque.ToString());
+        else info.AppendLine("No motor.");
+        info.Append("Brake Torque: ").AppendLine(brakeTorque.ToString());
+        if (brakesLockedOn) info.AppendLine("Brakes are locked on");
+
+        return info.ToString();
+    }
+
     public override void OnStart(PartModule.StartState state)
     {
         base.OnStart(state);
@@ -733,7 +746,11 @@ class FSwheel : PartModule
         #region update brake torque        
         if (brakesEngaged || brakesLockedOn)
         {            
-            wheelList.brakeTorque = Mathf.Lerp(wheelList.brakeTorque, brakeTorque, TimeWarp.deltaTime * brakeSpeed);
+            finalBrakeTorque = Mathf.Lerp(wheelList.brakeTorque, brakeTorque, TimeWarp.deltaTime * brakeSpeed);
+            if (brakesLockedOn)
+                if (vessel.ctrlState.mainThrottle > 0.1f)
+                    finalBrakeTorque = 0f;
+            wheelList.brakeTorque = finalBrakeTorque;
         }
         else
         {

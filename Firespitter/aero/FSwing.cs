@@ -15,11 +15,11 @@ class FSwing : PartModule
     [KSPField]
     public string controlSurfaceName = "obj_ctrlSrf";
     [KSPField]
-    public string flapName = "obj_flap";
+    public string flapName = string.Empty;
     [KSPField]
-    public string leadingEdgeTopName;
+    public string leadingEdgeTopName = string.Empty;
     [KSPField]
-    public string leadingEdgeBottomName;
+    public string leadingEdgeBottomName = string.Empty;
     [KSPField]
     public string leadingEdgeTopRetractedName = "leadingEdgeRetracted";
     [KSPField]
@@ -533,6 +533,28 @@ class FSwing : PartModule
         {
             //Debug.Log("FSwing testAxisSymmetryError");
         }
+    }
+
+    public override string GetInfo()
+    {
+        StringBuilder info = new StringBuilder();
+        info.AppendLine("Advanced reconfigurable wing");
+        info.Append("Default control range: ").AppendLine(ctrlSurfaceRange.ToString());
+        if (leadingEdgeBottomName != string.Empty || leadingEdgeTopName != string.Empty)
+        {
+            if (autoDeployLeadingEdge)
+                info.AppendLine("Leading Edge auto deploys");
+            else
+                info.AppendLine("Manually deployed leading edge");
+        }
+        if (flapName != string.Empty)
+            info.AppendLine("Separate Flap surface");
+        info.AppendLine("<color=99ff00ff>Axis Response</color>");
+        info.Append("Pitch: ").AppendLine(pitchResponse.ToString());
+        info.Append("Roll: ").AppendLine(rollResponse.ToString());
+        info.Append("Yaw: ").AppendLine(yawResponse.ToString());
+        info.Append("Flap: ").AppendLine(flapResponse.ToString());
+        return info.ToString();
     }
 
     public override void OnStart(PartModule.StartState state)

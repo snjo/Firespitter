@@ -215,6 +215,17 @@ using UnityEngine;
             }
         }
 
+        public override string GetInfo()
+        {
+            StringBuilder info = new StringBuilder();
+            info.Append("Default steering range: ").AppendLine(steerMultiplier.ToString());
+            if (steeringEnabled) info.AppendLine("Steering enabled by default.");
+            else info.AppendLine("Steering disabled by default.");
+            if (reversedInput) info.AppendLine("Steering inverted (for tail use)");
+
+            return info.ToString();
+        }
+
         public override void OnStart(PartModule.StartState state)
         {
             base.OnStart(state);
