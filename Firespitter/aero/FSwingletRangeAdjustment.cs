@@ -19,12 +19,13 @@ public class FSwingletRangeAdjustment : PartModule
     [KSPField]
     public float maxRange = 60f;
 
-    [KSPField(guiActive = true, guiName = "Control range", isPersistant = true)]
+    [KSPField(guiActive = true, guiName = "Control range", isPersistant = true, guiActiveEditor=true), UI_FloatRange(controlEnabled=true, minValue=0f, maxValue=50f, stepIncrement=0.02f)]
     public float currentControlRange = 16;
+    public float oldControlRange = 16;
     private bool currentControlRangeSet = false;
     private bool locked = false;
 
-    [KSPEvent(name = "decreaseRange", active = true, guiActive = true, guiName = "Decrease control range")]
+    [KSPEvent(name = "decreaseRange", active = true, guiActive = true, guiName = "Decrease control range", guiActiveEditor=true)]
     public void decreaseRangeEvent()
     {
         alterRange(-stepAngle);
@@ -35,7 +36,7 @@ public class FSwingletRangeAdjustment : PartModule
         alterRange(-stepAngle);
     }
 
-    [KSPEvent(name = "increaseRange", active = true, guiActive = true, guiName = "Increase control range")]
+    [KSPEvent(name = "increaseRange", active = true, guiActive = true, guiName = "Increase control range", guiActiveEditor=true)]
     public void increaseRangeEvent()
     {
         alterRange(stepAngle);
@@ -76,6 +77,19 @@ public class FSwingletRangeAdjustment : PartModule
         {
             winglet.ctrlSurfaceRange = currentControlRange;
             locked = false;
+        }
+    }
+
+    public override void OnUpdate()
+    {
+        if (!FARActive)
+        {
+            if (currentControlRange != oldControlRange)
+            {
+                currentControlRange = Mathf.Round(currentControlRange);
+                winglet.ctrlSurfaceRange = currentControlRange;
+                oldControlRange = currentControlRange;
+            }
         }
     }
 

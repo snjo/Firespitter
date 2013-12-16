@@ -128,6 +128,8 @@ class FSwheel : PartModule
     public float rotationAdjustment = 1f;
 
     [KSPField]
+    public bool useDragUpdate = true;
+    [KSPField]
     public float deployedDrag = 0f;
     [KSPField]
     public float retractedDrag = 0f;
@@ -141,6 +143,8 @@ class FSwheel : PartModule
     public int moduleID = 0;
 
     public bool hasAnimation = false;
+
+    [KSPField]
     public float animTime = 0f;
     public float animSpeed = 0f;
 
@@ -880,15 +884,18 @@ class FSwheel : PartModule
 
             #region update drag            
 
-            if (deploymentState == "Deployed")
+            if (useDragUpdate)
             {
-                part.minimum_drag = deployedDrag;
-                part.maximum_drag = deployedDrag;
-            }
-            else
-            {
-                part.minimum_drag = 0f;
-                part.maximum_drag = 0f;
+                if (deploymentState == "Deployed")
+                {
+                    part.minimum_drag = deployedDrag;
+                    part.maximum_drag = deployedDrag;
+                }
+                else
+                {
+                    part.minimum_drag = 0f;
+                    part.maximum_drag = 0f;
+                }
             }
 
             #endregion

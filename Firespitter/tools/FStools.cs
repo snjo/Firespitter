@@ -10,7 +10,10 @@ namespace Firespitter
     {
         public static Vector3 WorldUp(Vessel vessel)
         {
-            return (vessel.rigidbody.position - vessel.mainBody.position).normalized;
+            if (vessel != null)
+                return (vessel.rigidbody.position - vessel.mainBody.position).normalized;
+            else
+                return Vector3.zero;
         }
 
 

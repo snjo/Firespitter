@@ -10,8 +10,10 @@ class FSwing : PartModule
     #region kspfields
     [KSPField]
     public string displayName = "Wing";
-    [KSPField]
-    public string mainLiftSurfaceName = "obj_main";
+    //[KSPField]
+    //public string windowTitle = "Wing Settings";
+    //[KSPField]
+    //public string mainLiftSurfaceName = "obj_main";
     [KSPField]
     public string controlSurfaceName = "obj_ctrlSrf";
     [KSPField]
@@ -54,10 +56,10 @@ class FSwing : PartModule
     public float flapMin = 0f;
     [KSPField]
     public float flapSpeed = 0.3f;
-    [KSPField]
-    public string flapRetractedName = "flapRetracted";
-    [KSPField]
-    public string flapExtendedName = "flapExtended";        
+    //[KSPField]
+    //public string flapRetractedName = "flapRetracted";
+    //[KSPField]
+    //public string flapExtendedName = "flapExtended";        
     [KSPField]
     public Vector3 controlSurfaceAxis = Vector3.right;
     [KSPField(isPersistant=true, guiName="Pitch Response", guiActiveEditor=true, guiActive=true), UI_FloatRange(minValue=-2f, maxValue=2f, stepIncrement=0.025f)]
@@ -67,7 +69,9 @@ class FSwing : PartModule
     [KSPField(isPersistant = true, guiName="Yaw Response", guiActiveEditor=true, guiActive=true), UI_FloatRange(minValue=-2f, maxValue=2f, stepIncrement=0.025f)]
     public float yawResponse = 0f;
     [KSPField(isPersistant = true, guiName="Flap Response", guiActiveEditor=true, guiActive=true), UI_FloatRange(minValue=-2f, maxValue=2f, stepIncrement=0.025f)]
-    public float flapResponse = 0f;    
+    public float flapResponse = 0f;
+    [KSPField]
+    public float controlRotationSpeed = 0.2f;
 
     [KSPField]
     public bool allowInvertOnLeft = true;
@@ -85,21 +89,25 @@ class FSwing : PartModule
     public bool positionOnVesselSet = false;
 
     [KSPField]
-    public bool affectStockWingModule = true;
+    public bool affectStockWingModule = false;
     [KSPField(isPersistant = true)]
     public float deflectionLiftCoeff = 0f;
 
-    [KSPField]
-    public float dragCoeff = 0.5f;
+    //[KSPField]
+    //public float dragCoeff = 0.5f;
     [KSPField]
     public float currentDeflectionLiftCoeff = 1.5f;
     [KSPField]
     public float ctrlSurfaceRange = 20f;
+    [KSPField]
+    public float controlLimiterMaxSpeed = 400f;
+    [KSPField]
+    public float controlLimiterMultiplier = 0.3f;
+    
+    private float limiterMultiplier = 1f;
 
     [KSPField]
-    public int moduleID = 0;
-    [KSPField]
-    public string windowTitle = "Wing Settings";
+    public int moduleID = 0;    
     //[KSPField]
     //public bool GUIchild = false;
     //[KSPField]
@@ -142,22 +150,22 @@ class FSwing : PartModule
 
     #region gui variables
 
-    private FSGUIPopup popup;
-    //private PopupSection axisSection = new PopupSection();
-    public WingAxisSection axisPitchSection;
-    public WingAxisSection axisRollSection;
-    public WingAxisSection axisYawSection;
-    public WingAxisSection axisFlapSection;
-    public PopupSection testAxisSection;
-    private Rect windowRect = FSGUIwindowID.standardRect;
+    //private FSGUIPopup popup;
+    ////private PopupSection axisSection = new PopupSection();
+    //public WingAxisSection axisPitchSection;
+    //public WingAxisSection axisRollSection;
+    //public WingAxisSection axisYawSection;
+    //public WingAxisSection axisFlapSection;
+    //public PopupSection testAxisSection;
+    //private Rect windowRect = FSGUIwindowID.standardRect;
     public Vector4 testAxis = Vector4.zero;
     private bool editorTransformsFound = false;
     //private bool doTestSymmetry = false;
 
-    private float oldPitchResponse;
-    private float oldRollResponse;
-    private float oldYawResponse;
-    private float oldFlapResponse;
+    //private float oldPitchResponse;
+    //private float oldRollResponse;
+    //private float oldYawResponse;
+    //private float oldFlapResponse;
 
     //private bool invertAxisTest;
     //private bool debugStep = false;
@@ -187,7 +195,7 @@ class FSwing : PartModule
 
     }
 
-    [KSPEvent(guiActive = true, guiName = "Toggle Leading Edge")]
+    [KSPEvent(guiActive = false, guiName = "Toggle Leading Edge")]
     public void toggleLeadingEdgeEvent()
     {
         setLeadingEdge(!leadingEdgeExtended);
@@ -302,89 +310,89 @@ class FSwing : PartModule
         }
     }
 
-    private void updateValuesFromGUI()
-    {        
-        if (axisPitchSection == null) return;
-        //axisPitchSection.updateCollapseStatus();
-        //axisRollSection.updateCollapseStatus();
-        //axisYawSection.updateCollapseStatus();
-        //axisFlapSection.updateCollapseStatus();
+    //private void updateValuesFromGUI()
+    //{        
+    //    if (axisPitchSection == null) return;
+    //    //axisPitchSection.updateCollapseStatus();
+    //    //axisRollSection.updateCollapseStatus();
+    //    //axisYawSection.updateCollapseStatus();
+    //    //axisFlapSection.updateCollapseStatus();
 
-        try
-        {
-            float.TryParse(axisPitchSection.responseElement.inputText, out pitchResponse);
-        }
-        catch{}
+    //    try
+    //    {
+    //        float.TryParse(axisPitchSection.responseElement.inputText, out pitchResponse);
+    //    }
+    //    catch{}
 
-        try
-        {
-            float.TryParse(axisRollSection.responseElement.inputText, out rollResponse);
-        }
-        catch { }
+    //    try
+    //    {
+    //        float.TryParse(axisRollSection.responseElement.inputText, out rollResponse);
+    //    }
+    //    catch { }
 
-        try
-        {
-            float.TryParse(axisYawSection.responseElement.inputText, out yawResponse);
-        }
-        catch { }
+    //    try
+    //    {
+    //        float.TryParse(axisYawSection.responseElement.inputText, out yawResponse);
+    //    }
+    //    catch { }
 
-        try
-        {
-            float.TryParse(axisFlapSection.responseElement.inputText, out flapResponse);
-        }
-        catch { }
+    //    try
+    //    {
+    //        float.TryParse(axisFlapSection.responseElement.inputText, out flapResponse);
+    //    }
+    //    catch { }
 
-        if (oldPitchResponse != pitchResponse || oldRollResponse != rollResponse || oldYawResponse != yawResponse || oldFlapResponse != flapResponse)
-        {
-            List<Part> wings = new List<Part>(part.symmetryCounterparts);
-            //wings.Add(part);
-            foreach (Part p in wings)
-            {
-                FSwing wing = p.GetComponent<FSwing>();
-                if (wing != null)
-                {
-                    wing.pitchResponse = pitchResponse;
-                    wing.rollResponse = rollResponse;
-                    wing.yawResponse = yawResponse;
-                    wing.flapResponse = flapResponse;
-                    wing.axisPitchSection.response = pitchResponse;
-                    wing.axisRollSection.response = rollResponse;
-                    wing.axisYawSection.response = yawResponse;
-                    wing.axisFlapSection.response = flapResponse;                    
-                }
-            }
-        }
+    //    if (oldPitchResponse != pitchResponse || oldRollResponse != rollResponse || oldYawResponse != yawResponse || oldFlapResponse != flapResponse)
+    //    {
+    //        List<Part> wings = new List<Part>(part.symmetryCounterparts);
+    //        //wings.Add(part);
+    //        foreach (Part p in wings)
+    //        {
+    //            FSwing wing = p.GetComponent<FSwing>();
+    //            if (wing != null)
+    //            {
+    //                wing.pitchResponse = pitchResponse;
+    //                wing.rollResponse = rollResponse;
+    //                wing.yawResponse = yawResponse;
+    //                wing.flapResponse = flapResponse;
+    //                wing.axisPitchSection.response = pitchResponse;
+    //                wing.axisRollSection.response = rollResponse;
+    //                wing.axisYawSection.response = yawResponse;
+    //                wing.axisFlapSection.response = flapResponse;                    
+    //            }
+    //        }
+    //    }
 
-        oldPitchResponse = pitchResponse;
-        oldRollResponse = rollResponse;
-        oldYawResponse = yawResponse;
-        oldFlapResponse = flapResponse;
-    }
+    //    oldPitchResponse = pitchResponse;
+    //    oldRollResponse = rollResponse;
+    //    oldYawResponse = yawResponse;
+    //    oldFlapResponse = flapResponse;
+    //}
 
-    public PopupSection createTestSection()
-    {
-        float buttonWidth = 30f;
-        PopupSection newSection = new PopupSection();
+    //public PopupSection createTestSection()
+    //{
+    //    float buttonWidth = 30f;
+    //    PopupSection newSection = new PopupSection();
 
-        PopupElement testElement = new PopupElement("Test", new PopupButton("Q", buttonWidth, testFunction, (int)keys.rollLeft));
-        testElement.useTitle = false;
-        testElement.buttons.Add(new PopupButton("W", buttonWidth, testFunction, (int)keys.pitchDown));
-        testElement.buttons.Add(new PopupButton("E", buttonWidth, testFunction, (int)keys.rollRight));
-        testElement.buttons.Add(new PopupButton("Fl.+", buttonWidth, testFunction, (int)keys.flapPlus));
+    //    PopupElement testElement = new PopupElement("Test", new PopupButton("Q", buttonWidth, testFunction, (int)keys.rollLeft));
+    //    testElement.useTitle = false;
+    //    testElement.buttons.Add(new PopupButton("W", buttonWidth, testFunction, (int)keys.pitchDown));
+    //    testElement.buttons.Add(new PopupButton("E", buttonWidth, testFunction, (int)keys.rollRight));
+    //    testElement.buttons.Add(new PopupButton("Fl.+", buttonWidth, testFunction, (int)keys.flapPlus));
 
-        PopupElement testElement2 = new PopupElement("", new PopupButton("A", buttonWidth, testFunction, (int)keys.yawLeft));
-        testElement2.useTitle = false;
-        testElement2.buttons.Add(new PopupButton("S", buttonWidth, testFunction, (int)keys.pitchUp));
-        testElement2.buttons.Add(new PopupButton("D", buttonWidth, testFunction, (int)keys.yawRight));
-        testElement2.buttons.Add(new PopupButton("Fl.-", buttonWidth, testFunction, (int)keys.flapMinus));
-        testElement2.buttons.Add(new PopupButton("Reset", buttonWidth*2, testFunction, (int)keys.reset));
+    //    PopupElement testElement2 = new PopupElement("", new PopupButton("A", buttonWidth, testFunction, (int)keys.yawLeft));
+    //    testElement2.useTitle = false;
+    //    testElement2.buttons.Add(new PopupButton("S", buttonWidth, testFunction, (int)keys.pitchUp));
+    //    testElement2.buttons.Add(new PopupButton("D", buttonWidth, testFunction, (int)keys.yawRight));
+    //    testElement2.buttons.Add(new PopupButton("Fl.-", buttonWidth, testFunction, (int)keys.flapMinus));
+    //    testElement2.buttons.Add(new PopupButton("Reset", buttonWidth*2, testFunction, (int)keys.reset));
 
-        newSection.elements.Add(new PopupElement("Test settings"));
-        newSection.elements.Add(testElement);
-        newSection.elements.Add(testElement2);
+    //    newSection.elements.Add(new PopupElement("Test settings"));
+    //    newSection.elements.Add(testElement);
+    //    newSection.elements.Add(testElement2);
 
-        return newSection;
-    }
+    //    return newSection;
+    //}
 
     private void testFunction(int ID)
     {
@@ -433,9 +441,9 @@ class FSwing : PartModule
     private void findTransforms(bool verboseErrors)
     {
         #region find transforms
-        controlSurface = part.FindModelTransform(controlSurfaceName);
-        if (controlSurface != null) useCtrlSrf = true;
-        else if (verboseErrors) debug.debugMessage("FSwing: did not find controlSurface " + controlSurfaceName);
+        //controlSurface = part.FindModelTransform(controlSurfaceName);
+        //if (controlSurface != null) useCtrlSrf = true;
+        //else if (verboseErrors) debug.debugMessage("FSwing: did not find controlSurface " + controlSurfaceName);
 
         flap = part.FindModelTransform(flapName);
         if (flap != null)
@@ -451,10 +459,10 @@ class FSwing : PartModule
         if (leadingEdgeBottom == null && verboseErrors) debug.debugMessage("FSwing: did not find leadingEdgeBottom " + leadingEdgeBottomName);
         if (leadingEdgeTop != null) useLeadingEdge = true;
 
-        flapRetracted = part.FindModelTransform(flapRetractedName);
-        if (flapRetracted == null && verboseErrors) debug.debugMessage("FSwing: did not find flapRetracted " + flapRetractedName);
-        flapExtended = part.FindModelTransform(flapExtendedName);
-        if (flapExtended == null && verboseErrors) debug.debugMessage("FSwing: did not find flapExtended " + flapExtendedName);
+        //flapRetracted = part.FindModelTransform(flapRetractedName);
+        //if (flapRetracted == null && verboseErrors) debug.debugMessage("FSwing: did not find flapRetracted " + flapRetractedName);
+        //flapExtended = part.FindModelTransform(flapExtendedName);
+        //if (flapExtended == null && verboseErrors) debug.debugMessage("FSwing: did not find flapExtended " + flapExtendedName);
 
         leadingEdgeTopExtended = part.FindModelTransform(leadingEdgeTopExtendedName);
         if (leadingEdgeTopExtended == null && verboseErrors) debug.debugMessage("FSwing: did not find leadingEdgeTopExtended " + leadingEdgeTopExtendedName);
@@ -549,7 +557,7 @@ class FSwing : PartModule
         }
         if (flapName != string.Empty)
             info.AppendLine("Separate Flap surface");
-        info.AppendLine("<color=99ff00ff>Axis Response</color>");
+        info.AppendLine("<color=#99ff00ff>Axis Response</color>");
         info.Append("Pitch: ").AppendLine(pitchResponse.ToString());
         info.Append("Roll: ").AppendLine(rollResponse.ToString());
         info.Append("Yaw: ").AppendLine(yawResponse.ToString());
@@ -585,8 +593,12 @@ class FSwing : PartModule
             }
 
             // get the main lift surface for the leading edge to manipulate
-            if (!affectStockWingModule)
+            if (affectStockWingModule)
             {
+                useCtrlSrf = false;
+            }
+            else
+            {                
                 FSliftSurface[] surfaces = part.GetComponents<FSliftSurface>();
                 foreach (FSliftSurface surface in surfaces)
                 {
@@ -605,45 +617,57 @@ class FSwing : PartModule
 
         #region editor mode
 
-        if (HighLogic.LoadedSceneIsEditor)
-        {
-            popup = new FSGUIPopup(part, "FSwing", moduleID, FSGUIwindowID.wing, windowRect, windowTitle);
-            axisPitchSection = new WingAxisSection("Pitch Response", pitchResponse);
-            axisRollSection = new WingAxisSection("Roll Response", rollResponse);
-            axisYawSection = new WingAxisSection("Yaw Response", yawResponse);
-            axisFlapSection = new WingAxisSection("Flap Response", flapResponse);
-            popup.sections.Add(axisPitchSection);
-            popup.sections.Add(axisRollSection);
-            popup.sections.Add(axisYawSection);
-            popup.sections.Add(axisFlapSection);
+        //if (HighLogic.LoadedSceneIsEditor)
+        //{
+        //    //popup = new FSGUIPopup(part, "FSwing", moduleID, FSGUIwindowID.wing, windowRect, windowTitle);
+        //    //axisPitchSection = new WingAxisSection("Pitch Response", pitchResponse);
+        //    //axisRollSection = new WingAxisSection("Roll Response", rollResponse);
+        //    //axisYawSection = new WingAxisSection("Yaw Response", yawResponse);
+        //    //axisFlapSection = new WingAxisSection("Flap Response", flapResponse);
+        //    //popup.sections.Add(axisPitchSection);
+        //    //popup.sections.Add(axisRollSection);
+        //    //popup.sections.Add(axisYawSection);
+        //    //popup.sections.Add(axisFlapSection);
 
-            //testAxisSection = createTestSection();
-            //popup.sections.Add(testAxisSection);
-            popup.lineSpacing = 5f;
-            PopupSection testDescriptionSection = new PopupSection();
-            PopupElement testDescription1 = new PopupElement("To test settings, press WASDQE to see roll,");
-            PopupElement testDescription2 = new PopupElement("pitch and yaw response. Just like in flight.");
-            PopupElement testDescription3 = new PopupElement("Press F to see full flap response");
-            testDescription1.height = 21f;
-            testDescription2.height = 21f;
-            testDescriptionSection.elements.Add(testDescription1);
-            testDescriptionSection.elements.Add(testDescription2);
-            testDescriptionSection.elements.Add(testDescription3);  
-            popup.sections.Add(testDescriptionSection);
+        //    ////testAxisSection = createTestSection();
+        //    ////popup.sections.Add(testAxisSection);
+        //    //popup.lineSpacing = 5f;
+        //    //PopupSection testDescriptionSection = new PopupSection();
+        //    //PopupElement testDescription1 = new PopupElement("To test settings, press WASDQE to see roll,");
+        //    //PopupElement testDescription2 = new PopupElement("pitch and yaw response. Just like in flight.");
+        //    //PopupElement testDescription3 = new PopupElement("Press F to see full flap response");
+        //    //testDescription1.height = 21f;
+        //    //testDescription2.height = 21f;
+        //    //testDescriptionSection.elements.Add(testDescription1);
+        //    //testDescriptionSection.elements.Add(testDescription2);
+        //    //testDescriptionSection.elements.Add(testDescription3);  
+        //    //popup.sections.Add(testDescriptionSection);
 
-            popup.showCloseButton = false;
-            popup.useInActionEditor = true;
-            popup.useInFlight = false;
+        //    //popup.showCloseButton = false;
+        //    //popup.useInActionEditor = true;
+        //    //popup.useInFlight = false;
 
-            oldPitchResponse = pitchResponse;
-            oldRollResponse = rollResponse;
-            oldYawResponse = yawResponse;
-            oldFlapResponse = flapResponse;
+        //    oldPitchResponse = pitchResponse;
+        //    oldRollResponse = rollResponse;
+        //    oldYawResponse = yawResponse;
+        //    oldFlapResponse = flapResponse;
 
-            //if (GUIparent)
-            //    popup.addGUIChildSections(part);
-        }
+        //    //if (GUIparent)
+        //    //    popup.addGUIChildSections(part);
+        //}
         #endregion
+
+        if (affectStockWingModule)
+        {
+            Fields["pitchResponse"].guiActive = false;
+            Fields["pitchResponse"].guiActiveEditor = false;
+            Fields["rollResponse"].guiActive = false;
+            Fields["rollResponse"].guiActiveEditor = false;
+            Fields["yawResponse"].guiActive = false;
+            Fields["yawResponse"].guiActiveEditor = false;
+            Fields["flapResponse"].guiActive = false;
+            Fields["flapResponse"].guiActiveEditor = false;
+        }
 
         if (!useLeadingEdge || autoDeployLeadingEdge)
         {
@@ -742,8 +766,8 @@ class FSwing : PartModule
                 if (!wingIsPointingUp)
                     input.z *= -1;
 
-                float amount = (ctrlSurfaceRange * ((input.x * pitchResponse) + (input.y * rollResponse) + (input.z * yawResponse))) + (input.w * flapResponse);                
-                controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis));
+                float amount = (limiterMultiplier * ctrlSurfaceRange * ((input.x * pitchResponse) + (input.y * rollResponse) + (input.z * yawResponse))) + (input.w * flapResponse);                
+                controlSurface.localRotation = Quaternion.Lerp(controlSurface.localRotation, Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis)), controlRotationSpeed);
             }
 
             //if (useFlap)
@@ -755,13 +779,18 @@ class FSwing : PartModule
         #endregion
     }
 
+    public override void OnFixedUpdate()
+    {
+        limiterMultiplier = Mathf.Max(controlLimiterMultiplier, -(((float)vessel.srf_velocity.magnitude - controlLimiterMaxSpeed) / controlLimiterMaxSpeed));        
+    }
+
     public void Update()
     {
         #region editor
 
         
 
-        if (popup == null) return;
+        //if (popup == null) return;
 
         if (HighLogic.LoadedSceneIsEditor)
         {
@@ -803,17 +832,17 @@ class FSwing : PartModule
         #endregion
     }
 
-    public void OnGUI()
-    {
-        if (HighLogic.LoadedSceneIsEditor && popup != null)
-        {
-            //testAxis = Vector4.zero;
-            //doTestSymmetry = false;
+    //public void OnGUI()
+    //{
+    //    if (HighLogic.LoadedSceneIsEditor && popup != null)
+    //    {
+    //        //testAxis = Vector4.zero;
+    //        //doTestSymmetry = false;
 
-            //popup.popup();
-            //updateValuesFromGUI();
-        }
-    }
+    //        //popup.popup();
+    //        //updateValuesFromGUI();
+    //    }
+    //}
 }
 
 public class WingAxisSection : PopupSection

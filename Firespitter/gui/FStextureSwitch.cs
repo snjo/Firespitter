@@ -83,7 +83,7 @@ class FStextureSwitch : PartModule
     public void useTexture(Material targetMat)
     {
         if (targetMat != null && texList.Count > 0)
-        {                
+        {
             if (GameDatabase.Instance.ExistsTexture(texList[selectedTexture]))
             {
                 debug.debugMessage("assigning texture: " + texList[selectedTexture]);
@@ -94,6 +94,10 @@ class FStextureSwitch : PartModule
             {
                 debug.debugMessage("no such texture: " + texList[selectedTexture]);
             }
+        }
+        else
+        {
+            debug.debugMessage("FStextureSwitch: No target material in object.");
         }
     }
 
@@ -161,7 +165,7 @@ class FStextureSwitch : PartModule
         {
             Transform targetObjectTransform = part.FindModelTransform(targetObjectName);
             if (targetObjectTransform != null && targetObjectTransform.gameObject.renderer != null) // check for if the object even has a mesh. otherwise part list loading crashes
-            {                
+            {
                 Material targetMat = targetObjectTransform.gameObject.renderer.material;
                 if (targetMat != null)
                 {
@@ -170,6 +174,14 @@ class FStextureSwitch : PartModule
                         targetMats.Add(targetMat);
                     }
                 }
+                else
+                {
+                    debug.debugMessage("FStextureSwitch: No target material in object " + targetObjectName);
+                }
+            }
+            else
+            {
+                debug.debugMessage("FStextureSwitch: Object " + targetObjectName + " not found");
             }
         }        
 

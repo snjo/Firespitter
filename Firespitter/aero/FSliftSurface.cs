@@ -9,7 +9,7 @@ class FSliftSurface : PartModule
     [KSPField]
     public string liftTransformName = "lift";
     [KSPField]
-    public float power = 0.0002f;
+    public float power = 0.0008f;
     [KSPField]
     public float wingArea = 12f;
     [KSPField]

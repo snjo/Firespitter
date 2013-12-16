@@ -52,7 +52,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="aero\FSliftSurface.cs" />
+    <Compile Include="cockpit\AnalogCounter.cs" />
+    <Compile Include="cockpit\FSairSpeedIndicator.cs" />
+    <Compile Include="cockpit\FSaltimeterCounter.cs" />
+    <Compile Include="cockpit\FSartificialHorizon.cs" />
+    <Compile Include="cockpit\FSclimbRate.cs" />
+    <Compile Include="cockpit\FSfuelGauge.cs" />
     <Compile Include="cockpit\FSkerbalPuppet.cs" />
+    <Compile Include="cockpit\FSmaintenanceCounter.cs" />
+    <Compile Include="cockpit\FSpitchIndicator.cs" />
+    <Compile Include="cockpit\FStachometer.cs" />
     <Compile Include="engine\FSparticleFX.cs" />
     <Compile Include="engine\FSvelocityController.cs" />
     <Compile Include="tools\ShipHeading.cs" />
