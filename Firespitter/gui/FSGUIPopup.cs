@@ -90,6 +90,10 @@ public class FSGUIPopup
     {
         if (element.showElement)
         {
+            if (element.style == null)
+            {
+                element.setStyle(GUI.skin.textArea); //GUI.skin.textArea
+            }
             int activeElements = 0;
             if (element.useTitle) activeElements++;
             if (element.useInput) activeElements++;
@@ -104,7 +108,10 @@ public class FSGUIPopup
             {
                 if (subElementRect.width == 0)
                     subElementRect.width = (elementWidth / activeElements) - (subElementSpacing);
-                GUI.Label(subElementRect, element.titleText);
+                if (element.useTextArea)
+                    GUI.TextArea(subElementRect, element.titleText, element.style);
+                else
+                    GUI.Label(subElementRect, element.titleText, element.style);                
                 subElementRect.x += subElementRect.width + subElementSpacing;
             }
 
@@ -159,25 +166,6 @@ public class FSGUIPopup
             lastElementTop += element.height + lineSpacing;
         }
     }
-
-   /* private void drawWindow(int windowID)
-    {
-        lastElementTop = 0f;
-        elementSize.x = windowRect.width - marginLeft - marginRight + subElementSpacing;
-        windowRect.height = ((float)elementList.Count * (elementSize.y + subElementSpacing)) + marginTop + marginBottom;
-        for (int i = 0; i < elementList.Count; i++)
-        {
-            drawElement(elementList[i]);
-        }
-        if (showCloseButton)
-        {
-            if (GUI.Button(new Rect(windowRect.width - 18f, 2f, 16f, 16f),""))
-            {
-                showMenu = false;
-            }
-        }
-        GUI.DragWindow();        
-    }*/
 
     private void drawWindow(int windowID)
     {
@@ -278,30 +266,6 @@ public class FSGUIPopup
         }
         //return optionEnabled;        
     }
-
-    ///// <summary>
-    ///// Combines together popup sections from different modules. Must be hard coded in per module type currently. Child modules must be listed in the cfg before the parent module, or they will return an empty list.
-    ///// The target module must have a list of sections called popupSections
-    ///// </summary>
-    ///// <param name="part"></param>
-    //public void addGUIChildSections(Part part)
-    //{
-    //    foreach (PartModule module in part.Modules)
-    //    {
-    //        if (module is FStextureSwitch)
-    //        {
-    //            //Debug.Log("adding gui from texture switcher to this gui");
-    //            FStextureSwitch target = (module as FStextureSwitch);
-    //            //Debug.Log("target guichild is " + target.GUIchild);
-    //            if (target.GUIchild)
-    //            {
-    //                //Debug.Log("section count before: " + sections.Count);
-    //                sections.AddRange(target.popupSections);
-    //                //Debug.Log("section count after: " + sections.Count);
-    //            }                                
-    //        }
-    //    }
-    //}
 }
 
 public class ProxyModuleWithGUI : PartModule
@@ -320,6 +284,10 @@ public class PopupSection
         element.height = height;
         elements.Add(element);
     }
+    public void AddElement(PopupElement element)
+    {        
+        elements.Add(element);
+    }
 }
 
 public class PopupElement
@@ -334,6 +302,28 @@ public class PopupElement
 
     public bool useTitle = false;
     public bool useInput = false;
+    public bool useTextArea = false;
+
+    public GUIStyle style; // GUIStyle(GUI.skin.button);
+    Color selectedColor = Color.red;
+    Color normalColor = Color.white;
+    Color disabledColor = Color.gray;
+    Color textColor = Color.white;
+    bool wordWrap = true;
+    bool richText = true;    
+
+    public void setStyle(GUIStyle _baseStyle)
+    {
+        setStyle(textColor, wordWrap, richText, _baseStyle);        
+    }
+
+    public void setStyle(Color _textColor, bool _wordWrap, bool _richText, GUIStyle _baseStyle)
+    {
+        style = new GUIStyle(_baseStyle);
+        style.normal.textColor = _textColor;
+        style.wordWrap = _wordWrap;
+        style.richText = _richText;        
+    }
 
     public PopupElement()
     {
@@ -355,6 +345,13 @@ public class PopupElement
     {        
         titleText = title;
         useTitle = true;        
+    }
+
+    public PopupElement(string title, bool textArea)
+    {
+        titleText = title;
+        useTitle = true;
+        useTextArea = textArea;
     }
 
     public PopupElement(string title, string input)

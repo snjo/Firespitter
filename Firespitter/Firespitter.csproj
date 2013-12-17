@@ -64,6 +64,7 @@
     <Compile Include="cockpit\FStachometer.cs" />
     <Compile Include="engine\FSparticleFX.cs" />
     <Compile Include="engine\FSvelocityController.cs" />
+    <Compile Include="gui\HelpPopup.cs" />
     <Compile Include="tools\ShipHeading.cs" />
     <Compile Include="engine\FSanimateThrottle.cs" />
     <Compile Include="tools\FSgenericButtonHandler.cs" />

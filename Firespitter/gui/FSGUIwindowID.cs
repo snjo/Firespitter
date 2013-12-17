@@ -24,6 +24,7 @@ public static class FSGUIwindowID
     public static int flightPath = 5916; // 5 reserved
 
     public static Rect standardRect = new Rect(500f, 300f, 300f, 100f);
+    public static Rect tallRect = new Rect(500f, 300f, 300f, 500f);
 
     public static int lastUsedID = 6050;
 

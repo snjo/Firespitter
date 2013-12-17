@@ -93,8 +93,6 @@ class FSwing : PartModule
     [KSPField(isPersistant = true)]
     public float deflectionLiftCoeff = 0f;
 
-    //[KSPField]
-    //public float dragCoeff = 0.5f;
     [KSPField]
     public float currentDeflectionLiftCoeff = 1.5f;
     [KSPField]
@@ -107,11 +105,11 @@ class FSwing : PartModule
     private float limiterMultiplier = 1f;
 
     [KSPField]
+    public bool showTweakables = true;
+    [KSPField]
+    public bool showHelp = true;
+    [KSPField]
     public int moduleID = 0;    
-    //[KSPField]
-    //public bool GUIchild = false;
-    //[KSPField]
-    //public bool GUIparent = false;
     [KSPField]
     public bool debugMode = false;
     
@@ -150,26 +148,8 @@ class FSwing : PartModule
 
     #region gui variables
 
-    //private FSGUIPopup popup;
-    ////private PopupSection axisSection = new PopupSection();
-    //public WingAxisSection axisPitchSection;
-    //public WingAxisSection axisRollSection;
-    //public WingAxisSection axisYawSection;
-    //public WingAxisSection axisFlapSection;
-    //public PopupSection testAxisSection;
-    //private Rect windowRect = FSGUIwindowID.standardRect;
     public Vector4 testAxis = Vector4.zero;
     private bool editorTransformsFound = false;
-    //private bool doTestSymmetry = false;
-
-    //private float oldPitchResponse;
-    //private float oldRollResponse;
-    //private float oldYawResponse;
-    //private float oldFlapResponse;
-
-    //private bool invertAxisTest;
-    //private bool debugStep = false;
-    //private bool debugStepMode = false;
 
     private enum keys
     {
@@ -185,14 +165,35 @@ class FSwing : PartModule
     }
     private Vector4 oldTestAmount = Vector4.zero;
 
+    [KSPField]
+    public string helpTextString = string.Empty;
+    public static string defaultHelpText = "Each wing has three control axis, and the flap axis. The sliders in the tweakable menu set their response to the Pitch, Roll and Yaw, taking input from the keyboard/joystick.\n\n<color=#99ff00ff>Testing</color>\nWhile in the Action Group editor you can test the control surface movement by pressing the W/A, Q/E, A/D and F keys.\n\n<color=#99ff00ff>Axis response</color>\nA setting of 1 in an axis will give the default control surface response. a 0 will give no response on that axis, and -1 will give the normal amount, but in the opposite direction.\nEach part has a default control response. Wings respond top roll only, rudders to yaw, and elevators to pitch. You can override these if you want to use an elevator as a rudder for instance.\n\n<color=#99ff00ff>Tweaks</color>\nYou can set up a bit or pitch on the main wings, or roll response on the rudder by setting a low number to an axis that is 0 by default.\nSome special settings are easier to do in flight mode because of SPH tweakable symmetry constraints.\n\n<color=#99ff00ff>Flaps</color>\nThe flap axis responds to Action Group inputs set up in the Action Group editor. Some wings also have a separate flap surface controlled by the action group. This can not be tested in the editor.";
+
+    private Firespitter.gui.HelpPopup helpPopup;
+
+    //private FSGUIPopup helpPopup;
+    //private Rect windowRect = FSGUIwindowID.standardRect;
+    //private PopupSection helpSection;
+    //private int windowID = 0;
+    private string helpTextInternal
+    {
+        get
+        {
+            if (helpTextString == string.Empty)
+                return defaultHelpText;
+            else
+                return helpTextString;
+        }
+    }
+
     #endregion
 
     #region events and actions
 
-    [KSPEvent(guiName = "Help", guiActiveEditor = true)]
+    [KSPEvent(guiName = "Help", guiActiveEditor = true, guiActive = true)]
     public void showHelpEvent()
     {
-
+        helpPopup.showMenu = true;
     }
 
     [KSPEvent(guiActive = false, guiName = "Toggle Leading Edge")]
@@ -310,140 +311,9 @@ class FSwing : PartModule
         }
     }
 
-    //private void updateValuesFromGUI()
-    //{        
-    //    if (axisPitchSection == null) return;
-    //    //axisPitchSection.updateCollapseStatus();
-    //    //axisRollSection.updateCollapseStatus();
-    //    //axisYawSection.updateCollapseStatus();
-    //    //axisFlapSection.updateCollapseStatus();
-
-    //    try
-    //    {
-    //        float.TryParse(axisPitchSection.responseElement.inputText, out pitchResponse);
-    //    }
-    //    catch{}
-
-    //    try
-    //    {
-    //        float.TryParse(axisRollSection.responseElement.inputText, out rollResponse);
-    //    }
-    //    catch { }
-
-    //    try
-    //    {
-    //        float.TryParse(axisYawSection.responseElement.inputText, out yawResponse);
-    //    }
-    //    catch { }
-
-    //    try
-    //    {
-    //        float.TryParse(axisFlapSection.responseElement.inputText, out flapResponse);
-    //    }
-    //    catch { }
-
-    //    if (oldPitchResponse != pitchResponse || oldRollResponse != rollResponse || oldYawResponse != yawResponse || oldFlapResponse != flapResponse)
-    //    {
-    //        List<Part> wings = new List<Part>(part.symmetryCounterparts);
-    //        //wings.Add(part);
-    //        foreach (Part p in wings)
-    //        {
-    //            FSwing wing = p.GetComponent<FSwing>();
-    //            if (wing != null)
-    //            {
-    //                wing.pitchResponse = pitchResponse;
-    //                wing.rollResponse = rollResponse;
-    //                wing.yawResponse = yawResponse;
-    //                wing.flapResponse = flapResponse;
-    //                wing.axisPitchSection.response = pitchResponse;
-    //                wing.axisRollSection.response = rollResponse;
-    //                wing.axisYawSection.response = yawResponse;
-    //                wing.axisFlapSection.response = flapResponse;                    
-    //            }
-    //        }
-    //    }
-
-    //    oldPitchResponse = pitchResponse;
-    //    oldRollResponse = rollResponse;
-    //    oldYawResponse = yawResponse;
-    //    oldFlapResponse = flapResponse;
-    //}
-
-    //public PopupSection createTestSection()
-    //{
-    //    float buttonWidth = 30f;
-    //    PopupSection newSection = new PopupSection();
-
-    //    PopupElement testElement = new PopupElement("Test", new PopupButton("Q", buttonWidth, testFunction, (int)keys.rollLeft));
-    //    testElement.useTitle = false;
-    //    testElement.buttons.Add(new PopupButton("W", buttonWidth, testFunction, (int)keys.pitchDown));
-    //    testElement.buttons.Add(new PopupButton("E", buttonWidth, testFunction, (int)keys.rollRight));
-    //    testElement.buttons.Add(new PopupButton("Fl.+", buttonWidth, testFunction, (int)keys.flapPlus));
-
-    //    PopupElement testElement2 = new PopupElement("", new PopupButton("A", buttonWidth, testFunction, (int)keys.yawLeft));
-    //    testElement2.useTitle = false;
-    //    testElement2.buttons.Add(new PopupButton("S", buttonWidth, testFunction, (int)keys.pitchUp));
-    //    testElement2.buttons.Add(new PopupButton("D", buttonWidth, testFunction, (int)keys.yawRight));
-    //    testElement2.buttons.Add(new PopupButton("Fl.-", buttonWidth, testFunction, (int)keys.flapMinus));
-    //    testElement2.buttons.Add(new PopupButton("Reset", buttonWidth*2, testFunction, (int)keys.reset));
-
-    //    newSection.elements.Add(new PopupElement("Test settings"));
-    //    newSection.elements.Add(testElement);
-    //    newSection.elements.Add(testElement2);
-
-    //    return newSection;
-    //}
-
-    private void testFunction(int ID)
-    {
-        //doTestSymmetry = true;
-        testAxis = Vector4.zero;
-        //invertAxisTest = true;
-
-        if (ID > (int)keys.reset || ID < 0) ID = (int)keys.reset;
-        keys IDasKey = (keys)ID;
-
-        switch (IDasKey)
-        {
-            case keys.pitchUp: // Pitch ^
-                testAxis.x = 1; 
-                break;
-            case keys.pitchDown: // Pitch v
-                testAxis.x = -1;
-                break;
-            case keys.rollLeft:// Roll <
-                testAxis.y = 1;
-                //invertAxisTest = false;
-                break;
-            case keys.rollRight: // Roll >
-                testAxis.y = -1;
-                //invertAxisTest = false;
-                break;
-            case keys.yawLeft: // Yaw <
-                testAxis.z = -1;
-                break;
-            case keys.yawRight: // Yaw >
-                testAxis.z = 1;
-                break;
-            case keys.flapPlus: // Flap ^
-                testAxis.w = 1;
-                break;
-            case keys.flapMinus: // Flap v
-                testAxis.w = -1;
-                break;
-            case keys.reset: // Reset
-                testAxis = Vector4.zero;
-                break;
-        }
-        debug.debugMessage("test axis: " + testAxis);
-    }
-
     private void findTransforms(bool verboseErrors)
     {
         #region find transforms
-        //controlSurface = part.FindModelTransform(controlSurfaceName);
-        //if (controlSurface != null) useCtrlSrf = true;
-        //else if (verboseErrors) debug.debugMessage("FSwing: did not find controlSurface " + controlSurfaceName);
 
         flap = part.FindModelTransform(flapName);
         if (flap != null)
@@ -490,50 +360,32 @@ class FSwing : PartModule
 
     public void testAxisOnSymmetry(Vector4 inputAxis) //, bool allowInvert)
     {
-        //if (debugStepMode)
-        //{
-        //    if (!debugStep) return;
-        //    Debug.Log("testAxisSymmetry steps tarting");
-        //    debugStep = false;
-        //}
         try
         {
-
-            //float invert = 1f;
             List<Part> wings = new List<Part>(part.symmetryCounterparts);
             wings.Add(part);
-
-            //test
-            //if (debugStepMode) Debug.Log("wings: " + wings.Count);
 
             foreach (Part p in wings)
             {
                 FSwing wing = p.GetComponent<FSwing>();
                 if (wing != null)
                 {
-                    Vector4 applyAxis = new Vector4(inputAxis.x, inputAxis.y, inputAxis.z, inputAxis.w);
-                    //wing.targetAngle = availableAnglesList[selectedListAngle];
+                    Vector4 applyAxis = new Vector4(inputAxis.x, inputAxis.y, inputAxis.z, inputAxis.w);                    
                     float dotRight = Vector3.Dot(p.transform.right, Vector3.right);
-                    float dotUp = Vector3.Dot(p.transform.right, Vector3.up);
-
-                    //if (debugStepMode) Debug.Log("wing dot: " + dot);
+                    float dotUp = Vector3.Dot(p.transform.right, Vector3.up);                    
 
                     if (dotRight < -0.01f && allowInvertOnLeft) // check for orientation of the part, relative to world directions, since there is no vessel transfrom to compare to
                     {
-                        applyAxis.x *= -1; //invert pitch, yaw and flap, but not roll.
-                        //applyAxis.z *= -1;
-                        applyAxis.w *= -1;
-                        //if (debugStepMode) Debug.Log("wing axis reversed");
+                        applyAxis.x *= -1; //invert pitch, yaw and flap, but not roll.                        
+                        applyAxis.w *= -1;                        
                     }
                     if (dotUp > 0f)
                     {
                         applyAxis.z *= -1;
                     }
 
-                    float amount = (((applyAxis.x * pitchResponse) + (applyAxis.y * rollResponse) + (applyAxis.z * yawResponse)) * ctrlSurfaceRange) + (applyAxis.w * flapResponse * flapMax);
-                    //if (debugStepMode) Debug.Log("wing rotation amount: " + amount);
-                    wing.controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis));
-                    //if (debugStepMode) Debug.Log("wing localRot: " + wing.controlSurface.localRotation);
+                    float amount = (((applyAxis.x * pitchResponse) + (applyAxis.y * rollResponse) + (applyAxis.z * yawResponse)) * ctrlSurfaceRange) + (applyAxis.w * flapResponse * flapMax);                    
+                    wing.controlSurface.localRotation = Quaternion.Euler(ctrllSrfDefRot + (amount * controlSurfaceAxis));                    
                 }
             }
         }
@@ -613,51 +465,25 @@ class FSwing : PartModule
                 if (mainLift == null) debug.debugMessage("FSwing: leading edge missing main FSliftSurface: " + leadingEdgeLiftSurface);
             }            
         }
+        #endregion        
+        
+        #region help popup
+
+        helpPopup = new Firespitter.gui.HelpPopup("Wing setup help", helpTextInternal);
+
+        /*helpSection = new PopupSection();
+        PopupElement helpText = new PopupElement(helpTextnternal, true);
+        helpSection.AddElement(helpText, 300f);
+        if (windowID == 0)
+            windowID = FSGUIwindowID.getNextID();
+        helpPopup = new FSGUIPopup(part, "FSwing", 0, windowID, windowRect, "Wing setup help");
+        helpPopup.sections.Add(helpSection);
+        helpPopup.useInEditor = true;
+        helpPopup.useInFlight = true;*/
+
         #endregion
 
-        #region editor mode
-
-        //if (HighLogic.LoadedSceneIsEditor)
-        //{
-        //    //popup = new FSGUIPopup(part, "FSwing", moduleID, FSGUIwindowID.wing, windowRect, windowTitle);
-        //    //axisPitchSection = new WingAxisSection("Pitch Response", pitchResponse);
-        //    //axisRollSection = new WingAxisSection("Roll Response", rollResponse);
-        //    //axisYawSection = new WingAxisSection("Yaw Response", yawResponse);
-        //    //axisFlapSection = new WingAxisSection("Flap Response", flapResponse);
-        //    //popup.sections.Add(axisPitchSection);
-        //    //popup.sections.Add(axisRollSection);
-        //    //popup.sections.Add(axisYawSection);
-        //    //popup.sections.Add(axisFlapSection);
-
-        //    ////testAxisSection = createTestSection();
-        //    ////popup.sections.Add(testAxisSection);
-        //    //popup.lineSpacing = 5f;
-        //    //PopupSection testDescriptionSection = new PopupSection();
-        //    //PopupElement testDescription1 = new PopupElement("To test settings, press WASDQE to see roll,");
-        //    //PopupElement testDescription2 = new PopupElement("pitch and yaw response. Just like in flight.");
-        //    //PopupElement testDescription3 = new PopupElement("Press F to see full flap response");
-        //    //testDescription1.height = 21f;
-        //    //testDescription2.height = 21f;
-        //    //testDescriptionSection.elements.Add(testDescription1);
-        //    //testDescriptionSection.elements.Add(testDescription2);
-        //    //testDescriptionSection.elements.Add(testDescription3);  
-        //    //popup.sections.Add(testDescriptionSection);
-
-        //    //popup.showCloseButton = false;
-        //    //popup.useInActionEditor = true;
-        //    //popup.useInFlight = false;
-
-        //    oldPitchResponse = pitchResponse;
-        //    oldRollResponse = rollResponse;
-        //    oldYawResponse = yawResponse;
-        //    oldFlapResponse = flapResponse;
-
-        //    //if (GUIparent)
-        //    //    popup.addGUIChildSections(part);
-        //}
-        #endregion
-
-        if (affectStockWingModule)
+        if (affectStockWingModule || !showTweakables)
         {
             Fields["pitchResponse"].guiActive = false;
             Fields["pitchResponse"].guiActiveEditor = false;
@@ -672,6 +498,12 @@ class FSwing : PartModule
         if (!useLeadingEdge || autoDeployLeadingEdge)
         {
             Events["toggleLeadingEdgeEvent"].guiActive = false;
+        }
+        
+        if (affectStockWingModule || !showHelp)
+        {
+            Events["showHelpEvent"].guiActive = false;
+            Events["showHelpEvent"].guiActiveEditor = false;
         }
     }
 
@@ -832,8 +664,12 @@ class FSwing : PartModule
         #endregion
     }
 
-    //public void OnGUI()
-    //{
+    public void OnGUI()
+    {
+        if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedSceneIsEditor)
+        {
+            helpPopup.draw();
+        }
     //    if (HighLogic.LoadedSceneIsEditor && popup != null)
     //    {
     //        //testAxis = Vector4.zero;
@@ -842,7 +678,7 @@ class FSwing : PartModule
     //        //popup.popup();
     //        //updateValuesFromGUI();
     //    }
-    //}
+    }
 }
 
 public class WingAxisSection : PopupSection
