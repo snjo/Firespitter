@@ -190,7 +190,7 @@ class FSwing : PartModule
 
     #region events and actions
 
-    [KSPEvent(guiName = "Help", guiActiveEditor = true, guiActive = true)]
+    [KSPEvent(guiName = "Help", guiActive = true, guiActiveEditor=true, active=true)]
     public void showHelpEvent()
     {
         helpPopup.showMenu = true;
@@ -499,9 +499,10 @@ class FSwing : PartModule
         {
             Events["toggleLeadingEdgeEvent"].guiActive = false;
         }
-        
+
         if (affectStockWingModule || !showHelp)
         {
+            Debug.Log("FSwing: hiding help event");
             Events["showHelpEvent"].guiActive = false;
             Events["showHelpEvent"].guiActiveEditor = false;
         }
