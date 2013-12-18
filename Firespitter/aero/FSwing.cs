@@ -107,9 +107,9 @@ class FSwing : PartModule
     [KSPField]
     public bool showTweakables = true;
     [KSPField]
-    public bool showHelp = true;
+    public bool showHelp = false;
     [KSPField]
-    public int moduleID = 0;    
+    public int moduleID = 0;
     [KSPField]
     public bool debugMode = false;
     
@@ -501,8 +501,7 @@ class FSwing : PartModule
         }
 
         if (affectStockWingModule || !showHelp)
-        {
-            Debug.Log("FSwing: hiding help event");
+        {            
             Events["showHelpEvent"].guiActive = false;
             Events["showHelpEvent"].guiActiveEditor = false;
         }
