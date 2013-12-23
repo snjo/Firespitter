@@ -31,6 +31,8 @@ class FSliftSurface : PartModule
     [KSPField]
     public int moduleID = 0;
 
+    public bool FARActive = false;
+
     private Transform liftTransform;
     private Rigidbody commonRigidBody;
     //private Vector3 rigidBodyVelocity;
@@ -110,7 +112,12 @@ class FSliftSurface : PartModule
 
     public override void OnStart(PartModule.StartState state)
     {
- 	     base.OnStart(state);        
+        FARActive = AssemblyLoader.loadedAssemblies.Any(a => a.assembly.GetName().Name.Equals("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));
+        // This line breaks the plugin :(
+        if (FARActive)
+        {            
+            this.enabled = false;
+        }
     
         if (liftTransformName == string.Empty)
         {

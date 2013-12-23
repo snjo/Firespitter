@@ -121,6 +121,8 @@ class FSwingBase : PartModule
 
     FSdebugMessages debug = new FSdebugMessages(false, FSdebugMessages.OutputMode.log, 2f);
     //public bool useMainSrf;
+    internal bool FARActive = false;
+
     public bool useCtrlSrf;
     public bool useFlap;
     public bool useLeadingEdge;
@@ -428,6 +430,29 @@ class FSwingBase : PartModule
     public override void OnStart(PartModule.StartState state)
     {
         debug.debugMode = debugMode;
+
+        FARActive = AssemblyLoader.loadedAssemblies.Any(a => a.assembly.GetName().Name.Equals("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));
+        // This line breaks the plugin :(
+        if (FARActive)
+        {
+            foreach (BaseField f in Fields)
+            {
+                f.guiActive = false;
+            }
+            foreach (BaseEvent e in Events)
+            {
+                e.active = false;
+                e.guiActive = false;
+                e.guiActiveEditor = false;                
+            }
+            foreach (BaseAction a in Actions)
+            {
+                a.active = false;
+            }
+            this.enabled = false;
+            return;
+        }
+
         //debug.debugMessage("FSwing OnStart: " + part.name);
 
         #region fligth mode
@@ -526,6 +551,7 @@ class FSwingBase : PartModule
 
     public override void OnUpdate()
     {
+        if (FARActive) return;
         #region flight
         if (HighLogic.LoadedSceneIsFlight)
         {
@@ -631,11 +657,13 @@ class FSwingBase : PartModule
 
     public override void OnFixedUpdate()
     {
+        if (FARActive) return;
         limiterMultiplier = Mathf.Max(controlLimiterMultiplier, -(((float)vessel.srf_velocity.magnitude - controlLimiterMaxSpeed) / controlLimiterMaxSpeed));        
     }
 
     public void Update()
     {
+        if (FARActive) return;
         #region editor
 
         //debug.debugMessage("FSwing Update: " + part.name);

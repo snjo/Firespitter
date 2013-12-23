@@ -17,6 +17,8 @@ class FStextureSwitch : PartModule
     public int selectedTexture = 0;
     [KSPField(isPersistant = true)]
     public string selectedTextureURL = string.Empty;
+    [KSPField(isPersistant = true)]
+    public string selectedMapURL = string.Empty;
     [KSPField]
     public bool showListButton = false;
     [KSPField]
@@ -24,14 +26,27 @@ class FStextureSwitch : PartModule
     [KSPField]
     public bool switchableInFlight = false;
     [KSPField]
+    public string additionalMapType = "_BumpMap";
+    [KSPField]
+    public bool mapIsNormal = true;
+    [KSPField]
+    public bool repaintableEVA = true;
+    [KSPField]
     public Vector4 GUIposition = new Vector4(FSGUIwindowID.standardRect.x, FSGUIwindowID.standardRect.y, FSGUIwindowID.standardRect.width, FSGUIwindowID.standardRect.height);
 
     List<Transform> targetObjectTransforms = new List<Transform>();
     List<Material> targetMats = new List<Material>();
+
     private FSnodeLoader textureNode;
     private string textureNodeName = "textures";
     private string textureValueName = "name";
     private List<String> texList = new List<string>();
+
+    private FSnodeLoader mapNode;
+    private string mapNodeName = "additionalMap";
+    private string mapValueName = "name";
+    private List<String> mapList = new List<string>();
+
     FSnodeLoader objectNode;
     private string objectNodeName = "objects";
     private string objectValueName = "name";
@@ -39,6 +54,7 @@ class FStextureSwitch : PartModule
     FSdebugMessages debug = new FSdebugMessages(false, FSdebugMessages.OutputMode.both, 2f); //set to true for debug   
 
     public static Dictionary<String, List<String>> texListDictionary = new Dictionary<String,List<string>>();
+    public static Dictionary<String, List<String>> mapListDictionary = new Dictionary<String, List<string>>();
     public static Dictionary<String, List<String>> objectListDictionary = new Dictionary<String, List<string>>();
 
     [KSPEvent(guiActive=false, guiActiveEditor=false, guiName="Debug: Log Objects")]
@@ -72,6 +88,12 @@ class FStextureSwitch : PartModule
         useTextureAll();
     }
 
+    [KSPEvent(guiActiveUnfocused = true, unfocusedRange = 5f, guiActive = false, guiActiveEditor = false, guiName = "Repaint")]
+    public void nextTextureEVAEvent()
+    {
+        nextTextureEvent();
+    }
+
     public void useTextureAll()
     {
         foreach (Material mat in targetMats)
@@ -89,6 +111,11 @@ class FStextureSwitch : PartModule
                 debug.debugMessage("assigning texture: " + texList[selectedTexture]);
                 targetMat.mainTexture = GameDatabase.Instance.GetTexture(texList[selectedTexture], false);
                 selectedTextureURL = texList[selectedTexture];
+                if (mapList.Count > selectedTexture)
+                {
+                    targetMat.SetTexture(additionalMapType, GameDatabase.Instance.GetTexture(mapList[selectedTexture], mapIsNormal));
+                    selectedMapURL = mapList[selectedTexture];
+                }
             }
             else
             {
@@ -138,6 +165,7 @@ class FStextureSwitch : PartModule
     public override void OnLoad(ConfigNode node)
     {                       
         getNodeValues(node, textureNode, textureNodeName, textureValueName, texListDictionary, texList);
+        getNodeValues(node, mapNode, mapNodeName, mapValueName, mapListDictionary, mapList);
         getNodeValues(node, objectNode, objectNodeName, objectValueName, objectListDictionary, objectList);
     }
 
@@ -156,10 +184,12 @@ class FStextureSwitch : PartModule
 
         if (!texListDictionary.TryGetValue(uniqueModuleID, out texList))
             debug.debugMessage("FStextureSwitch: No matching texture list key: " + uniqueModuleID);
+        if (!mapListDictionary.TryGetValue(uniqueModuleID, out mapList))
+            debug.debugMessage("FStextureSwitch: No matching map list key: " + uniqueModuleID);
         if (!objectListDictionary.TryGetValue(uniqueModuleID, out objectList))
             debug.debugMessage("FStextureSwitch: No matching object list key: " + uniqueModuleID);
 
-        debug.debugMessage("FStextureSwitch found " + texList.Count + " textures, using number " + selectedTexture + ", found " + objectList.Count + " objects");
+        debug.debugMessage("FStextureSwitch found " + texList.Count + " textures, using number " + selectedTexture + ", found " + objectList.Count + " objects, " + mapList.Count + " maps");
 
         foreach (String targetObjectName in objectList)
         {
@@ -191,5 +221,6 @@ class FStextureSwitch : PartModule
 
         if (switchableInFlight) Events["nextTextureEvent"].guiActive = true;
         if (showListButton) Events["listAllObjects"].guiActiveEditor = true;
+        if (!repaintableEVA) Events["nextTextureEVAEvent"].guiActiveUnfocused = false;
     }
 }

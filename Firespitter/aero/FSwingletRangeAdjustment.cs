@@ -108,6 +108,7 @@ public class FSwingletRangeAdjustment : PartModule
             {
                 e.active = false;
                 e.guiActive = false;
+                e.guiActiveEditor = false;
             }
             foreach (BaseAction a in Actions)
             {

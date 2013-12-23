@@ -55,6 +55,26 @@ class FSwing : FSwingBase
     {
         base.OnStart(state);
 
+        if (FARActive)
+        {
+            foreach (BaseField f in Fields)
+            {
+                f.guiActive = false;
+            }
+            foreach (BaseEvent e in Events)
+            {
+                e.active = false;
+                e.guiActive = false;
+                e.guiActiveEditor = false;
+            }
+            foreach (BaseAction a in Actions)
+            {
+                a.active = false;
+            }
+            this.enabled = false;
+            return;
+        }
+
         if (!useLeadingEdge || autoDeployLeadingEdge)
         {
             Events["toggleLeadingEdgeEvent"].guiActive = false;
@@ -77,9 +97,12 @@ class FSwing : FSwingBase
 
     public void OnGUI()
     {
-        if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedSceneIsEditor)
+        if (!FARActive)
         {
-            helpPopup.draw();
+            if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedSceneIsEditor)
+            {
+                helpPopup.draw();
+            }
         }
     }
 }

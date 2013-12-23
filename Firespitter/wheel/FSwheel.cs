@@ -148,12 +148,16 @@ class FSwheel : PartModule
     public float animTime = 0f;
     public float animSpeed = 0f;
 
+    [KSPField]
+    public float wheelScreechThreshold = 10f; // RPM difference between expected value and current wheel RPM at curretn velocity    
+
     private float finalBrakeTorque = 0f;
 
     private Animation anim;    
     private WheelList wheelList = new WheelList();
     private bool boundsColliderRemoved = false;
     private float animNormalizedTime = 0f;
+    public float currentRPM = 0f;
 
     FSGUIPopup popup;
     PopupElement motorToggleElement;
@@ -766,8 +770,10 @@ class FSwheel : PartModule
         for (int i = 0; i < wheelList.wheels.Count; i++)
         {
             if (wheelList.wheels[i].useRotation)
-            {                
-                float rotation = wheelList.wheels[i].wheelCollider.rpm * rotationAdjustment * Time.deltaTime;
+            {
+                currentRPM = wheelList.wheels[i].wheelCollider.rpm * rotationAdjustment;
+                float rotation =  currentRPM * Time.deltaTime;
+
                 wheelList.wheels[i].wheelMesh.Rotate(new Vector3(0f, 0f, rotation));
                 //Debug.Log("rotating wheel " + i + " : " + rotation);
             }
@@ -905,14 +911,13 @@ class FSwheel : PartModule
         }
     }
 
-    //public void OnGUI()
-    //{
-    //    if (HighLogic.LoadedSceneIsEditor || HighLogic.LoadedSceneIsFlight)
-    //    {
-    //        if (popup != null)
-    //            popup.popup();
-    //    }
-    //}
+    public void OnGUI()
+    {
+        if (debugMode)
+        {
+            GUI.Label(new Rect(300f, 300f, 200f, 100f), "Speed: " + Mathf.Round((float)vessel.srf_velocity.magnitude).ToString() + ", rpm: " + currentRPM);
+        }
+    }
 
 }
 

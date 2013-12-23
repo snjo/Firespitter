@@ -24,6 +24,17 @@ public class FSkerbalPuppet : PartModule
     public int seatNumber = 0;
     [KSPField(isPersistant=true)]
     public bool lastOccupiedState = false;
+    [KSPField]
+    public bool checkDate = false;
+    [KSPField]
+    public Vector3 dateStart = new Vector3(2013f, 12f, 22f);
+    [KSPField]
+    public Vector3 dateEnd = new Vector3(2014f, 1f, 1f);
+
+    private DateTime _dateStart;
+    private DateTime _dateEnd;
+    private DateTime currentDate;
+    private bool showOnDate = true;
 
     public bool showPuppet = true;
     private Transform[] puppetTransforms;    
@@ -87,6 +98,13 @@ public class FSkerbalPuppet : PartModule
     {
         base.OnStart(state);
         puppetTransforms = part.FindModelTransforms(objectName);
+        _dateStart = new DateTime((int)dateStart.x, (int)dateStart.y, (int)dateStart.z);
+        _dateEnd = new DateTime((int)dateEnd.x, (int)dateEnd.y, (int)dateEnd.z);
+        currentDate = DateTime.Now;
+        if ((currentDate > _dateStart && currentDate < _dateEnd) || !checkDate)
+            showOnDate = true;
+        else
+            showOnDate = false;
     }
 
     public override void OnUpdate()
@@ -99,6 +117,7 @@ public class FSkerbalPuppet : PartModule
             {
                 seatStatus = checkSeatOccupied();
                 showPuppet = seatStatus;
+                if (!showOnDate) showPuppet = false;
                 if (seatStatus != oldSeatStatus)
                     doUpdate = true;
                 oldSeatStatus = seatStatus;
@@ -114,6 +133,7 @@ public class FSkerbalPuppet : PartModule
         {
             if (showInEditor) showPuppet = true;
             else showPuppet = false;
+            if (!showOnDate) showPuppet = false;
             updatePuppetActive();
         }
     }
