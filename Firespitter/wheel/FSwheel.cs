@@ -150,14 +150,22 @@ class FSwheel : PartModule
 
     [KSPField]
     public float wheelScreechThreshold = 10f; // RPM difference between expected value and current wheel RPM at curretn velocity    
+    [KSPField]
+    public bool useCustomParticleFX = false;
+    //Firespitter.FSparticleFX smokeFX;
+    Texture2D smokeFXtexture;
+    [KSPField]
+    public string smokeFXtextureName = "Firespitter/textures/particle";
+    [KSPField]
+    public float particleEmissionRate = 1200f;
 
     private float finalBrakeTorque = 0f;
 
     private Animation anim;    
     private WheelList wheelList = new WheelList();
     private bool boundsColliderRemoved = false;
-    private float animNormalizedTime = 0f;
-    public float currentRPM = 0f;
+    private float animNormalizedTime = 0f;    
+    
 
     FSGUIPopup popup;
     PopupElement motorToggleElement;
@@ -166,6 +174,8 @@ class FSwheel : PartModule
     PopupElement suspensionDamperElement;
     PopupElement suspensionTargetPositionElement;
     PopupElement suspensionUpdateElement;
+    PopupElement suspensionDistanceElement;
+    PopupElement wheelRadiusElement;
     Light brakeLight;
     Transform brakeEmissiveObject;
 
@@ -405,10 +415,15 @@ class FSwheel : PartModule
 
     private void popupUpdateSuspension()
     {
+        overrideModelSpringValues = true;
+        wheelColliderRadius = float.Parse(wheelRadiusElement.inputText);
+        wheelColliderSuspensionDistance = float.Parse(suspensionDistanceElement.inputText);
         suspensionSpring = float.Parse(suspensionSpringElement.inputText);
         suspensionDamper = float.Parse(suspensionDamperElement.inputText);
         suspensionTargetPosition = float.Parse(suspensionTargetPositionElement.inputText);
         wheelList.updateSpring(suspensionSpring, suspensionDamper, suspensionTargetPosition);
+        wheelList.radius = wheelColliderRadius;
+        wheelList.suspensionDistance = wheelColliderSuspensionDistance;
     }
 
     #endregion
@@ -599,20 +614,26 @@ class FSwheel : PartModule
                 wheelList.updateSpring(suspensionSpring, suspensionDamper, suspensionTargetPosition);
             }
             if (wheelColliderRadius >= 0f) wheelList.radius = wheelColliderRadius;
+            else
+                wheelColliderRadius = wheelList.radius;
             if (wheelColliderMass >= 0f) wheelList.mass = wheelColliderMass;
             if (wheelColliderSuspensionDistance >= 0f) wheelList.suspensionDistance = wheelColliderSuspensionDistance;
+            else
+                wheelColliderSuspensionDistance = wheelList.suspensionDistance;
 
-            #endregion
-
-                     
+            #endregion                     
 
             #region GUI popup
 
             popup = new FSGUIPopup(part, "FSwheel", moduleID, FSGUIwindowID.wheel, new Rect(500f, 300f, 250f, 100f), "Wheel settings", new PopupElement("Suspension Settings:"));
             popup.useInFlight = true;
+            wheelRadiusElement = new PopupElement("Radius", wheelColliderRadius.ToString());
+            suspensionDistanceElement = new PopupElement("Distance", wheelColliderSuspensionDistance.ToString());
             suspensionSpringElement = new PopupElement("Spring", suspensionSpring.ToString());
             suspensionDamperElement = new PopupElement("Damper", suspensionDamper.ToString());
             suspensionTargetPositionElement = new PopupElement("Target pos", suspensionTargetPosition.ToString());
+            popup.sections[0].elements.Add(wheelRadiusElement);
+            popup.sections[0].elements.Add(suspensionDistanceElement);
             popup.sections[0].elements.Add(suspensionSpringElement);
             popup.sections[0].elements.Add(suspensionDamperElement);
             popup.sections[0].elements.Add(suspensionTargetPositionElement);
@@ -620,35 +641,48 @@ class FSwheel : PartModule
             suspensionUpdateElement = new PopupElement(new PopupButton("Update", 0f, popupUpdateSuspension));
             popup.sections[0].elements.Add(suspensionUpdateElement);
 
-           
+            #endregion
 
             if (brakeEmissiveObjectName != string.Empty)
             {
                 brakeEmissiveObject = part.FindModelTransform(brakeEmissiveObjectName);
             }
             setBrakeLight(brakesEngaged);
-            
-        }
-        #endregion
-        #region In Editor
-        //else if (HighLogic.LoadedSceneIsEditor)
-        //{
-        //    #region GUI popup
 
-        //    motorToggleElement = new PopupElement("Motor", new PopupButton("On", "Off", 0f, popupToggleMotor));            
-        //    popup = new FSGUIPopup(part, "FSwheel", moduleID, FSGUIwindowID.wheel, new Rect(500f, 300f, 250f, 100f), "Wheel settings", new PopupElement("Settings affect symmetry group"));
-        //    popup.sections[0].elements.Add(motorToggleElement);
-        //    motorReverseElement = new PopupElement("Reverse Motor", new PopupButton("On", "Off", 0f, popupToggleReverseMotor));
-        //    popup.sections[0].elements.Add(motorReverseElement);
+            #region set up fx
+            if (useCustomParticleFX)
+            {                
+                smokeFXtexture = GameDatabase.Instance.GetTexture(smokeFXtextureName, false);
+                if (smokeFXtexture == null)
+                {
+                    useCustomParticleFX = false;                    
+                }
+                else
+                {
+                    for (int i = 0; i < wheelList.wheels.Count; i++)
+                    {
+                        wheelList.wheels[i].smokeFX = new Firespitter.FSparticleFX(wheelList.wheels[i].wheelMesh.gameObject, smokeFXtexture);
+                        wheelList.wheels[i].smokeFX.AnimatorColor0 = new Color(1.0f, 1.0f, 1.0f, 0.8f);
+                        wheelList.wheels[i].smokeFX.AnimatorColor1 = new Color(1.0f, 1.0f, 1.0f, 0.6f);
+                        wheelList.wheels[i].smokeFX.AnimatorColor2 = new Color(1.0f, 1.0f, 1.0f, 0.4f);
+                        wheelList.wheels[i].smokeFX.AnimatorColor3 = new Color(1.0f, 1.0f, 1.0f, 0.2f);
+                        wheelList.wheels[i].smokeFX.AnimatorColor4 = new Color(1.0f, 1.0f, 1.0f, 0.0f);
 
-        //    motorToggleElement.buttons[0].toggle(motorEnabled);
-        //    motorReverseElement.buttons[0].toggle(motorStartsReversed);
+                        wheelList.wheels[i].smokeFX.EmitterMinSize = 0.3f;
+                        wheelList.wheels[i].smokeFX.EmitterMaxSize = 0.6f;
+                        wheelList.wheels[i].smokeFX.EmitterMinEnergy = 0.1f;
+                        wheelList.wheels[i].smokeFX.EmitterMaxEnergy = 0.8f;
+                        wheelList.wheels[i].smokeFX.EmitterMinEmission = 0f;
+                        wheelList.wheels[i].smokeFX.EmitterMaxEmission = 0f;
+                        
+                        wheelList.wheels[i].smokeFX.setupFXValues();
+                    }
+                }
+            }
 
-        //    #endregion
+            #endregion
 
-        //    setBrakeLight(BrakeStatus.off);
-        //}
-        #endregion
+        }        
 
         #endregion
 
@@ -710,8 +744,111 @@ class FSwheel : PartModule
     }    
 
     public void FixedUpdate()
+    {        
+        updateDeploymentState();        
+
+        if (!HighLogic.LoadedSceneIsFlight)
+            return;        
+        
+        destroyBoundsCollider();                
+              
+        updateBrakeTorque();        
+             
+        rotateWheelMeshes();        
+        
+        updateSuspension();        
+
+        #region Active vessel code        
+
+        if (vessel.isActiveVessel && base.vessel.IsControllable)
+        {            
+            disableColliders();
+                       
+            updateMotors();
+            
+            updateDrag();                      
+
+        #endregion
+
+        }
+    }
+
+    private void updateSuspension()
     {
-        #region update deployment state
+        for (int i = 0; i < wheelList.wheels.Count; i++)
+        {
+            if (wheelList.wheels[i].useSuspension)
+            {
+                RaycastHit raycastHit;
+                WheelCollider wheelCollider = wheelList.wheels[i].wheelCollider;
+                Transform suspensionParent = wheelList.wheels[i].suspensionParent;                
+
+                if (Physics.Raycast(wheelCollider.transform.position, -wheelCollider.transform.up, out raycastHit, (wheelCollider.suspensionDistance + wheelCollider.radius) * part.rescaleFactor))
+                {
+                    suspensionParent.position = raycastHit.point + wheelCollider.transform.up * wheelCollider.radius * part.rescaleFactor;
+                }
+                else
+                {
+                    suspensionParent.position = wheelCollider.transform.position - wheelCollider.transform.up * (wheelCollider.suspensionDistance * part.rescaleFactor);
+                }
+            }
+        }
+    }
+
+    private void rotateWheelMeshes()
+    {
+        for (int i = 0; i < wheelList.wheels.Count; i++)
+        {
+            if (wheelList.wheels[i].useRotation)
+            {                
+                float rotation = wheelList.wheels[i].wheelCollider.rpm * TimeWarp.deltaTime * rotationAdjustment;
+
+                wheelList.wheels[i].wheelMesh.Rotate(new Vector3(0f, 0f, rotation));
+
+                if (Mathf.Abs(wheelList.wheels[i].getDeltaRPM()) > 30f && wheelList.wheels[i].wheelCollider.isGrounded)
+                {
+                    fireScreechEffect(i);
+                }
+
+                updateScreechEffect(i);
+            }
+        }
+    }
+
+    private void updateBrakeTorque()
+    {
+        if (brakesEngaged || brakesLockedOn)
+        {
+            finalBrakeTorque = Mathf.Lerp(wheelList.brakeTorque, brakeTorque, TimeWarp.deltaTime * brakeSpeed);
+            if (brakesLockedOn)
+                if (vessel.ctrlState.mainThrottle > 0.1f)
+                    finalBrakeTorque = 0f;
+            wheelList.brakeTorque = finalBrakeTorque;
+        }
+        else
+        {
+            wheelList.brakeTorque = 0f;
+        }
+    }
+
+    private void destroyBoundsCollider()
+    {
+        if (!boundsColliderRemoved)
+        {
+            if (boundsCollider != string.Empty)
+            {
+                Transform boundsTransform = part.FindModelTransform(boundsCollider);
+                if (boundsTransform != null)
+                {
+                    GameObject.Destroy(boundsTransform.gameObject);
+                }
+            }
+            boundsColliderRemoved = true;
+        }
+    }
+
+    private void updateDeploymentState()
+    {
         if (anim != null)
         {
 
@@ -729,185 +866,139 @@ class FSwheel : PartModule
                 }
             }
         }
-        #endregion
+    }
 
-        if (!HighLogic.LoadedSceneIsFlight)
-            return;        
+    private void disableColliders()
+    {
+        if (anim != null)
+        {
+            animNormalizedTime = anim[animationName].normalizedTime;
 
-        #region destroy bounds collider
-        if (!boundsColliderRemoved)
-        {            
-            if (boundsCollider != string.Empty)
+            if (disableColliderWhenRetracted || disableColliderWhenRetracting) // runs OnStart too, so no need to run it in fixed update on non active vessels
             {
-                Transform boundsTransform = part.FindModelTransform(boundsCollider);
-                if (boundsTransform != null)
+                switch (deploymentState)
                 {
-                    GameObject.Destroy(boundsTransform.gameObject);
+                    case "Retracted":
+                        if (disableColliderWhenRetracted)
+                            wheelList.enabled = false;
+                        else
+                            wheelList.enabled = true;
+                        break;
+                    case "Retracting":
+                        if (disableColliderWhenRetracting)
+                        {
+                            if (animNormalizedTime > disableColliderAtAnimTime)
+                                wheelList.enabled = false;
+                            else wheelList.enabled = true;
+                        }
+                        break;
+                    case "Deploying":
+                        if (disableColliderWhenRetracting)
+                        {
+                            if (animNormalizedTime > disableColliderAtAnimTime)
+                                wheelList.enabled = false;
+                            else wheelList.enabled = true;
+                        }
+                        else
+                        {
+                            wheelList.enabled = true;
+                        }
+                        break;
+                    default:
+                        wheelList.enabled = true;
+                        break;
                 }
             }
-            boundsColliderRemoved = true;
         }
-        #endregion
+    }
 
-        
-
-        #region update brake torque        
-        if (brakesEngaged || brakesLockedOn)
-        {            
-            finalBrakeTorque = Mathf.Lerp(wheelList.brakeTorque, brakeTorque, TimeWarp.deltaTime * brakeSpeed);
-            if (brakesLockedOn)
-                if (vessel.ctrlState.mainThrottle > 0.1f)
-                    finalBrakeTorque = 0f;
-            wheelList.brakeTorque = finalBrakeTorque;
+    private void updateMotors()
+    {
+        if (hasMotor && motorEnabled && deploymentState == "Deployed")
+        {
+            float speedModifier = Mathf.Max(0f, -(((float)vessel.horizontalSrfSpeed - maxSpeed) / maxSpeed));
+            float throttleInput = vessel.ctrlState.wheelThrottle * speedModifier;
+            if (reverseMotor)
+                throttleInput *= -1;
+            double resourceConsumed = (double)Mathf.Abs(resourceConsumptionRate * throttleInput) * (double)TimeWarp.deltaTime;
+            if (!CheatOptions.InfiniteFuel)
+            {
+                double receivedResource = base.part.RequestResource(resourceName, resourceConsumed);
+                if (resourceConsumed > 0f)
+                {
+                    double resouceReceivedNormalized = receivedResource / resourceConsumed;                    
+                    throttleInput *= Mathf.Clamp((float)resouceReceivedNormalized, 0f, 1f);
+                }
+            }
+            if (throttleInput < 0f)
+                throttleInput *= nerfNegativeTorque; // fixes negative values being overpowered
+            wheelList.motorTorque = throttleInput * motorTorque;            
         }
         else
         {
-            wheelList.brakeTorque = 0f;
+            wheelList.motorTorque = 0f;
         }
-        #endregion
+    }
 
-        #region rotate wheel meshes        
-        for (int i = 0; i < wheelList.wheels.Count; i++)
+    private void updateDrag()
+    {
+        if (useDragUpdate)
         {
-            if (wheelList.wheels[i].useRotation)
+            if (deploymentState == "Deployed")
             {
-                currentRPM = wheelList.wheels[i].wheelCollider.rpm * rotationAdjustment;
-                float rotation =  currentRPM * Time.deltaTime;
-
-                wheelList.wheels[i].wheelMesh.Rotate(new Vector3(0f, 0f, rotation));
-                //Debug.Log("rotating wheel " + i + " : " + rotation);
-            }
-        }
-        #endregion
-
-        #region update suspension        
-        for (int i = 0; i < wheelList.wheels.Count; i++)
-        {
-            if (wheelList.wheels[i].useSuspension)
-            {                
-                RaycastHit raycastHit;
-                WheelCollider wheelCollider = wheelList.wheels[i].wheelCollider;
-                Transform suspensionParent = wheelList.wheels[i].suspensionParent;
-                /*WheelHit wheelHit;
-                float suspensionTravel = 1.0f;
-                if(wheelCollider.GetGroundHit(out wheelHit))
-                {
-                    suspensionTravel = (-wheelCollider.transform.InverseTransformPoint(wheelHit.point).x - wheelCollider.radius) / wheelCollider.suspensionDistance;
-                }
-                suspensionParent.position = wheelCollider.transform.position - (wheelCollider.transform.up * (suspensionTravel)); //  * part.rescaleFactor
-                */
-
-                if (Physics.Raycast(wheelCollider.transform.position, -wheelCollider.transform.up, out raycastHit, (wheelCollider.suspensionDistance + wheelCollider.radius) * part.rescaleFactor))
-                {                 
-                   suspensionParent.position = raycastHit.point + wheelCollider.transform.up * wheelCollider.radius * part.rescaleFactor;
-                }
-                else
-                {
-                    suspensionParent.position = wheelCollider.transform.position - wheelCollider.transform.up * (wheelCollider.suspensionDistance * part.rescaleFactor);
-                }
-            }
-        }
-        #endregion
-
-        #region Active vessel code        
-
-        if (vessel.isActiveVessel && base.vessel.IsControllable)
-        {
-            #region collider disabling
-
-            if (anim != null)
-            {
-                animNormalizedTime = anim[animationName].normalizedTime;
-
-                if (disableColliderWhenRetracted || disableColliderWhenRetracting) // runs OnStart too, so no need to run it in fixed update on non active vessels
-                {
-                    switch (deploymentState)
-                    {
-                        case "Retracted":
-                            if (disableColliderWhenRetracted)
-                                wheelList.enabled = false;
-                            else
-                                wheelList.enabled = true;
-                            break;
-                        case "Retracting":
-                            if (disableColliderWhenRetracting)
-                            {
-                                if (animNormalizedTime > disableColliderAtAnimTime)
-                                    wheelList.enabled = false;
-                                else wheelList.enabled = true;
-                            }
-                            break;
-                        case "Deploying":
-                            if (disableColliderWhenRetracting)
-                            {
-                                if (animNormalizedTime > disableColliderAtAnimTime)
-                                    wheelList.enabled = false;
-                                else wheelList.enabled = true;
-                            }
-                            else
-                            {
-                                wheelList.enabled = true;
-                            }
-                            break;
-                        default:
-                            wheelList.enabled = true;
-                            break;
-                    }
-                }
-            }
-            
-            #endregion
-
-            #region update motors            
-
-            if (hasMotor && motorEnabled && deploymentState == "Deployed")
-            {
-                float speedModifier = Mathf.Max(0f, -(((float)vessel.horizontalSrfSpeed - maxSpeed) / maxSpeed));
-                float throttleInput = vessel.ctrlState.wheelThrottle * speedModifier;
-                if (reverseMotor)
-                    throttleInput *= -1;
-                double resourceConsumed = (double)Mathf.Abs(resourceConsumptionRate * throttleInput) * (double)TimeWarp.deltaTime;
-                if (!CheatOptions.InfiniteFuel)
-                {
-                    double receivedResource = base.part.RequestResource(resourceName, resourceConsumed);                    
-                    if (resourceConsumed > 0f)
-                    {
-                        double resouceReceivedNormalized = receivedResource / resourceConsumed;
-                        //Debug.Log("got " + resouceReceivedNormalized + " of requested resource");
-                        throttleInput *= Mathf.Clamp((float)resouceReceivedNormalized, 0f, 1f);
-                    }
-                }
-                if (throttleInput < 0f)
-                    throttleInput *= nerfNegativeTorque; // fixes negative values being overpowered
-                wheelList.motorTorque = throttleInput * motorTorque;
-                //Debug.Log("FSwheel: applying torque: " + throttleInput);
+                part.minimum_drag = deployedDrag;
+                part.maximum_drag = deployedDrag;
             }
             else
             {
-                wheelList.motorTorque = 0f;
+                part.minimum_drag = 0f;
+                part.maximum_drag = 0f;
             }
-            #endregion
+        }
+    } 
 
-            #region update drag            
+    private void fireScreechEffect(int wheelNumber)
+    {
+        wheelList.wheels[wheelNumber].screechCountdown = 0.5f;
+        // play one shot audio        
+        part.Effect("touchdown");
+    }
 
-            if (useDragUpdate)
+    private void updateScreechEffect(int wheelNumber)
+    {
+        if (wheelList.wheels[wheelNumber].screechCountdown > 0f)
+        {
+            // emit particles
+            if (wheelList.wheels[wheelNumber].wheelCollider.isGrounded)
             {
-                if (deploymentState == "Deployed")
+                if (useCustomParticleFX)
                 {
-                    part.minimum_drag = deployedDrag;
-                    part.maximum_drag = deployedDrag;
+                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = particleEmissionRate;
+                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = particleEmissionRate;
                 }
                 else
                 {
-                    part.minimum_drag = 0f;
-                    part.maximum_drag = 0f;
+                    part.Effect("tireSmoke");
                 }
             }
-
-            #endregion
-
-        #endregion
-
+            else
+            {
+                if (useCustomParticleFX)
+                {
+                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = 0f;
+                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = 0f;
+                }
+            }
+            //smokeFX
+            wheelList.wheels[wheelNumber].screechCountdown -= TimeWarp.deltaTime;
+        }
+        else
+        {
+            if (useCustomParticleFX)
+            {
+                wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = 0f;
+                wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = 0f;
+            }
         }
     }
 
@@ -915,213 +1006,16 @@ class FSwheel : PartModule
     {
         if (debugMode)
         {
-            GUI.Label(new Rect(300f, 300f, 200f, 100f), "Speed: " + Mathf.Round((float)vessel.srf_velocity.magnitude).ToString() + ", rpm: " + currentRPM);
+            //float rpmOverSpeed = currentRPM / (float)vessel.srf_velocity.magnitude;
+            //GUI.Label(new Rect(300f, 300f, 400f, 100f), "Speed: " + Mathf.Round((float)vessel.srf_velocity.magnitude).ToString() + ", rpm: " + currentRPM + " speed / RP: " + rpmOverSpeed);
+            
+            //if (screechCountdown > 0f)
+            //{                
+            //    GUI.Label(new Rect(300f, 350f, 400f, 100f), "Screeech! grounded: " + wheelList.wheels[0].wheelCollider.isGrounded);
+            //}            
+            //wheelList.wheels[0].wheelCollider.isGrounded
+            popup.popup();
         }
     }
 
-}
-
-class WheelClass
-{
-    public WheelCollider wheelCollider;
-    public Transform wheelMesh;
-    public Transform suspensionParent;
-    public bool useRotation = false;
-    public bool useSuspension = false;
-    public WheelClass(WheelCollider _wheelCollider, Transform _wheelMesh, Transform _suspensionParent)
-    {
-        wheelCollider = _wheelCollider;
-        wheelMesh = _wheelMesh;
-        suspensionParent = _suspensionParent;
-    }
-
-    public WheelClass(WheelCollider _wheelCollider)
-    {
-        wheelCollider = _wheelCollider;
-        useRotation = false;
-        useSuspension = false;
-    }
-}
-
-class WheelList
-{
-    public List<WheelClass> wheels;
-    //public List<WheelCollider> wheelColliders = new List<WheelCollider>();
-    //public List<Transform> wheelMeshes;
-    //public List<Transform> suspensionParents;
-    private bool _enabled = false;
-    private float _brakeTorque = 0f;
-    private float _motorTorque = 0f;
-    private float _radius = 0.25f;
-    private float _suspensionDistance = 0.025f;
-    private float _mass = 0.1f;
-    public float forwardStiffness = 10f;    
-    public float forwardsExtremumSlip = 1.0f;
-    public float forwardsExtremumValue = 20000.0f;
-    public float forwardsAsymptoteSlip = 2.0f;
-    public float forwardsAsymptoteValue = 10000.0f;
-    public float sidewaysStiffness = 1.0f;
-    public float sidewaysExtremumSlip = 1.0f;    
-    public float sidewaysExtremumValue = 20000.0f;    
-    public float sidewaysAsymptoteSlip = 2.0f;    
-    public float sidewaysAsymptoteValue = 10000.0f;
-
-    public void Create(List<WheelCollider> colliders, List<Transform> wheelMeshes, List<Transform> suspensionParents)
-    {
-        wheels = new List<WheelClass>();
-        for (int i = 0; i < colliders.Count; i++)
-        {            
-            wheels.Add(new WheelClass(colliders[i]));
-            if (i < wheelMeshes.Count)
-            {
-                wheels[i].wheelMesh = wheelMeshes[i];
-                wheels[i].useRotation = true;
-            }
-            if (i < suspensionParents.Count)
-            {
-                wheels[i].suspensionParent = suspensionParents[i];
-                wheels[i].useSuspension = true;
-            }
-        }        
-    }
-
-    public void Create(WheelCollider collider, Transform wheelMesh, Transform suspensionParent)
-    {
-        wheels = new List<WheelClass>();
-        wheels.Add(new WheelClass(collider, wheelMesh, suspensionParent));           
-    }
-
-    public bool enabled
-    {
-        get
-        {
-            return _enabled;
-        }
-
-        set
-        {
-            _enabled = value;
-            for (int i = 0; i < wheels.Count; i++)
-            {
-                wheels[i].wheelCollider.enabled = value;
-            }
-        }
-    }
-
-    public float brakeTorque
-    {
-        get
-        {
-            return _brakeTorque;
-        }
-        set
-        {
-            _brakeTorque = value;
-            for (int i = 0; i < wheels.Count; i++)
-            {
-                wheels[i].wheelCollider.brakeTorque = value;
-            }
-        }
-    }
-
-    public float motorTorque
-    {
-        get
-        {
-            return _motorTorque;
-        }
-        set
-        {
-            _motorTorque = value;
-            for (int i = 0; i < wheels.Count; i++)
-            {
-                wheels[i].wheelCollider.motorTorque = value;
-                //Debug.Log("torque: " + value);
-            }
-        }
-    }
-
-    public void updateSpring(float spring, float damper, float targetPosition)
-    {
-        JointSpring jointSpring = new JointSpring();
-        jointSpring.spring = spring;
-        jointSpring.damper = damper;
-        jointSpring.targetPosition = targetPosition;
-        for (int i = 0; i < wheels.Count; i++)
-        {
-            wheels[i].wheelCollider.suspensionSpring = jointSpring;            
-        }
-    }
-
-    public float suspensionDistance
-    {
-        get
-        {
-            return _suspensionDistance;
-        }
-        set
-        {
-            _suspensionDistance = value;
-            for (int i = 0; i < wheels.Count; i++)
-            {
-                wheels[i].wheelCollider.suspensionDistance = value;
-            }            
-        }
-    }
-
-    public float mass
-    {
-        get
-        {
-            return _mass;
-        }
-        set
-        {
-            _mass = value;
-            for (int i = 0; i < wheels.Count; i++)
-            {
-                wheels[i].wheelCollider.mass = value;
-            }
-        }
-    }
-
-    public float radius
-    {
-        get
-        {
-            return _radius;
-        }
-        set
-        {
-            _radius = value;
-            for (int i = 0; i < wheels.Count; i++)
-            {
-                wheels[i].wheelCollider.radius = value;
-            }
-        }
-    }
-
-    public void updateWheelFriction()
-    {
-        
-        WheelFrictionCurve forwardFriction = new WheelFrictionCurve();
-        forwardFriction.extremumSlip = forwardsExtremumSlip;
-        forwardFriction.extremumValue = forwardsExtremumValue;
-        forwardFriction.asymptoteSlip = forwardsAsymptoteSlip;
-        forwardFriction.asymptoteValue = forwardsAsymptoteValue;
-        forwardFriction.stiffness = forwardStiffness;
-
-        WheelFrictionCurve sidewaysFriction = new WheelFrictionCurve();
-        sidewaysFriction.extremumSlip = sidewaysExtremumSlip;
-        sidewaysFriction.extremumValue = sidewaysExtremumValue;
-        sidewaysFriction.asymptoteSlip = sidewaysAsymptoteSlip;
-        sidewaysFriction.asymptoteValue = sidewaysAsymptoteValue;
-        sidewaysFriction.stiffness = sidewaysStiffness;
-
-        for (int i = 0; i < wheels.Count; i++)
-        {
-            wheels[i].wheelCollider.forwardFriction = forwardFriction;
-            wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
-        }        
-    }
 }

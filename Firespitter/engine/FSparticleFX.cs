@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Firespitter.engine
+namespace Firespitter
 {
     public class FSparticleFX
     {                
@@ -26,7 +26,7 @@ namespace Firespitter.engine
 
         public float EmitterMinSize = 0.1f;
         public float EmitterMaxSize = 0.2f;
-        public float EmitterMinEnergy = 0.2f;
+        public float EmitterMinEnergy = 0.1f;
         public float EmitterMaxEnergy = 0.8f;
         public float EmitterMinEmission = 120f;
         public float EmitterMaxEmission = 160f;

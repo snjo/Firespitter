@@ -11,7 +11,7 @@ class transformTest : PartModule
     [KSPField]
     public Vector3 EmitterLocalVelocity = new Vector3(0f, 0f, 1f);
     Texture2D particleTexture;
-    private Firespitter.engine.FSparticleFX particleFX;
+    private Firespitter.FSparticleFX particleFX;
     private Transform refTransform;
 
     public override void OnStart(PartModule.StartState state)
@@ -20,7 +20,7 @@ class transformTest : PartModule
         particleTexture = GameDatabase.Instance.GetTexture(particleTextureName, false);
         if (particleTexture != null)
         {            
-                particleFX = new Firespitter.engine.FSparticleFX(part.gameObject, particleTexture);
+                particleFX = new Firespitter.FSparticleFX(part.gameObject, particleTexture);
                 particleFX.EmitterLocalVelocity = EmitterLocalVelocity;
                 //Debug.Log("KTvelocityController: particle texture found: " + particleTextureName);
                 particleFX.setupFXValues();

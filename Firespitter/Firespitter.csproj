@@ -117,6 +117,8 @@
     <Compile Include="engine\FSthrottlePropSpinner.cs" />
     <Compile Include="engine\FSVTOLrotator.cs" />
     <Compile Include="aero\FSwingletRangeAdjustment.cs" />
+    <Compile Include="wheel\WheelClass.cs" />
+    <Compile Include="wheel\WheelList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Documentation.txt" />

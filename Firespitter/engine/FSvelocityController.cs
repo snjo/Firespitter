@@ -36,7 +36,7 @@ public class FSvelocityController : PartModule
     Transform[] transformArray;
     private bool transformsFound = false;
     private Vector3 velocityDirection = new Vector3(0f, 0f, 0f);
-    private Firespitter.engine.FSparticleFX[] particleFX;
+    private Firespitter.FSparticleFX[] particleFX;
     private Texture2D particleTexture;
     private Vector3 finalThrust = new Vector3(0f, 0f, 0f);
 
@@ -52,7 +52,7 @@ public class FSvelocityController : PartModule
         if (transformArray.Length > 0)
         {
             transformsFound = true;
-            particleFX = new Firespitter.engine.FSparticleFX[transformArray.Length];
+            particleFX = new Firespitter.FSparticleFX[transformArray.Length];
         }
         else
         {
@@ -68,7 +68,7 @@ public class FSvelocityController : PartModule
             {
                 for (int i = 0; i < particleFX.Length; i++)
                 {
-                    particleFX[i] = new Firespitter.engine.FSparticleFX(transformArray[i].gameObject, particleTexture);
+                    particleFX[i] = new Firespitter.FSparticleFX(transformArray[i].gameObject, particleTexture);
                     particleFX[i].EmitterLocalVelocity = EmitterLocalVelocity;
                     //Debug.Log("KTvelocityController: particle texture found: " + particleTextureName);
                     particleFX[i].setupFXValues();
