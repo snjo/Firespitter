@@ -14,6 +14,7 @@ class WheelClass
 
     public float screechCountdown = 0f;
     public Firespitter.FSparticleFX smokeFX;
+    public GameObject fxLocation = new GameObject();
 
     private float deltaRPM = 0f;
     private float oldRPM = 0f;
@@ -23,6 +24,7 @@ class WheelClass
         wheelCollider = _wheelCollider;
         wheelMesh = _wheelMesh;
         suspensionParent = _suspensionParent;
+        setupFxLocation();
     }
 
     public WheelClass(WheelCollider _wheelCollider)
@@ -30,6 +32,12 @@ class WheelClass
         wheelCollider = _wheelCollider;
         useRotation = false;
         useSuspension = false;
+    }
+
+    public void setupFxLocation()
+    {
+        fxLocation.transform.parent = wheelCollider.gameObject.transform;
+        fxLocation.transform.localPosition = new Vector3(0f, -wheelCollider.radius * 0.8f, 0f); //
     }
 
     public float getDeltaRPM()

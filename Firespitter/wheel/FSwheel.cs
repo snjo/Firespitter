@@ -661,19 +661,20 @@ class FSwheel : PartModule
                 {
                     for (int i = 0; i < wheelList.wheels.Count; i++)
                     {
-                        wheelList.wheels[i].smokeFX = new Firespitter.FSparticleFX(wheelList.wheels[i].wheelMesh.gameObject, smokeFXtexture);
+                        wheelList.wheels[i].smokeFX = new Firespitter.FSparticleFX(wheelList.wheels[i].fxLocation, smokeFXtexture);
                         wheelList.wheels[i].smokeFX.AnimatorColor0 = new Color(1.0f, 1.0f, 1.0f, 0.8f);
-                        wheelList.wheels[i].smokeFX.AnimatorColor1 = new Color(1.0f, 1.0f, 1.0f, 0.6f);
-                        wheelList.wheels[i].smokeFX.AnimatorColor2 = new Color(1.0f, 1.0f, 1.0f, 0.4f);
-                        wheelList.wheels[i].smokeFX.AnimatorColor3 = new Color(1.0f, 1.0f, 1.0f, 0.2f);
+                        wheelList.wheels[i].smokeFX.AnimatorColor1 = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                        wheelList.wheels[i].smokeFX.AnimatorColor2 = new Color(1.0f, 1.0f, 1.0f, 0.2f);
+                        wheelList.wheels[i].smokeFX.AnimatorColor3 = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                         wheelList.wheels[i].smokeFX.AnimatorColor4 = new Color(1.0f, 1.0f, 1.0f, 0.0f);
 
                         wheelList.wheels[i].smokeFX.EmitterMinSize = 0.3f;
-                        wheelList.wheels[i].smokeFX.EmitterMaxSize = 0.6f;
+                        wheelList.wheels[i].smokeFX.EmitterMaxSize = 0.5f;
                         wheelList.wheels[i].smokeFX.EmitterMinEnergy = 0.1f;
-                        wheelList.wheels[i].smokeFX.EmitterMaxEnergy = 0.8f;
+                        wheelList.wheels[i].smokeFX.EmitterMaxEnergy = 0.3f;
                         wheelList.wheels[i].smokeFX.EmitterMinEmission = 0f;
                         wheelList.wheels[i].smokeFX.EmitterMaxEmission = 0f;
+                        wheelList.wheels[i].smokeFX.AnimatorSizeGrow = 0.1f;
                         
                         wheelList.wheels[i].smokeFX.setupFXValues();
                     }
@@ -960,6 +961,7 @@ class FSwheel : PartModule
     private void fireScreechEffect(int wheelNumber)
     {
         wheelList.wheels[wheelNumber].screechCountdown = 0.5f;
+        Debug.Log(Vector3.Distance(vessel.ReferenceTransform.position, wheelList.wheels[wheelNumber].smokeFX.gameObject.transform.position));
         // play one shot audio        
         part.Effect("touchdown");
     }
@@ -974,7 +976,7 @@ class FSwheel : PartModule
                 if (useCustomParticleFX)
                 {
                     wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = particleEmissionRate;
-                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = particleEmissionRate;
+                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = particleEmissionRate;                    
                 }
                 else
                 {

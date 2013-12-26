@@ -37,13 +37,14 @@ class WheelList
             {
                 wheels[i].wheelMesh = wheelMeshes[i];
                 wheels[i].useRotation = true;
+                wheels[i].setupFxLocation();
             }
             if (i < suspensionParents.Count)
             {
                 wheels[i].suspensionParent = suspensionParents[i];
                 wheels[i].useSuspension = true;
-            }
-        }
+            }            
+        }        
     }
 
     public void Create(WheelCollider collider, Transform wheelMesh, Transform suspensionParent)
