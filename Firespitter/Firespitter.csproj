@@ -63,6 +63,8 @@
     <Compile Include="cockpit\FSmaintenanceCounter.cs" />
     <Compile Include="cockpit\FSpitchIndicator.cs" />
     <Compile Include="cockpit\FStachometer.cs" />
+    <Compile Include="engine\FSengine.cs" />
+    <Compile Include="engine\FShelicopterEngine.cs" />
     <Compile Include="engine\FSparticleFX.cs" />
     <Compile Include="engine\FSvelocityController.cs" />
     <Compile Include="gui\HelpPopup.cs" />

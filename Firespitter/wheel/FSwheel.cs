@@ -960,10 +960,11 @@ class FSwheel : PartModule
 
     private void fireScreechEffect(int wheelNumber)
     {
-        wheelList.wheels[wheelNumber].screechCountdown = 0.5f;
-        Debug.Log(Vector3.Distance(vessel.ReferenceTransform.position, wheelList.wheels[wheelNumber].smokeFX.gameObject.transform.position));
-        // play one shot audio        
         part.Effect("touchdown");
+        //Debug.Log("wheels: " + wheelList.wheels.Count + ", current: " + wheelNumber);
+        wheelList.wheels[wheelNumber].screechCountdown = 0.5f;
+        //Debug.Log(Vector3.Distance(vessel.ReferenceTransform.position, wheelList.wheels[wheelNumber].smokeFX.gameObject.transform.position));
+        // play one shot audio                
     }
 
     private void updateScreechEffect(int wheelNumber)

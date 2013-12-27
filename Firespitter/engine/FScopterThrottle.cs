@@ -45,7 +45,9 @@ public class FScopterThrottle : PartModule
     private ModuleEngines engine = new ModuleEngines();
     private Transform RotorParent;
     private bool spinRotorObject = true;
-        
+
+    //private float desiredVerticalSpeed = 0f;
+
     /*[KSPAction("Hover Throttle")]
     public void hoverThrottleAction(KSPActionParam param)
     {
@@ -100,7 +102,7 @@ public class FScopterThrottle : PartModule
     public void decreaseHeightEvent()
     {
         hoverHeight -= heightIncrements;
-        if (hoverHeight < 0f) hoverHeight = 0f;
+        //if (hoverHeight < 0f) hoverHeight = 0f;
     }
 
     [KSPAction("Increase Hover Height")]
