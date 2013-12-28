@@ -18,6 +18,7 @@ class WheelClass
 
     private float deltaRPM = 0f;
     private float oldRPM = 0f;
+    public bool oldIsGrounded = true;
 
     public WheelClass(WheelCollider _wheelCollider, Transform _wheelMesh, Transform _suspensionParent)
     {

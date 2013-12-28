@@ -67,6 +67,7 @@
     <Compile Include="engine\FShelicopterEngine.cs" />
     <Compile Include="engine\FSparticleFX.cs" />
     <Compile Include="engine\FSvelocityController.cs" />
+    <Compile Include="gui\FSinputVisualizer.cs" />
     <Compile Include="gui\HelpPopup.cs" />
     <Compile Include="tools\ShipHeading.cs" />
     <Compile Include="engine\FSanimateThrottle.cs" />

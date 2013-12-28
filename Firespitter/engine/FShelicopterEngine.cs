@@ -11,84 +11,104 @@ class FShelicopterEngine : FSengine
     [KSPField]
     public float minVerticalSpeed = -5f;
     [KSPField]
-    public float positiveSpeedChangeRate = 0.05f;
+    public float positiveSpeedChangeRate = 0.1f;
     [KSPField]
-    public float negativeSpeedChangeRate = 0.02f;
+    public float negativeSpeedChangeRate = 0.05f;
     [KSPField(guiActive = true, guiName = "Req. Climb rate")]
     public float requestedVerticalSpeed = 0f;
     
-    //private float upAlignment = 1f;
+    private float upAlignment = 1f;
 
     [KSPField(guiActive = true, guiName = "Allowed")]
     public float allowedVerticalSpeed = 0f;
     public bool inputProvided = false;
     public bool provideLift = false;
+    private float verticalSpeed = 0f;
+    private float requestThrottleRaw = 0f;
+
+    private FSinputVisualizer inputVisualizer = new FSinputVisualizer();
+
+    [KSPField(isPersistant = true)]
+    public bool autoThrottle = true;
+
+    [KSPEvent(guiName = "Normal Throttle", guiActive = true, guiActiveEditor = true)]
+    public void toggleThrottleMode()
+    {
+        autoThrottle = !autoThrottle;
+        if (autoThrottle)
+            Events["toggleThrottleMode"].guiName = "Normal Throttle";
+        else
+            Events["toggleThrottleMode"].guiName = "Auto Throttle";
+    }
 
     public override void OnUpdate()
     {
-        if (FlightGlobals.ActiveVessel == vessel)
+        if (autoThrottle)
         {
-            //upAlignment = Mathf.Sign(Vector3.Dot(thrustTransforms[0].forward, vessel.upAxis));
-
-            inputProvided = false;
-            if (Input.GetKey(GameSettings.THROTTLE_UP.primary))
+            if (FlightGlobals.ActiveVessel == vessel)
             {
-                requestedVerticalSpeed += positiveSpeedChangeRate;
-                provideLift = true;
-                inputProvided = true;
-            }
-            if (Input.GetKey(GameSettings.THROTTLE_DOWN.primary))
-            {
-                requestedVerticalSpeed -= negativeSpeedChangeRate;
-                provideLift = true;
-                inputProvided = true;
-            }
-            if (Input.GetKey(GameSettings.THROTTLE_CUTOFF.primary))
-            {
-                provideLift = false;
-                requestedVerticalSpeed = 0f;
-                inputProvided = true;
-            }
+                upAlignment = -Mathf.Sign(Vector3.Dot(thrustTransforms[0].forward, vessel.upAxis));
+                verticalSpeed = (float)vessel.verticalSpeed * upAlignment;                
 
-            if (!inputProvided && requestedVerticalSpeed != 0f)
-            {
-                requestedVerticalSpeed = 0f;
-                //requestedVerticalSpeed += verticalSpeedChangeRate * -Mathf.Sign(requestedVerticalSpeed);
-                //if (Mathf.Abs(requestedVerticalSpeed) < verticalSpeedChangeRate) requestedVerticalSpeed = 0f;
-            }
+                getThrottleInput();
 
-            requestedVerticalSpeed = Mathf.Clamp(requestedVerticalSpeed, minVerticalSpeed, maxVerticalSpeed);
-
-            //requestedVerticalSpeed *= upAlignment;
-
-            if (provideLift)
-            {
-                if (requestedVerticalSpeed >= 0f)
+                if (provideLift)
                 {
-                    //allowedVerticalSpeed = Mathf.Clamp(Mathf.Min(requestedVerticalSpeed, maxVerticalSpeed - (float)vessel.verticalSpeed), 0f, maxVerticalSpeed);
-                    //requestedThrottle = allowedVerticalSpeed / maxVerticalSpeed;
-                    if (vessel.verticalSpeed < requestedVerticalSpeed)
-                        requestedThrottle = 1f;
-                    else
-                        requestedThrottle = 0f;
+                    if (verticalSpeed > requestedVerticalSpeed)
+                            requestThrottleRaw = -1f;
+                        else if (verticalSpeed < requestedVerticalSpeed)
+                            requestThrottleRaw = 1f;
+                        else
+                            requestThrottleRaw = 0f;
                 }
-                else if (requestedVerticalSpeed < 0f && minVerticalSpeed < 0f)
-                {
-                    //allowedVerticalSpeed = Mathf.Clamp(Mathf.Max(requestedVerticalSpeed, maxVerticalSpeed - (float)vessel.verticalSpeed), minVerticalSpeed, 0f);
-                    //requestedThrottle = allowedVerticalSpeed / minVerticalSpeed;
-                    if (vessel.verticalSpeed > requestedVerticalSpeed)
-                        requestedThrottle = -1f;
-                    else
-                        requestedThrottle = 0f;
-                }
+                else
+                    requestThrottleRaw = 0f;
+
+                requestedThrottle = Mathf.Lerp(requestedThrottle, requestThrottleRaw, 0.5f);
+
             }
             else
-                requestedThrottle = 0f;
-         
+            {
+                requestedVerticalSpeed = 0f;
+            }
+            updateFX();
         }
         else
+            base.OnUpdate();
+    }
+
+    private void getThrottleInput()
+    {
+        inputProvided = false;
+        if (Input.GetKey(GameSettings.THROTTLE_UP.primary))
+        {
+            requestedVerticalSpeed += positiveSpeedChangeRate;
+            provideLift = true;
+            inputProvided = true;
+        }
+        if (Input.GetKey(GameSettings.THROTTLE_DOWN.primary))
+        {
+            requestedVerticalSpeed -= negativeSpeedChangeRate;
+            provideLift = true;
+            inputProvided = true;
+        }
+        if (Input.GetKey(GameSettings.THROTTLE_CUTOFF.primary))
+        {
+            provideLift = false;
+            requestedVerticalSpeed = 0f;
+            inputProvided = true;
+        }
+
+        if (!inputProvided || !vessel.IsControllable)
         {
             requestedVerticalSpeed = 0f;
         }
+
+        requestedVerticalSpeed = Mathf.Clamp(requestedVerticalSpeed, minVerticalSpeed, maxVerticalSpeed);
+    }
+
+    public void OnGUI()
+    {
+        inputVisualizer.OnGUI();
     }
 }

@@ -158,6 +158,8 @@ class FSwheel : PartModule
     public string smokeFXtextureName = "Firespitter/textures/particle";
     [KSPField]
     public float particleEmissionRate = 1200f;
+    private float fxLevel = 0f;
+    public float screechMindeltaRPM = 30f;
 
     private float finalBrakeTorque = 0f;
 
@@ -745,7 +747,7 @@ class FSwheel : PartModule
     }    
 
     public void FixedUpdate()
-    {        
+    {
         updateDeploymentState();        
 
         if (!HighLogic.LoadedSceneIsFlight)
@@ -762,15 +764,21 @@ class FSwheel : PartModule
         #region Active vessel code        
 
         if (vessel.isActiveVessel && base.vessel.IsControllable)
-        {            
+        {
             disableColliders();
-                       
+
             updateMotors();
-            
-            updateDrag();                      
 
-        #endregion
+            updateDrag();            
+        }
+        #endregion        
+    }
 
+    public override void OnUpdate()
+    {
+        if (HighLogic.LoadedSceneIsFlight)
+        {
+            checkSounds();
         }
     }
 
@@ -806,9 +814,10 @@ class FSwheel : PartModule
 
                 wheelList.wheels[i].wheelMesh.Rotate(new Vector3(0f, 0f, rotation));
 
-                if (Mathf.Abs(wheelList.wheels[i].getDeltaRPM()) > 30f && wheelList.wheels[i].wheelCollider.isGrounded)
+                float deltaRPM = Mathf.Max(0f, Mathf.Abs(wheelList.wheels[i].getDeltaRPM()) - screechMindeltaRPM);
+                if (deltaRPM > 0f && wheelList.wheels[i].wheelCollider.isGrounded)
                 {
-                    fireScreechEffect(i);
+                    fireScreechEffect(i, deltaRPM);
                 }
 
                 updateScreechEffect(i);
@@ -824,7 +833,7 @@ class FSwheel : PartModule
             if (brakesLockedOn)
                 if (vessel.ctrlState.mainThrottle > 0.1f)
                     finalBrakeTorque = 0f;
-            wheelList.brakeTorque = finalBrakeTorque;
+            wheelList.brakeTorque = finalBrakeTorque;            
         }
         else
         {
@@ -956,11 +965,56 @@ class FSwheel : PartModule
                 part.maximum_drag = 0f;
             }
         }
-    } 
-
-    private void fireScreechEffect(int wheelNumber)
+    }
+        
+    private void checkSounds()
     {
-        part.Effect("touchdown");
+        for (int i = 0; i < wheelList.wheels.Count; i++)
+        {
+            bool isGrounded = wheelList.wheels[i].wheelCollider.isGrounded;
+            if (isGrounded && !wheelList.wheels[i].oldIsGrounded)
+            {
+                if (vessel.verticalSpeed < -1f)
+                    fireTouchdownThud();
+            }
+            wheelList.wheels[i].oldIsGrounded = isGrounded;
+
+            if (isGrounded && vessel.horizontalSrfSpeed > 2f)
+            {
+                fireRollSound();
+                fireBrakeSound(i);
+            }
+            else
+            {
+                part.Effect("wheelRoll", 0f);
+                part.Effect("brakes", 0f);
+            }
+        }
+    }
+
+    private void fireBrakeSound(int wheelNumber)
+    {
+        part.Effect("brakes", (wheelList.wheels[wheelNumber].wheelCollider.brakeTorque / brakeTorque) * Mathf.Clamp((float)vessel.horizontalSrfSpeed, 0f, 15f) / 15f);
+        
+    }
+
+    private void fireRollSound()
+    {
+        float rollLevel = Mathf.Clamp((float)vessel.horizontalSrfSpeed, 0f, 40f) / 40f;
+        part.Effect("wheelRoll", rollLevel);                
+    }
+
+    private void fireTouchdownThud()
+    {
+        float thudLevel = Mathf.Clamp(-(float)vessel.verticalSpeed, 0f, 15f) / 15f;
+        part.Effect("touchdownThud", thudLevel);
+    }
+
+    private void fireScreechEffect(int wheelNumber, float deltaRPM)
+    {
+        fxLevel = Mathf.Clamp((float)vessel.horizontalSrfSpeed, 0f, 40f) / 40f;
+        fxLevel *= deltaRPM / 200f;
+        part.Effect("touchdown", fxLevel);
         //Debug.Log("wheels: " + wheelList.wheels.Count + ", current: " + wheelNumber);
         wheelList.wheels[wheelNumber].screechCountdown = 0.5f;
         //Debug.Log(Vector3.Distance(vessel.ReferenceTransform.position, wheelList.wheels[wheelNumber].smokeFX.gameObject.transform.position));
@@ -976,12 +1030,12 @@ class FSwheel : PartModule
             {
                 if (useCustomParticleFX)
                 {
-                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = particleEmissionRate;
-                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = particleEmissionRate;                    
+                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = particleEmissionRate * fxLevel;
+                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = particleEmissionRate * fxLevel;                    
                 }
                 else
                 {
-                    part.Effect("tireSmoke");
+                    part.Effect("tireSmoke", fxLevel);
                 }
             }
             else
