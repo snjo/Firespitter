@@ -57,6 +57,16 @@ public class FSanimateGeneric : PartModule
     public string startDeployedString = "Start Deployed?";
 
     private Animation anim;
+    private bool effectPlaybackReady = false;
+
+    [KSPField]
+    public string fullyRetractedEffect = string.Empty;
+    [KSPField]
+    public string fullyDeployedEffect = string.Empty;
+    [KSPField]
+    public string startDeployEffect = string.Empty;
+    [KSPField]
+    public string startRetractEffect = string.Empty;
     //private FSGUIPopup popup;
 
     //private bool showMenu = false;
@@ -71,7 +81,8 @@ public class FSanimateGeneric : PartModule
 
     [KSPEvent(name = "toggleEvent", guiName = "Deploy", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor=true)]
     public void toggleEvent()
-    {
+    {        
+
         Events["toggleEvent"].active = false; //see if this removes the button when clicking
         isAnimating = true;
 
@@ -91,6 +102,11 @@ public class FSanimateGeneric : PartModule
                 anim[animationName].normalizedTime = 1f;
             anim.Play(animationName);
             startDeployed = false; // to get the hangar toggle button state right
+            if (startRetractEffect != string.Empty)
+            {
+                part.Effect(startRetractEffect);
+                Debug.Log("start retract effect");
+            }
         }
         else
         {
@@ -105,6 +121,11 @@ public class FSanimateGeneric : PartModule
                 anim[animationName].normalizedTime = 0f;
             anim.Play(animationName);
             startDeployed = true; // to get the hangar toggle button state right
+            if (startDeployEffect != string.Empty)
+            {
+                part.Effect(startDeployEffect);
+                Debug.Log("start deploy effect");
+            }
         }
 
         reverseAnimation = !reverseAnimation;
@@ -235,12 +256,27 @@ public class FSanimateGeneric : PartModule
                     animTime = 0f; // 1
                 }
                 anim[animationName].normalizedTime = animTime;
+                isAnimating = false;
+
+                if (effectPlaybackReady)
+                {
+                    if (animTime == 0 && fullyRetractedEffect != string.Empty)
+                    {
+                        part.Effect(fullyRetractedEffect);                        
+                    }
+                    else if (animTime == 1 && fullyDeployedEffect != string.Empty)
+                    {
+                        part.Effect(fullyDeployedEffect);                        
+                    }
+                }
+                effectPlaybackReady = false;
             }
             else
             {
                 animTime = anim[animationName].normalizedTime;
                 animSpeed =  anim[animationName].speed;
-                isAnimating = false;
+                isAnimating = true; // this was false... hmmm
+                effectPlaybackReady = true;
             }
         }
     }

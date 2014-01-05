@@ -161,6 +161,11 @@ class FSwheel : PartModule
     private float fxLevel = 0f;
     public float screechMindeltaRPM = 30f;
 
+    [KSPField]
+    public string startDeployEffect = string.Empty;
+    [KSPField]
+    public string startRetractEffect = string.Empty;
+
     private float finalBrakeTorque = 0f;
 
     private Animation anim;    
@@ -298,6 +303,10 @@ class FSwheel : PartModule
                     animTime = 1f;
                 animSpeed = -1f;
                 deploymentState = "Deploying";
+                if (startDeployEffect != string.Empty)
+                {
+                    part.Effect(startDeployEffect);
+                }
             }
             else if (mode == "Retract")
             {
@@ -305,6 +314,10 @@ class FSwheel : PartModule
                     animTime = 0f;
                 animSpeed = 1f;
                 deploymentState = "Retracting";
+                if (startRetractEffect != string.Empty)
+                {
+                    part.Effect(startRetractEffect);
+                }
             }
             else if (mode == "Stop")
             {
@@ -1031,7 +1044,7 @@ class FSwheel : PartModule
                 if (useCustomParticleFX)
                 {
                     wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = particleEmissionRate * fxLevel;
-                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = particleEmissionRate * fxLevel;                    
+                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = particleEmissionRate * fxLevel;
                 }
                 else
                 {
