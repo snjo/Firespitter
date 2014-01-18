@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class FSbuoyancy : PartModule
 {
-    [KSPField]
+    [KSPField(isPersistant=true, guiName="Buoyancy", guiActive = false, guiActiveEditor = true), UI_FloatRange(minValue=0f, maxValue=50f, stepIncrement=1f)]
     public float buoyancyForce = 12f; // the force applied to lift the part, scaled by depth according to buoyancyRange
     [KSPField]
     public float buoyancyRange = 1f; // the max depth at which the buoyancy will be scaled up. at this depth, the force applied is equal to buiyoancyForce. At 0 depth, the force is 0
@@ -23,7 +23,7 @@ public class FSbuoyancy : PartModule
     public float waterImpactTolerance = 125f;
     [KSPField]
     public string forcePointName; // if defined, this is the point that's checked for height, and where the force is applied. allows for several modules on one part through use of many named forecePoints. If undefined, uses part.transform
-    [KSPField]
+    [KSPField(isPersistant=true, guiName = "Splash FX", guiActive = false, guiActiveEditor = true), UI_Toggle(enabledText="On", disabledText="Off")]
     public bool splashFXEnabled = true;
 
     public Transform forcePoint;
@@ -34,19 +34,19 @@ public class FSbuoyancy : PartModule
     private float splashTimer = 0f;
     public float splashCooldown = 0.5f;
 
-    [KSPEvent(guiActive = false, guiName = "increase buoyancy")]
-    public void increaseBuoyancyEvent()
-    {
-        buoyancyForce += buoyancyIncrements;
-        Debug.Log("buoyancy: " + buoyancyForce);
-    }
+    //[KSPEvent(guiActive = false, guiName = "increase buoyancy")]
+    //public void increaseBuoyancyEvent()
+    //{
+    //    buoyancyForce += buoyancyIncrements;
+    //    Debug.Log("buoyancy: " + buoyancyForce);
+    //}
 
-    [KSPEvent(guiActive = false, guiName = "decrease buoyancy")]
-    public void decreaseBuoyancyEvent()
-    {
-        buoyancyForce -= buoyancyIncrements;
-        Debug.Log("buoyancy: " + buoyancyForce);
-    }
+    //[KSPEvent(guiActive = false, guiName = "decrease buoyancy")]
+    //public void decreaseBuoyancyEvent()
+    //{
+    //    buoyancyForce -= buoyancyIncrements;
+    //    Debug.Log("buoyancy: " + buoyancyForce);
+    //}
 
     public override void OnStart(PartModule.StartState state)
     {
@@ -63,12 +63,14 @@ public class FSbuoyancy : PartModule
         }
         if (debugMode)
         {
-            Events["increaseBuoyancyEvent"].guiActive = true;
-            Events["decreaseBuoyancyEvent"].guiActive = true;
+            //Events["increaseBuoyancyEvent"].guiActive = true;
+            //Events["decreaseBuoyancyEvent"].guiActive = true;
+            Fields["buoyancyForce"].guiActive = true;
             if (forcePointName != string.Empty)
             {
-                Events["increaseBuoyancyEvent"].guiName = "increase buoy " + forcePointName;
-                Events["decreaseBuoyancyEvent"].guiName = "decrease buoy " + forcePointName;
+                //Events["increaseBuoyancyEvent"].guiName = "increase buoy " + forcePointName;
+                //Events["decreaseBuoyancyEvent"].guiName = "decrease buoy " + forcePointName;
+                Fields["buoyancyForce"].guiName = forcePointName + "Buoyancy";
             }
         }
     }

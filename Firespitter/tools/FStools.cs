@@ -16,7 +16,8 @@ namespace Firespitter
                 return Vector3.zero;
         }
 
-
+        public static String AppPath = KSPUtil.ApplicationRootPath.Replace("\\", "/");
+        public static String PlugInDataPath = AppPath + "GameData/Firespitter/PluginData/";
     }
 
     public class MouseEventHandler : MonoBehaviour

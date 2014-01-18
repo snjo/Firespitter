@@ -100,6 +100,7 @@ class FSwingBase : PartModule
     public float controlLimiterMultiplier = 0.3f;
     
     private float limiterMultiplier = 1f;
+    private float originalCtrlSurfaceRange = 20f;
 
     [KSPField]
     public bool showTweakables = true;
@@ -109,9 +110,15 @@ class FSwingBase : PartModule
     public int moduleID = 0;
     [KSPField]
     public bool customActionName = true;
+    [KSPField(isPersistant=true)]
+    public float partHealth = 1f; // used by InfinteDice's weapon code. 0f is damaged, 1f is OK
+    [KSPField]
+    public string status = "Undamaged";
     [KSPField]
     public bool debugMode = false;
-    
+
+    public bool jammed = false;
+
     #endregion
 
     public virtual bool isMaster()
@@ -517,6 +524,8 @@ class FSwingBase : PartModule
 
         #endregion
 
+        originalCtrlSurfaceRange = ctrlSurfaceRange;
+
         if (affectStockWingModule || !showTweakables)
         {
             Fields["pitchResponse"].guiActive = false;
@@ -529,24 +538,7 @@ class FSwingBase : PartModule
             Fields["flapResponse"].guiActiveEditor = false;
         }
 
-        //if (!useLeadingEdge || autoDeployLeadingEdge)
-        //{
-        //    Events["toggleLeadingEdgeEvent"].guiActive = false;
-        //}
-
-        //if (affectStockWingModule || !showHelp)
-        //{            
-        //    Events["showHelpEvent"].guiActive = false;
-        //    Events["showHelpEvent"].guiActiveEditor = false;
-        //}
-
-        //if (customActionName)
-        //{
-        //    Fields["pitchResponse"].guiName = displayName + " Pitch";            
-        //    Fields["rollResponse"].guiName = displayName + " Roll";            
-        //    Fields["yawResponse"].guiName = displayName + " Yaw";
-        //    Fields["flapResponse"].guiName = displayName + " Flap";            
-        //}
+        ApplyDamage(partHealth);
     }
 
     public override void OnUpdate()
@@ -602,7 +594,7 @@ class FSwingBase : PartModule
 
             FlightCtrlState ctrl = vessel.ctrlState;
 
-            if (useLeadingEdge)
+            if (useLeadingEdge && !jammed)
             {
                 if (autoDeployLeadingEdge)
                 {
@@ -629,7 +621,7 @@ class FSwingBase : PartModule
                     updateDrag();
             }
 
-            if (useCtrlSrf)
+            if (useCtrlSrf && !jammed)
             {
                 Vector4 input = new Vector4(ctrl.pitch, -ctrl.roll, ctrl.yaw, flapCurrent);
                 if (wingIsPointingLeft && allowInvertOnLeft)
@@ -708,5 +700,33 @@ class FSwingBase : PartModule
         }
 
         #endregion
+    }
+
+    public void ApplyDamage(float amount) // used by InfiniteDice's damage code. 0f is broken, 1f is OK
+    {
+        partHealth = amount;
+        Debug.Log("=== FSwing damage set to " + amount + " ===");
+        ctrlSurfaceRange = originalCtrlSurfaceRange * amount;
+        Debug.Log("=== FSwing range now " + ctrlSurfaceRange + " ===");
+
+        if (amount >= 1f)
+            status = "Undamaged";
+        else if (amount > 0.5f)
+            status = "Damaged";
+        else
+        {
+            status = "Broken";
+            jammed = true;
+        }
+
+        if (showTweakables)
+        {
+            Debug.Log("FSwing - setting fields to " + jammed);
+            Fields["status"].guiActive = (amount < 1f);
+            Fields["pitchResponse"].guiActive = !jammed;
+            Fields["rollResponse"].guiActive = !jammed;
+            Fields["yawResponse"].guiActive = !jammed;
+            Fields["flapResponse"].guiActive = !jammed;
+        }
     }
 }
