@@ -36,13 +36,15 @@ public class FSmoveCraftAtLaunch : PartModule
     public float longitude = 285.639486f;
     [KSPField(isPersistant = true, guiActiveEditor = true)]
     public float altitude = 1.6f;
+    [KSPField(isPersistant = true, guiActiveEditor = true), UI_FloatRange(minValue = -50f, maxValue = 50f, stepIncrement = 1f)]
+    public float altitudeShift = 0f;
 
 
     [KSPField(isPersistant=true)]
     public bool hasLaunched = false;
 
     [KSPField(isPersistant=true), UI_FloatRange(minValue=3f, maxValue=30f, stepIncrement=1f)]
-    public float timer = 3f;
+    public float timer = 12f;
 
     public bool doQuickLoad = false;
     private bool isFixed = false;
@@ -175,7 +177,7 @@ public class FSmoveCraftAtLaunch : PartModule
 
     public Vector3d calculateLaunchPosition()
     {
-        return vessel.mainBody.GetWorldSurfacePosition((double)latitude, (double)longitude, (double)altitude);
+        return vessel.mainBody.GetWorldSurfacePosition((double)latitude, (double)longitude, (double)(altitude + altitudeShift));
     }
 
     public void tryMoveVessel()
@@ -216,7 +218,7 @@ public class FSmoveCraftAtLaunch : PartModule
         
         if (!hasLaunched)
         {
-            Debug.Log("FSmoveCraftAtLaunch: Launching vessel at " + positionDisplayName + ", lat " + latitude + ", long " + longitude + ", alt " + altitude);
+            //Debug.Log("FSmoveCraftAtLaunch: Launching vessel at " + positionDisplayName + ", lat " + latitude + ", long " + longitude + ", alt " + altitude);
             // --------- TEMP DISABLING ----------
             //ScreenMessages.PostScreenMessage(new ScreenMessage("The water launch module is disabled in KSP 0.22 due to a bug", 10f, ScreenMessageStyle.UPPER_CENTER));
             //hasLaunched = true;
