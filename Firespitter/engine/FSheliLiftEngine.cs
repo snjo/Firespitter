@@ -65,6 +65,9 @@ class FSheliLiftEngine : PartModule
     [KSPField]
     public float correctionMaxSpeed = 80f;
 
+    [KSPField]
+    public bool debugMode = true;
+
     public bool flameOut = false;
     public bool initialized = false;
     //public bool staged = false;
@@ -92,6 +95,9 @@ class FSheliLiftEngine : PartModule
 
     [KSPField(isPersistant = true)]
     public bool fullSimulation = false;
+
+    public float bladeSpeedLimitLow = 50f;
+    public float bladeSpeedLimitHigh = 200f; //335f;
 
     private Transform rotorHubTransform;
     private Transform baseTransform;
@@ -224,6 +230,11 @@ class FSheliLiftEngine : PartModule
             rotationDirection = -1f;
         else
             rotationDirection = 1f;
+
+        //test
+        if (Input.GetKeyDown(KeyCode.KeypadPlus))
+            RPM = 200f;
+        // ---
 
         animateRotor();
 
@@ -520,14 +531,16 @@ class FSheliLiftSurface : PartModule
     public float lift = 0f;
     public float discDrag = 0f;
     public float bladeDrag = 0f;
-    public bool fullSimulation = true;
+    public bool fullSimulation = true;    
 
     public float pointVelocityMagnitude = 0f;
 
+    [KSPField]
     public bool debugMode = true;
     private bool initialized = false;
     private Vector2 liftAndDrag = new Vector2(0f, 0f);
     private float speed = 0f;
+    public float realSpeed = 0f;
     public Vector3 bladeVelocity = Vector3.zero;
     public Vector3 partVelocity = Vector3.zero;
     private List<FSliftSurface> liftSurfaces = new List<FSliftSurface>();
@@ -565,6 +578,7 @@ class FSheliLiftSurface : PartModule
             partVelocity = GetVelocity(commonRigidBody, liftTransform.position);
             //bladeVelocity = partVelocity + pointVelocity;
             bladeVelocity = pointVelocity; // test
+            realSpeed = (bladeVelocity + partVelocity).magnitude;
             if (fullSimulation) bladeVelocity += partVelocity;
             //velocity = pointVelocity; //+ (GetVelocity(commonRigidBody, liftTransform.position).magnitude * -liftTransform.up);
 
@@ -578,7 +592,7 @@ class FSheliLiftSurface : PartModule
             
             discDrag = 0.5f * dragCoeff * airDensity * (partVelocity.magnitude * partVelocity.magnitude) * wingArea;
 
-            lift *= power;
+            lift *= power; // modified by too low blade speed //;
             discDrag *= power;
             bladeDrag *= power;
         }

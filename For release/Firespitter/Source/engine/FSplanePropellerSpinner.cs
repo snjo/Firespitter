@@ -129,7 +129,7 @@ public class FSplanePropellerSpinner : PartModule
     }
 
     //public override void OnFixedUpdate()    
-    public override void OnUpdate()    
+    public void FixedUpdate()    
     {
         if (!HighLogic.LoadedSceneIsFlight) return; // || !vessel.isActiveVessel
 
@@ -157,7 +157,7 @@ public class FSplanePropellerSpinner : PartModule
             else
                 targetRPM = 1f;            
             
-            currentRPM = Mathf.Lerp(currentRPM, targetRPM, engine.engineAccelerationSpeed/spinUpTime * TimeWarp.deltaTime);
+            currentRPM = Mathf.Lerp(currentRPM, targetRPM, engine.engineAccelerationSpeed/spinUpTime * TimeWarp.fixedDeltaTime);
 
             if (currentRPM != 0f)
             {

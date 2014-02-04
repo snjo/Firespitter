@@ -43,7 +43,7 @@ public class FSmoveCraftAtLaunch : PartModule
     [KSPField(isPersistant=true)]
     public bool hasLaunched = false;
 
-    [KSPField(isPersistant=true), UI_FloatRange(minValue=3f, maxValue=30f, stepIncrement=1f)]
+    [KSPField(isPersistant=true), UI_FloatRange(minValue=3f, maxValue=60f, stepIncrement=1f)]
     public float timer = 12f;
 
     public bool doQuickLoad = false;

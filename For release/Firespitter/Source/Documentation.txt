@@ -1,0 +1,12 @@
+﻿Documentation:
+Firespitter Module Documetation: https://docs.google.com/document/d/1iD52DfHft04Hb48TEhF5a4n5JOc8efUevdg5Y_QPICQ/edit?usp=sharing
+Change Log: https://docs.google.com/document/d/1w8OYi6iwFxu8fQ7avZ-2IrYLoe3vNgtnSuFgB7HTTZI/edit?usp=sharing
+Firespitter Parts Guide: https://docs.google.com/document/d/1em9W_3JydpPTX-3aaC7LF42r8fBasmgUyobHTeBds9M/edit?usp=sharing
+KSP/Unity code snippet Library: https://docs.google.com/document/d/1SvSgUbI7NiAPfpdLzboHfpJZ0e6iDogT6gMP5Uro3qQ/edit?usp=sharing
+
+Publish Locations:
+Kerbal Spaceport: http://kerbalspaceport.com/firespitter-propeller-plane-parts/
+KSP Forum Thread: http://forum.kerbalspaceprogram.com/showthread.php/24551-Firespitter-propeller-plane-and-helicopter-parts-v5-0-%28May-25th%29-for-KSP-0-20-0
+
+GUI Window IDs
+Use FSGUIwindowID.*className* as the ID when creating GUI.windows

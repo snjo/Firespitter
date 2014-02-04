@@ -1,0 +1,5379 @@
+ship = FS Gotha Bomber
+version = 0.23.0
+description = 
+type = SPH
+PART
+{
+	part = FSbiplaneCockpit_4294774408
+	partName = Part
+	pos = -0.0414029,5.571064,0.1197567
+	rot = 0.7071068,0,0,0.7071068
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 0
+	link = FSoblongFuselageHalf_4294774314
+	link = FSoblongFuselageHalf_4294774284
+	link = FSstrutConnectorWire_4294772876
+	link = FSstrutConnectorWire_4294772822
+	attN = top,FSoblongFuselageHalf_4294774284
+	attN = bottom,FSoblongFuselageHalf_4294774314
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = ModuleCommand
+		isEnabled = True
+		controlSrcStatusText = 
+		EVENTS
+		{
+			MakeReference
+			{
+				active = True
+				guiActive = True
+				guiIcon = Control From Here
+				guiName = Control From Here
+				category = Control From Here
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			RenameVessel
+			{
+				active = True
+				guiActive = True
+				guiIcon = Rename Vessel
+				guiName = Rename Vessel
+				category = Rename Vessel
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSkerbalPuppet
+		isEnabled = True
+		lastOccupiedState = False
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSkerbalPuppet
+		isEnabled = True
+		lastOccupiedState = False
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleScienceExperiment
+		isEnabled = True
+		Deployed = False
+		Inoperable = False
+		EVENTS
+		{
+			DeployExperiment
+			{
+				active = True
+				guiActive = True
+				guiIcon = Deploy
+				guiName = Deploy
+				category = Deploy
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			CollectDataExternalEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = 
+				guiName = 
+				category = 
+				guiActiveUnfocused = True
+				unfocusedRange = 1.5
+				externalToEVAOnly = True
+			}
+			ReviewDataEvent
+			{
+				active = True
+				guiActive = True
+				guiIcon = Review Data
+				guiName = Review Data
+				category = Review Data
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			ResetExperiment
+			{
+				active = True
+				guiActive = True
+				guiIcon = Reset
+				guiName = Reset
+				category = Reset
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			ResetExperimentExternal
+			{
+				active = True
+				guiActive = False
+				guiIcon = Reset
+				guiName = Reset
+				category = Reset
+				guiActiveUnfocused = True
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			DeployAction
+			{
+				actionGroup = None
+			}
+			ResetAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+	MODULE
+	{
+		name = ModuleScienceContainer
+		isEnabled = True
+		EVENTS
+		{
+			StoreDataExternalEvent
+			{
+				active = False
+				guiActive = False
+				guiIcon = 
+				guiName = Store Experiments (0)
+				category = 
+				guiActiveUnfocused = True
+				unfocusedRange = 1.3
+				externalToEVAOnly = True
+			}
+			CollectDataExternalEvent
+			{
+				active = False
+				guiActive = False
+				guiIcon = 
+				guiName = Take Data (0)
+				category = 
+				guiActiveUnfocused = True
+				unfocusedRange = 1.3
+				externalToEVAOnly = True
+			}
+			ReviewDataEvent
+			{
+				active = False
+				guiActive = True
+				guiIcon = Review Data
+				guiName = Review Stored Data (0)
+				category = Review Data
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 1
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/biPlaneRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSmaintenanceInfo
+		isEnabled = True
+		flightTime = 0
+		cycles = 0
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleTripLogger
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		Surfaced
+		{
+		}
+		Flew
+		{
+		}
+		FlewBy
+		{
+		}
+		Orbited
+		{
+		}
+		SubOrbited
+		{
+		}
+	}
+	RESOURCE
+	{
+		name = LiquidFuel
+		amount = 20
+		maxAmount = 20
+		flowState = True
+		isTweakable = True
+		hideFlow = False
+		flowMode = Both
+	}
+}
+PART
+{
+	part = FSoblongFuselageHalf_4294774314
+	partName = Part
+	pos = -0.0414029,5.571064,-0.7770084
+	rot = 0.7071068,0,0,0.7071068
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 0
+	link = FSbiplaneCockpit_4294774254
+	link = FSbiPlaneWingCenter_4294774130
+	link = FSbiPlaneWingMain_4294774090
+	link = FSbiPlaneWingMain_4294774038
+	attN = top,FSbiplaneCockpit_4294774408
+	attN = bottom,FSbiplaneCockpit_4294774254
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 2
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/fuselageRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSoblongFuselageHalf_4294774284
+	partName = Part
+	pos = -0.0414029,5.571064,1.301509
+	rot = 0.7071068,0,0,0.7071068
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 0
+	link = FSoblongNose_4294770980
+	attN = top,FSoblongNose_4294770980
+	attN = bottom,FSbiplaneCockpit_4294774408
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 2
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/fuselageRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiplaneCockpit_4294774254
+	partName = Part
+	pos = -0.0414029,5.571064,-1.672751
+	rot = -1.256074E-15,-0.7071068,0.7071069,-1.256074E-15
+	attRot = 0,-0.9999999,5.960464E-08,-1.776357E-15
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 0
+	link = FSoblongFuselageHalf_4294774160
+	attN = top,FSoblongFuselageHalf_4294774160
+	attN = bottom,FSoblongFuselageHalf_4294774314
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = ModuleCommand
+		isEnabled = True
+		controlSrcStatusText = 
+		EVENTS
+		{
+			MakeReference
+			{
+				active = True
+				guiActive = True
+				guiIcon = Control From Here
+				guiName = Control From Here
+				category = Control From Here
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			RenameVessel
+			{
+				active = True
+				guiActive = True
+				guiIcon = Rename Vessel
+				guiName = Rename Vessel
+				category = Rename Vessel
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSkerbalPuppet
+		isEnabled = True
+		lastOccupiedState = False
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSkerbalPuppet
+		isEnabled = True
+		lastOccupiedState = False
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleScienceExperiment
+		isEnabled = True
+		Deployed = False
+		Inoperable = False
+		EVENTS
+		{
+			DeployExperiment
+			{
+				active = True
+				guiActive = True
+				guiIcon = Deploy
+				guiName = Deploy
+				category = Deploy
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			CollectDataExternalEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = 
+				guiName = 
+				category = 
+				guiActiveUnfocused = True
+				unfocusedRange = 1.5
+				externalToEVAOnly = True
+			}
+			ReviewDataEvent
+			{
+				active = True
+				guiActive = True
+				guiIcon = Review Data
+				guiName = Review Data
+				category = Review Data
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			ResetExperiment
+			{
+				active = True
+				guiActive = True
+				guiIcon = Reset
+				guiName = Reset
+				category = Reset
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			ResetExperimentExternal
+			{
+				active = True
+				guiActive = False
+				guiIcon = Reset
+				guiName = Reset
+				category = Reset
+				guiActiveUnfocused = True
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			DeployAction
+			{
+				actionGroup = None
+			}
+			ResetAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+	MODULE
+	{
+		name = ModuleScienceContainer
+		isEnabled = True
+		EVENTS
+		{
+			StoreDataExternalEvent
+			{
+				active = False
+				guiActive = False
+				guiIcon = 
+				guiName = Store Experiments (0)
+				category = 
+				guiActiveUnfocused = True
+				unfocusedRange = 1.3
+				externalToEVAOnly = True
+			}
+			CollectDataExternalEvent
+			{
+				active = False
+				guiActive = False
+				guiIcon = 
+				guiName = Take Data (0)
+				category = 
+				guiActiveUnfocused = True
+				unfocusedRange = 1.3
+				externalToEVAOnly = True
+			}
+			ReviewDataEvent
+			{
+				active = False
+				guiActive = True
+				guiIcon = Review Data
+				guiName = Review Stored Data (0)
+				category = Review Data
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 1
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/biPlaneRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSmaintenanceInfo
+		isEnabled = True
+		flightTime = 0
+		cycles = 0
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleTripLogger
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		Surfaced
+		{
+		}
+		Flew
+		{
+		}
+		FlewBy
+		{
+		}
+		Orbited
+		{
+		}
+		SubOrbited
+		{
+		}
+	}
+	RESOURCE
+	{
+		name = LiquidFuel
+		amount = 20
+		maxAmount = 20
+		flowState = True
+		isTweakable = True
+		hideFlow = False
+		flowMode = Both
+	}
+}
+PART
+{
+	part = FSoblongFuselageHalf_4294774160
+	partName = Part
+	pos = -0.0414029,5.57106,-2.85551
+	rot = 0.7071069,2.108497E-21,1.809026E-21,0.7071068
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 0
+	link = FSoblongFuselageHalf_4294773674
+	attN = top,FSbiplaneCockpit_4294774254
+	attN = bottom,FSoblongFuselageHalf_4294773674
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 2
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/fuselageRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneWingCenter_4294774130
+	partName = Part
+	pos = -0.04140295,6.851326,-0.9250903
+	rot = -0.7071068,-3.090862E-08,-3.090862E-08,-0.7071068
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSbiPlaneWingMain_4294773882
+	link = FSbiPlaneWingMain_4294773830
+	srfN = srfAttach,FSoblongFuselageHalf_4294774314
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 1
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/biPlaneRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneWingMain_4294774090
+	partName = Part
+	pos = -1.923332,5.12292,-0.8226202
+	rot = 0.7068439,-0.01927976,-0.01927989,0.706844
+	attRot = -2.02687E-16,-0.4617486,2.752237E-08,0.8870108
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSbiPlaneWingMain_4294773986
+	link = FSbiPlaneWheelPair_4294771948
+	sym = FSbiPlaneWingMain_4294774038
+	srfN = srfAttach,FSoblongFuselageHalf_4294774314
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 2
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/plainRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSwingBase
+		isEnabled = True
+		flapTarget = 0
+		pitchResponse = 0
+		rollResponse = 1
+		yawResponse = 0
+		flapResponse = 0
+		wingIsPointingLeft = True
+		wingIsPointingUp = True
+		isInFrontOfCoM = False
+		checkCoM = True
+		leadingEdgeExtended = False
+		positionOnVesselSet = False
+		deflectionLiftCoeff = 0
+		pitchResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		rollResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		yawResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		flapResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneWingMain_4294774038
+	partName = Part
+	pos = 1.840526,5.12292,-0.8226202
+	rot = -0.01927992,0.7068439,0.706844,-0.01927979
+	attRot = 2.02687E-16,0.4617486,-2.752237E-08,0.8870108
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSbiPlaneWingMain_4294773934
+	link = FSbiPlaneWheelPair_4294771878
+	sym = FSbiPlaneWingMain_4294774090
+	srfN = srfAttach,FSoblongFuselageHalf_4294774314
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 2
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/plainRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSwingBase
+		isEnabled = True
+		flapTarget = 0
+		pitchResponse = 0
+		rollResponse = 1
+		yawResponse = 0
+		flapResponse = 0
+		wingIsPointingLeft = True
+		wingIsPointingUp = True
+		isInFrontOfCoM = False
+		checkCoM = True
+		leadingEdgeExtended = False
+		positionOnVesselSet = False
+		deflectionLiftCoeff = 0
+		pitchResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		rollResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		yawResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		flapResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneWingMain_4294773986
+	partName = Part
+	pos = -5.042505,5.305717,-0.833603
+	rot = -0.706844,0.01927959,0.01927968,-0.706844
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSstrutConnectorWood_4294773524
+	link = FSstrutConnectorWood_4294773416
+	link = FSstrutConnectorWood_4294773308
+	link = FSstrutConnectorWood_4294773200
+	link = FSstrutConnectorWood_4294773092
+	link = FSstrutConnectorWood_4294772984
+	sym = FSbiPlaneWingMain_4294773934
+	srfN = srfAttach,FSbiPlaneWingMain_4294774090
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 2
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/plainRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSwingBase
+		isEnabled = True
+		flapTarget = 0
+		pitchResponse = 0
+		rollResponse = 1
+		yawResponse = 0
+		flapResponse = 0
+		wingIsPointingLeft = True
+		wingIsPointingUp = True
+		isInFrontOfCoM = False
+		checkCoM = True
+		leadingEdgeExtended = False
+		positionOnVesselSet = False
+		deflectionLiftCoeff = 0
+		pitchResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		rollResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		yawResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		flapResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneWingMain_4294773934
+	partName = Part
+	pos = 4.959765,5.305717,-0.833603
+	rot = -0.01927971,0.706844,0.706844,-0.01927962
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSstrutConnectorWood_4294773470
+	link = FSstrutConnectorWood_4294773362
+	link = FSstrutConnectorWood_4294773254
+	link = FSstrutConnectorWood_4294773146
+	link = FSstrutConnectorWood_4294773038
+	link = FSstrutConnectorWood_4294772930
+	sym = FSbiPlaneWingMain_4294773986
+	srfN = srfAttach,FSbiPlaneWingMain_4294774038
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 2
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/plainRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSwingBase
+		isEnabled = True
+		flapTarget = 0
+		pitchResponse = 0
+		rollResponse = 1
+		yawResponse = 0
+		flapResponse = 0
+		wingIsPointingLeft = True
+		wingIsPointingUp = True
+		isInFrontOfCoM = False
+		checkCoM = True
+		leadingEdgeExtended = False
+		positionOnVesselSet = False
+		deflectionLiftCoeff = 0
+		pitchResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		rollResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		yawResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		flapResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneWingMain_4294773882
+	partName = Part
+	pos = -2.384655,6.853117,-0.9186025
+	rot = 0.7071068,2.107343E-07,2.107343E-07,0.7071068
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSbiPlaneWingMain_4294773778
+	link = FSstrutConnectorWire_4294772336
+	sym = FSbiPlaneWingMain_4294773830
+	srfN = srfAttach,FSbiPlaneWingCenter_4294774130
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 2
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/plainRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSwingBase
+		isEnabled = True
+		flapTarget = 0
+		pitchResponse = 0
+		rollResponse = 1
+		yawResponse = 0
+		flapResponse = 0
+		wingIsPointingLeft = True
+		wingIsPointingUp = True
+		isInFrontOfCoM = False
+		checkCoM = True
+		leadingEdgeExtended = False
+		positionOnVesselSet = False
+		deflectionLiftCoeff = 0
+		pitchResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		rollResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		yawResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		flapResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneWingMain_4294773830
+	partName = Part
+	pos = 2.301845,6.853117,-0.9186025
+	rot = 1.798257E-07,0.7071067,0.7071069,1.798256E-07
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSbiPlaneWingMain_4294773726
+	link = FSstrutConnectorWire_4294772282
+	sym = FSbiPlaneWingMain_4294773882
+	srfN = srfAttach,FSbiPlaneWingCenter_4294774130
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 2
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/plainRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSwingBase
+		isEnabled = True
+		flapTarget = 0
+		pitchResponse = 0
+		rollResponse = 1
+		yawResponse = 0
+		flapResponse = 0
+		wingIsPointingLeft = True
+		wingIsPointingUp = True
+		isInFrontOfCoM = False
+		checkCoM = True
+		leadingEdgeExtended = False
+		positionOnVesselSet = False
+		deflectionLiftCoeff = 0
+		pitchResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		rollResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		yawResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		flapResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneWingMain_4294773778
+	partName = Part
+	pos = -5.509153,6.858856,-0.940274
+	rot = 0.7071068,3.793212E-07,4.214685E-07,0.7071068
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSstrutConnectorWire_4294772768
+	link = FSstrutConnectorWire_4294772660
+	link = FSstrutConnectorWire_4294772552
+	link = FSstrutConnectorWire_4294772444
+	link = FSstrutConnectorWire_4294772228
+	sym = FSbiPlaneWingMain_4294773726
+	srfN = srfAttach,FSbiPlaneWingMain_4294773882
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 1
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/biPlaneRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSwingBase
+		isEnabled = True
+		flapTarget = 0
+		pitchResponse = 0
+		rollResponse = 1
+		yawResponse = 0
+		flapResponse = 0
+		wingIsPointingLeft = True
+		wingIsPointingUp = True
+		isInFrontOfCoM = False
+		checkCoM = True
+		leadingEdgeExtended = False
+		positionOnVesselSet = False
+		deflectionLiftCoeff = 0
+		pitchResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		rollResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		yawResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		flapResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneWingMain_4294773726
+	partName = Part
+	pos = 5.426357,6.858856,-0.940274
+	rot = 3.905595E-07,0.7071066,0.707107,3.48413E-07
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSstrutConnectorWire_4294772714
+	link = FSstrutConnectorWire_4294772606
+	link = FSstrutConnectorWire_4294772498
+	link = FSstrutConnectorWire_4294772390
+	link = FSstrutConnectorWire_4294772174
+	sym = FSbiPlaneWingMain_4294773778
+	srfN = srfAttach,FSbiPlaneWingMain_4294773830
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 1
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/biPlaneRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSwingBase
+		isEnabled = True
+		flapTarget = 0
+		pitchResponse = 0
+		rollResponse = 1
+		yawResponse = 0
+		flapResponse = 0
+		wingIsPointingLeft = True
+		wingIsPointingUp = True
+		isInFrontOfCoM = False
+		checkCoM = True
+		leadingEdgeExtended = False
+		positionOnVesselSet = False
+		deflectionLiftCoeff = 0
+		pitchResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		rollResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		yawResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		flapResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSoblongFuselageHalf_4294773674
+	partName = Part
+	pos = -0.0414029,5.57106,-3.796043
+	rot = 0.7071068,-9.475892E-22,1.005606E-22,0.7071069
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 0
+	link = FSbiPlaneTail_4294773644
+	attN = top,FSoblongFuselageHalf_4294774160
+	attN = bottom,FSbiPlaneTail_4294773644
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 2
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/fuselageRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneTail_4294773644
+	partName = Part
+	pos = -0.0414029,5.571059,-5.205771
+	rot = 0.7071069,-4.983837E-22,-3.48648E-22,0.7071068
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 0
+	link = FSfighterTailGear_4294773618
+	link = FSbiPlaneWingShort_4294772120
+	link = FSbiPlaneWingShort_4294772034
+	attN = top,FSoblongFuselageHalf_4294773674
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 1
+		selectedTextureURL = Firespitter/Parts/biPlane/FS_biPlaneTailFuselage/tailRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSfighterTailGear_4294773618
+	partName = Part
+	pos = -0.04140287,5.29964,-7.886466
+	rot = -0.04966973,2.160442E-09,-8.720636E-08,-0.9987658
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	srfN = srfAttach,FSbiPlaneTail_4294773644
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FSwheel
+		isEnabled = True
+		deploymentState = Retracted
+		brakesEngaged = False
+		motorEnabled = False
+		reverseMotor = False
+		reverseMotorSet = False
+		motorStartsReversed = False
+		EVENTS
+		{
+			RaiseGear
+			{
+				active = True
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Raise Gear
+				guiName = Raise Gear
+				category = Raise Gear
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+			LowerGear
+			{
+				active = True
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Lower Gear
+				guiName = Lower Gear
+				category = Lower Gear
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+			EnableReverseMotorEvent
+			{
+				active = True
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Enable Reverse Motor
+				guiName = Enable Reverse Motor
+				category = Enable Reverse Motor
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			DisableReverseMotorEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Disable Reverse Motor
+				guiName = Disable Reverse Motor
+				category = Disable Reverse Motor
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			EnableMotorEvent
+			{
+				active = True
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Enable Motor
+				guiName = Enable Motor
+				category = Enable Motor
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			DisableMotorEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Disable Motor
+				guiName = Disable Motor
+				category = Disable Motor
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			brakesOnEvent
+			{
+				active = True
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Brakes On
+				guiName = Brakes On
+				category = Brakes On
+				guiActiveUnfocused = True
+				unfocusedRange = 6
+				externalToEVAOnly = True
+			}
+			brakesOffEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Brakes Off
+				guiName = Brakes Off
+				category = Brakes Off
+				guiActiveUnfocused = True
+				unfocusedRange = 6
+				externalToEVAOnly = True
+			}
+			increaseFrictionEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = increase friction (d)
+				guiName = increase friction (d)
+				category = increase friction (d)
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			decreaseFrictionEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = decrease friction (d)
+				guiName = decrease friction (d)
+				category = decrease friction (d)
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			suspensionGUIEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = adjust suspension (d)
+				guiName = adjust suspension (d)
+				category = adjust suspension (d)
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			ToggleGearAction
+			{
+				actionGroup = Gear
+			}
+			ReverseMotorAction
+			{
+				actionGroup = None
+			}
+			ToggleMotorAction
+			{
+				actionGroup = None
+			}
+			BrakesAction
+			{
+				actionGroup = Brakes
+			}
+		}
+	}
+	MODULE
+	{
+		name = FSpartTurner
+		isEnabled = True
+		steerMultiplier = 25
+		steeringEnabled = False
+		altInputModeEnabled = False
+		reversedInput = False
+		ignoreTrim = True
+		steerMultiplier_UIFlight
+		{
+			controlEnabled = True
+			minValue = 0
+			maxValue = 50
+			stepIncrement = 0.02
+		}
+		EVENTS
+		{
+			toggleSteering
+			{
+				active = True
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Toggle Steering
+				guiName = Enable Steering
+				category = Toggle Steering
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			toggleReverseInput
+			{
+				active = True
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Toggle Reverse Steering
+				guiName = Reverse Steering
+				category = Toggle Reverse Steering
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			toggleSpeedAdjustedSteeringEvent
+			{
+				active = True
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Dynamic Steering
+				guiName = Disable Dynamic Steering
+				category = Dynamic Steering
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			toggleAltInputMode
+			{
+				active = True
+				guiActive = False
+				guiIcon = QE or AD to steer
+				guiName = QE or AD to steer
+				category = QE or AD to steer
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			toggleIgnoreTrim
+			{
+				active = True
+				guiActive = False
+				guiIcon = Toggle Ignore trim
+				guiName = Toggle Ignore trim
+				category = Toggle Ignore trim
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			increaseSteering
+			{
+				active = True
+				guiActive = True
+				guiIcon = Increase Steering
+				guiName = Increase Steering
+				category = Increase Steering
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			decreaseSteering
+			{
+				active = True
+				guiActive = True
+				guiIcon = Decrease Steering
+				guiName = Decrease Steering
+				category = Decrease Steering
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			toggleSteeringAction
+			{
+				actionGroup = None
+			}
+			toggleInvertAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+}
+PART
+{
+	part = FSstrutConnectorWood_4294773524
+	partName = StrutConnector
+	pos = -6.487149,5.441005,-0.1948857
+	rot = -5.479091E-07,-9.272308E-07,0.7261236,-0.6875644
+	attRot = 0,4.214685E-08,0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_15; pos: -1.381289,0.07476214,0.1194096; dir: -0.9948388,0.05384539,0.08600219
+	sym = FSstrutConnectorWood_4294773470
+	srfN = srfAttach,FSbiPlaneWingMain_4294773986
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWood_4294773470
+	partName = StrutConnector
+	pos = 6.404417,5.441005,-0.1948846
+	rot = -0.7261236,0.6875644,4.846888E-07,5.900559E-07
+	attRot = 0,-4.214685E-08,-0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_23; pos: -1.381292,0.07475802,-0.1194103; dir: -0.9948392,0.05384494,-0.08600235
+	sym = FSstrutConnectorWood_4294773524
+	srfN = srfAttach,FSbiPlaneWingMain_4294773934
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWood_4294773416
+	partName = StrutConnector
+	pos = -6.492386,5.418343,-1.212254
+	rot = 0.02191699,0.02075237,0.7257926,-0.6872514
+	attRot = 0,4.214685E-08,0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_15; pos: -1.399912,0.07577007,0.1210198; dir: -0.9948388,0.05384539,0.08600219
+	sym = FSstrutConnectorWood_4294773362
+	srfN = srfAttach,FSbiPlaneWingMain_4294773986
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWood_4294773362
+	partName = StrutConnector
+	pos = 6.409668,5.418343,-1.212254
+	rot = -0.7257926,0.6872514,-0.02191609,-0.02075214
+	attRot = 0,-4.214685E-08,-0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_23; pos: -1.399912,0.07576551,-0.1210198; dir: -0.9948394,0.05384542,-0.08600225
+	sym = FSstrutConnectorWood_4294773416
+	srfN = srfAttach,FSbiPlaneWingMain_4294773934
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWood_4294773308
+	partName = StrutConnector
+	pos = -3.939008,5.278622,-1.217673
+	rot = 0.02191699,0.02075237,0.7257926,-0.6872514
+	attRot = 0,4.214685E-08,0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_14; pos: -1.535461,0.08310749,0.1327376; dir: -0.9948388,0.05384539,0.08600219
+	sym = FSstrutConnectorWood_4294773254
+	srfN = srfAttach,FSbiPlaneWingMain_4294773986
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWood_4294773254
+	partName = StrutConnector
+	pos = 3.856254,5.278622,-1.217673
+	rot = -0.7257926,0.6872514,-0.02191609,-0.02075214
+	attRot = 0,-4.214685E-08,-0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_22; pos: -1.535462,0.08310235,-0.1327377; dir: -0.9948394,0.05384542,-0.08600225
+	sym = FSstrutConnectorWood_4294773308
+	srfN = srfAttach,FSbiPlaneWingMain_4294773934
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWood_4294773200
+	partName = StrutConnector
+	pos = -4.015224,5.306059,-0.1839338
+	rot = -5.479091E-07,-7.586433E-07,0.7261236,-0.6875644
+	attRot = 0,4.214685E-08,0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_14; pos: -1.511116,0.08178861,0.1306331; dir: -0.9948388,0.05384539,0.08600219
+	sym = FSstrutConnectorWood_4294773146
+	srfN = srfAttach,FSbiPlaneWingMain_4294773986
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWood_4294773146
+	partName = StrutConnector
+	pos = 3.932468,5.306059,-0.1839344
+	rot = -0.7261236,0.6875644,4.846888E-07,5.057622E-07
+	attRot = 0,-4.214685E-08,-0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_22; pos: -1.511119,0.08178472,-0.130634; dir: -0.9948394,0.05384543,-0.08600245
+	sym = FSstrutConnectorWood_4294773200
+	srfN = srfAttach,FSbiPlaneWingMain_4294773934
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWood_4294773092
+	partName = StrutConnector
+	pos = -5.073946,5.346907,-1.113151
+	rot = 0.02191699,0.02075237,0.7257926,-0.6872514
+	attRot = 0,4.214685E-08,0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_15; pos: -1.465325,0.07931071,0.1266747; dir: -0.9948388,0.05384539,0.08600219
+	sym = FSstrutConnectorWood_4294773038
+	srfN = srfAttach,FSbiPlaneWingMain_4294773986
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWood_4294773038
+	partName = StrutConnector
+	pos = 4.991201,5.346907,-1.113151
+	rot = -0.7257926,0.6872514,-0.02191609,-0.02075214
+	attRot = 0,-4.214685E-08,-0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_23; pos: -1.465324,0.07930806,-0.1266749; dir: -0.9948394,0.05384542,-0.08600225
+	sym = FSstrutConnectorWood_4294773092
+	srfN = srfAttach,FSbiPlaneWingMain_4294773934
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWood_4294772984
+	partName = StrutConnector
+	pos = -5.130651,5.364484,-0.09757833
+	rot = -0.03145283,-0.02978276,0.7254419,-0.6869193
+	attRot = 0,4.214685E-08,0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_15; pos: -1.453,0.1038467,-0.1211394; dir: -0.9940246,0.07104305,-0.08287367
+	sym = FSstrutConnectorWood_4294772930
+	srfN = srfAttach,FSbiPlaneWingMain_4294773986
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWood_4294772930
+	partName = StrutConnector
+	pos = 5.047904,5.364484,-0.09757833
+	rot = -0.7254419,0.6869193,0.03145283,0.02978269
+	attRot = 0,-4.214685E-08,-0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_23; pos: -1.453001,0.1038439,0.1211392; dir: -0.9940251,0.0710432,0.08287363
+	sym = FSstrutConnectorWood_4294772984
+	srfN = srfAttach,FSbiPlaneWingMain_4294773934
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294772876
+	partName = StrutConnector
+	pos = -0.5141979,5.449395,0.1212667
+	rot = -0.7071069,4.214685E-08,4.214685E-08,-0.7071068
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_14; pos: -1.063732,-0.2981122,-1.350344; dir: -0.6097086,-0.1708716,-0.7739885
+	sym = FSstrutConnectorWire_4294772822
+	srfN = srfAttach,FSbiplaneCockpit_4294774408
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294772822
+	partName = StrutConnector
+	pos = 0.4313921,5.449395,0.1212667
+	rot = -7.305548E-08,0.7071067,0.7071069,-7.305547E-08
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_22; pos: -1.063731,-0.2981121,1.350344; dir: -0.6097088,-0.1708717,0.7739887
+	sym = FSstrutConnectorWire_4294772876
+	srfN = srfAttach,FSbiplaneCockpit_4294774408
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294772768
+	partName = StrutConnector
+	pos = -5.048892,6.820295,-1.233901
+	rot = 0.02134401,-0.02134302,0.7067851,0.7067842
+	attRot = 0,4.214685E-08,0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_31; pos: -1.380448,0.1569041,1.220017; dir: -0.7466031,0.08486006,0.6598352
+	sym = FSstrutConnectorWire_4294772714
+	srfN = srfAttach,FSbiPlaneWingMain_4294773778
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294772714
+	partName = StrutConnector
+	pos = 4.966106,6.820295,-1.233901
+	rot = 0.7067853,0.706784,0.02134325,-0.0213434
+	attRot = 0,-4.214685E-08,-0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_47; pos: -1.380448,0.1569064,-1.220018; dir: -0.7466034,0.08486029,-0.6598356
+	sym = FSstrutConnectorWire_4294772768
+	srfN = srfAttach,FSbiPlaneWingMain_4294773726
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294772660
+	partName = StrutConnector
+	pos = -5.027061,6.813173,-0.1099232
+	rot = -0.03062789,0.03062759,0.7064437,0.7064427
+	attRot = 0,4.214685E-08,0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_31; pos: -1.366264,0.1387782,-1.22805; dir: -0.7416108,0.07532904,-0.6665877
+	sym = FSstrutConnectorWire_4294772606
+	srfN = srfAttach,FSbiPlaneWingMain_4294773778
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294772606
+	partName = StrutConnector
+	pos = 4.944267,6.813173,-0.1099294
+	rot = 0.7064437,0.7064427,-0.0306278,0.03062799
+	attRot = 0,-4.214685E-08,-0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_47; pos: -1.366268,0.1387803,1.228054; dir: -0.7416115,0.07532904,0.6665881
+	sym = FSstrutConnectorWire_4294772660
+	srfN = srfAttach,FSbiPlaneWingMain_4294773726
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294772552
+	partName = StrutConnector
+	pos = -6.441002,6.820899,-1.243937
+	rot = 0.02134399,-0.02134239,0.7067844,0.706785
+	attRot = 0,4.214685E-08,0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_31; pos: -1.306987,0.1485543,1.155093; dir: -0.7466031,0.08486006,0.6598352
+	sym = FSstrutConnectorWire_4294772498
+	srfN = srfAttach,FSbiPlaneWingMain_4294773778
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294772498
+	partName = StrutConnector
+	pos = 6.358223,6.820899,-1.243937
+	rot = 0.7067851,0.7067842,0.02134325,-0.02134308
+	attRot = 0,-4.214685E-08,-0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_47; pos: -1.306985,0.1485565,-1.155093; dir: -0.7466034,0.08486025,-0.6598356
+	sym = FSstrutConnectorWire_4294772552
+	srfN = srfAttach,FSbiPlaneWingMain_4294773726
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294772444
+	partName = StrutConnector
+	pos = -6.446609,6.811028,-0.1346146
+	rot = -0.03062797,0.03062774,0.7064437,0.7064427
+	attRot = 0,4.214685E-08,0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_31; pos: -1.29003,0.1142766,-1.210538; dir: -0.7277002,0.06446271,-0.6828594
+	sym = FSstrutConnectorWire_4294772390
+	srfN = srfAttach,FSbiPlaneWingMain_4294773778
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294772390
+	partName = StrutConnector
+	pos = 6.363823,6.811028,-0.134621
+	rot = 0.7064437,0.7064427,-0.0306278,0.03062807
+	attRot = 0,-4.214685E-08,-0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_47; pos: -1.290031,0.1142803,1.210541; dir: -0.7277007,0.06446292,0.6828597
+	sym = FSstrutConnectorWire_4294772444
+	srfN = srfAttach,FSbiPlaneWingMain_4294773726
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294772336
+	partName = StrutConnector
+	pos = -3.891608,6.81694,-1.251726
+	rot = 0.02134314,-0.0213427,0.7067848,0.7067845
+	attRot = 0,4.214685E-08,0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_31; pos: -1.439537,0.1636202,1.272239; dir: -0.7466031,0.08486006,0.6598352
+	sym = FSstrutConnectorWire_4294772282
+	srfN = srfAttach,FSbiPlaneWingMain_4294773882
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294772282
+	partName = StrutConnector
+	pos = 3.808801,6.81694,-1.251726
+	rot = 0.706785,0.7067844,0.02134156,-0.02134302
+	attRot = 0,-4.214685E-08,-0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_47; pos: -1.439542,0.1636191,-1.272244; dir: -0.7466035,0.08486009,-0.6598357
+	sym = FSstrutConnectorWire_4294772336
+	srfN = srfAttach,FSbiPlaneWingMain_4294773830
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294772228
+	partName = StrutConnector
+	pos = -4.019701,6.807983,-0.1696945
+	rot = -0.03062789,0.03062759,0.7064437,0.7064427
+	attRot = 0,4.214685E-08,0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_31; pos: -1.42648,-0.003788154,-1.262357; dir: -0.7488723,-0.001988684,-0.6627114
+	sym = FSstrutConnectorWire_4294772174
+	srfN = srfAttach,FSbiPlaneWingMain_4294773778
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294772174
+	partName = StrutConnector
+	pos = 3.936936,6.807983,-0.1696977
+	rot = 0.7064437,0.7064427,-0.0306278,0.03062799
+	attRot = 0,-4.214685E-08,-0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_47; pos: -1.426483,-0.00378711,1.262361; dir: -0.7488729,-0.001988744,0.6627119
+	sym = FSstrutConnectorWire_4294772228
+	srfN = srfAttach,FSbiPlaneWingMain_4294773726
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSbiPlaneWingShort_4294772120
+	partName = Part
+	pos = -0.990707,5.823737,-7.210951
+	rot = -0.7070647,0.007687796,-0.007687823,-0.7070654
+	attRot = -0.04361939,0,0,0.9990482
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSbiPlaneWingRound_4294772084
+	link = FSbiPlaneAileron_4294770792
+	sym = FSbiPlaneWingShort_4294772034
+	srfN = srfAttach,FSbiPlaneTail_4294773644
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 1
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/biPlaneRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneWingRound_4294772084
+	partName = Part
+	pos = -1.772184,5.825047,-7.208989
+	rot = 0.5054066,-0.5054066,-0.4945343,0.4945346
+	attRot = 0,-0.7071067,4.214685E-08,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	sym = FSbiPlaneWingRound_4294771998
+	srfN = srfAttach,FSbiPlaneWingShort_4294772120
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FSwing
+		isEnabled = True
+		flapTarget = 0
+		pitchResponse = 0
+		rollResponse = 0
+		yawResponse = 1
+		flapResponse = 0
+		wingIsPointingLeft = True
+		wingIsPointingUp = True
+		isInFrontOfCoM = False
+		checkCoM = True
+		leadingEdgeExtended = False
+		positionOnVesselSet = False
+		deflectionLiftCoeff = 0
+		pitchResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		rollResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		yawResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		flapResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		EVENTS
+		{
+			showHelpEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Help
+				guiName = Help
+				category = Help
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			toggleLeadingEdgeEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Toggle Leading Edge
+				guiName = Toggle Leading Edge
+				category = Toggle Leading Edge
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			toggleLeadingEdgeAction
+			{
+				actionGroup = None
+			}
+			extendFlapAction
+			{
+				actionGroup = None
+			}
+			retractFlapAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 1
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/biPlaneRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneWingShort_4294772034
+	partName = Part
+	pos = 0.9079012,5.823737,-7.210951
+	rot = 0.007687794,0.7070654,0.7070647,-0.007687829
+	attRot = 0.04361939,0,0,0.9990482
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSbiPlaneWingRound_4294771998
+	link = FSbiPlaneAileron_4294770754
+	sym = FSbiPlaneWingShort_4294772120
+	srfN = srfAttach,FSbiPlaneTail_4294773644
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 1
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/biPlaneRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneWingRound_4294771998
+	partName = Part
+	pos = 1.689379,5.825047,-7.208989
+	rot = -0.4945347,0.4945344,0.5054067,-0.5054064
+	attRot = 0,-0.7071067,4.214685E-08,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	sym = FSbiPlaneWingRound_4294772084
+	srfN = srfAttach,FSbiPlaneWingShort_4294772034
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FSwing
+		isEnabled = True
+		flapTarget = 0
+		pitchResponse = 0
+		rollResponse = 0
+		yawResponse = 1
+		flapResponse = 0
+		wingIsPointingLeft = True
+		wingIsPointingUp = True
+		isInFrontOfCoM = False
+		checkCoM = True
+		leadingEdgeExtended = False
+		positionOnVesselSet = False
+		deflectionLiftCoeff = 0
+		pitchResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		rollResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		yawResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		flapResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		EVENTS
+		{
+			showHelpEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Help
+				guiName = Help
+				category = Help
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			toggleLeadingEdgeEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Toggle Leading Edge
+				guiName = Toggle Leading Edge
+				category = Toggle Leading Edge
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			toggleLeadingEdgeAction
+			{
+				actionGroup = None
+			}
+			extendFlapAction
+			{
+				actionGroup = None
+			}
+			retractFlapAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 1
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/biPlaneRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneWheelPair_4294771948
+	partName = Part
+	pos = -2.904407,4.419011,-0.4014978
+	rot = 0.7068446,-0.01927959,-0.01927969,0.7068433
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSoblongFuselageHalf_4294771808
+	sym = FSbiPlaneWheelPair_4294771878
+	srfN = srfAttach,FSbiPlaneWingMain_4294774090
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FSwheel
+		isEnabled = True
+		deploymentState = Deployed
+		brakesEngaged = False
+		motorEnabled = False
+		reverseMotor = False
+		reverseMotorSet = False
+		motorStartsReversed = False
+		EVENTS
+		{
+			RaiseGear
+			{
+				active = False
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Raise Gear
+				guiName = Raise Gear
+				category = Raise Gear
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+			LowerGear
+			{
+				active = False
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Lower Gear
+				guiName = Lower Gear
+				category = Lower Gear
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+			EnableReverseMotorEvent
+			{
+				active = False
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Enable Reverse Motor
+				guiName = Enable Reverse Motor
+				category = Enable Reverse Motor
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			DisableReverseMotorEvent
+			{
+				active = False
+				guiActive = False
+				guiIcon = Disable Reverse Motor
+				guiName = Disable Reverse Motor
+				category = Disable Reverse Motor
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			EnableMotorEvent
+			{
+				active = False
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Enable Motor
+				guiName = Enable Motor
+				category = Enable Motor
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			DisableMotorEvent
+			{
+				active = False
+				guiActive = False
+				guiIcon = Disable Motor
+				guiName = Disable Motor
+				category = Disable Motor
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			brakesOnEvent
+			{
+				active = True
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Brakes On
+				guiName = Brakes On
+				category = Brakes On
+				guiActiveUnfocused = True
+				unfocusedRange = 6
+				externalToEVAOnly = True
+			}
+			brakesOffEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Brakes Off
+				guiName = Brakes Off
+				category = Brakes Off
+				guiActiveUnfocused = True
+				unfocusedRange = 6
+				externalToEVAOnly = True
+			}
+			increaseFrictionEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = increase friction (d)
+				guiName = increase friction (d)
+				category = increase friction (d)
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			decreaseFrictionEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = decrease friction (d)
+				guiName = decrease friction (d)
+				category = decrease friction (d)
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			suspensionGUIEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = adjust suspension (d)
+				guiName = adjust suspension (d)
+				category = adjust suspension (d)
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			ToggleGearAction
+			{
+				actionGroup = Gear
+			}
+			ReverseMotorAction
+			{
+				actionGroup = None
+			}
+			ToggleMotorAction
+			{
+				actionGroup = None
+			}
+			BrakesAction
+			{
+				actionGroup = Brakes
+			}
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneWheelPair_4294771878
+	partName = Part
+	pos = 2.821602,4.419011,-0.4014974
+	rot = 0.7068446,0.01927958,0.01927969,0.7068433
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSoblongFuselageHalf_4294771394
+	sym = FSbiPlaneWheelPair_4294771948
+	srfN = srfAttach,FSbiPlaneWingMain_4294774038
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FSwheel
+		isEnabled = True
+		deploymentState = Deployed
+		brakesEngaged = False
+		motorEnabled = False
+		reverseMotor = False
+		reverseMotorSet = False
+		motorStartsReversed = False
+		EVENTS
+		{
+			RaiseGear
+			{
+				active = False
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Raise Gear
+				guiName = Raise Gear
+				category = Raise Gear
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+			LowerGear
+			{
+				active = False
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Lower Gear
+				guiName = Lower Gear
+				category = Lower Gear
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+			EnableReverseMotorEvent
+			{
+				active = False
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Enable Reverse Motor
+				guiName = Enable Reverse Motor
+				category = Enable Reverse Motor
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			DisableReverseMotorEvent
+			{
+				active = False
+				guiActive = False
+				guiIcon = Disable Reverse Motor
+				guiName = Disable Reverse Motor
+				category = Disable Reverse Motor
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			EnableMotorEvent
+			{
+				active = False
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Enable Motor
+				guiName = Enable Motor
+				category = Enable Motor
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			DisableMotorEvent
+			{
+				active = False
+				guiActive = False
+				guiIcon = Disable Motor
+				guiName = Disable Motor
+				category = Disable Motor
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			brakesOnEvent
+			{
+				active = True
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Brakes On
+				guiName = Brakes On
+				category = Brakes On
+				guiActiveUnfocused = True
+				unfocusedRange = 6
+				externalToEVAOnly = True
+			}
+			brakesOffEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Brakes Off
+				guiName = Brakes Off
+				category = Brakes Off
+				guiActiveUnfocused = True
+				unfocusedRange = 6
+				externalToEVAOnly = True
+			}
+			increaseFrictionEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = increase friction (d)
+				guiName = increase friction (d)
+				category = increase friction (d)
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			decreaseFrictionEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = decrease friction (d)
+				guiName = decrease friction (d)
+				category = decrease friction (d)
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			suspensionGUIEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = adjust suspension (d)
+				guiName = adjust suspension (d)
+				category = adjust suspension (d)
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			ToggleGearAction
+			{
+				actionGroup = Gear
+			}
+			ReverseMotorAction
+			{
+				actionGroup = None
+			}
+			ToggleMotorAction
+			{
+				actionGroup = None
+			}
+			BrakesAction
+			{
+				actionGroup = Brakes
+			}
+		}
+	}
+}
+PART
+{
+	part = FSoblongFuselageHalf_4294771808
+	partName = Part
+	pos = -2.859071,5.926363,-0.4473151
+	rot = 0.01927969,0.706843,0.7068449,0.0192796
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSstrutConnectorWire_4294771778
+	link = FSoblongNoseIntake_4294771724
+	link = FSoblongNose_4294771690
+	sym = FSoblongFuselageHalf_4294771394
+	srfN = srfAttach,FSbiPlaneWheelPair_4294771948
+	attN = top,FSoblongNoseIntake_4294771724
+	attN = bottom,FSoblongNose_4294771690
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 2
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/fuselageRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294771778
+	partName = StrutConnector
+	pos = -2.401234,5.639446,-0.4803361
+	rot = 0.0192797,0.706843,0.7068449,0.0192796
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSoblongFuselageHalf_1; pos: -1.898106,-0.02633517,-0.1512979; dir: -0.9967429,-0.01382917,-0.07945026
+	sym = FSstrutConnectorWire_4294771364
+	srfN = srfAttach,FSoblongFuselageHalf_4294771808
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSoblongNoseIntake_4294771724
+	partName = Strut
+	pos = -2.859071,5.926361,0.3184363
+	rot = 0.7068443,-0.01927999,-0.01928011,0.7068436
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	sym = FSoblongNoseIntake_4294771310
+	srfN = srfAttach,FSoblongFuselageHalf_4294771808
+	attN = bottom,FSoblongFuselageHalf_4294771808
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = ModuleResourceIntake
+		isEnabled = True
+		intakeEnabled = True
+		EVENTS
+		{
+			Deactivate
+			{
+				active = True
+				guiActive = True
+				guiIcon = Close Intake
+				guiName = Close Intake
+				category = Close Intake
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			Activate
+			{
+				active = False
+				guiActive = True
+				guiIcon = Open Intake
+				guiName = Open Intake
+				category = Open Intake
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			ToggleAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 2
+		selectedTextureURL = Firespitter/Parts/Aero/FS_oblongNoseIntake/intakeRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	RESOURCE
+	{
+		name = IntakeAir
+		amount = 0.2
+		maxAmount = 0.2
+		flowState = True
+		isTweakable = False
+		hideFlow = False
+		flowMode = Both
+	}
+}
+PART
+{
+	part = FSoblongNose_4294771690
+	partName = Strut
+	pos = -2.859071,5.926364,-1.212064
+	rot = -0.01927999,-0.7068443,0.7068436,0.01928011
+	attRot = 0,0.9999999,-5.960464E-08,-1.776357E-15
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 0
+	link = FSstrutConnectorWire_4294771502
+	link = FSstrutConnectorWire_4294771448
+	link = FSnoseEngine_4294770584
+	sym = FSoblongNose_4294771276
+	attN = top,FSnoseEngine_4294770584
+	attN = bottom,FSoblongFuselageHalf_4294771808
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294771502
+	partName = StrutConnector
+	pos = -2.452528,6.270422,-1.528636
+	rot = -0.2079693,0.9714952,-0.02381757,-0.1112603
+	attRot = 0,4.214685E-08,0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	sym = FSstrutConnectorWire_4294771088
+	srfN = srfAttach,FSoblongNose_4294771690
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294771448
+	partName = StrutConnector
+	pos = -3.215697,6.391176,-1.348524
+	rot = -0.6957072,0.1264597,-0.2029282,0.6773624
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_15; pos: -1.113235,-0.1034164,-0.0783535; dir: -0.9932767,-0.09227315,-0.06991028
+	sym = FSstrutConnectorWire_4294771034
+	srfN = srfAttach,FSoblongNose_4294771690
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSoblongFuselageHalf_4294771394
+	partName = Part
+	pos = 2.776269,5.926363,-0.4473149
+	rot = -0.0192797,0.7068431,0.7068447,-0.01927959
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	link = FSstrutConnectorWire_4294771364
+	link = FSoblongNoseIntake_4294771310
+	link = FSoblongNose_4294771276
+	sym = FSoblongFuselageHalf_4294771808
+	srfN = srfAttach,FSbiPlaneWheelPair_4294771878
+	attN = top,FSoblongNoseIntake_4294771310
+	attN = bottom,FSoblongNose_4294771276
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 2
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/fuselageRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294771364
+	partName = StrutConnector
+	pos = 2.318428,5.639446,-0.4803358
+	rot = -0.7068451,-0.01927963,-0.01927973,-0.7068428
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSoblongFuselageHalf_1; pos: -1.898106,-0.02633509,0.1512982; dir: -0.9967434,-0.01382906,0.0794502
+	sym = FSstrutConnectorWire_4294771778
+	srfN = srfAttach,FSoblongFuselageHalf_4294771394
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSoblongNoseIntake_4294771310
+	partName = Strut
+	pos = 2.776269,5.926361,0.3184402
+	rot = 0.7068444,0.01927999,0.01928011,0.7068434
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	sym = FSoblongNoseIntake_4294771724
+	srfN = srfAttach,FSoblongFuselageHalf_4294771394
+	attN = bottom,FSoblongFuselageHalf_4294771394
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = ModuleResourceIntake
+		isEnabled = True
+		intakeEnabled = True
+		EVENTS
+		{
+			Deactivate
+			{
+				active = True
+				guiActive = True
+				guiIcon = Close Intake
+				guiName = Close Intake
+				category = Close Intake
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			Activate
+			{
+				active = False
+				guiActive = True
+				guiIcon = Open Intake
+				guiName = Open Intake
+				category = Open Intake
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			ToggleAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 2
+		selectedTextureURL = Firespitter/Parts/Aero/FS_oblongNoseIntake/intakeRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+	RESOURCE
+	{
+		name = IntakeAir
+		amount = 0.2
+		maxAmount = 0.2
+		flowState = True
+		isTweakable = False
+		hideFlow = False
+		flowMode = Both
+	}
+}
+PART
+{
+	part = FSoblongNose_4294771276
+	partName = Strut
+	pos = 2.776269,5.926364,-1.212064
+	rot = -0.01927999,0.7068444,-0.7068435,0.01928011
+	attRot = 0,0.9999999,-5.960464E-08,-1.776357E-15
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 0
+	link = FSstrutConnectorWire_4294771088
+	link = FSstrutConnectorWire_4294771034
+	link = FSnoseEngine_4294770716
+	sym = FSoblongNose_4294771690
+	attN = top,FSnoseEngine_4294770716
+	attN = bottom,FSoblongFuselageHalf_4294771394
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294771088
+	partName = StrutConnector
+	pos = 2.369723,6.270422,-1.528636
+	rot = 0.02381765,0.1112602,0.2079694,-0.9714952
+	attRot = 0,4.214685E-08,0.7071067,0.7071067
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_22; pos: -1.363644,-0.06073966,0.6175016; dir: -0.9102046,-0.04054265,0.4121706
+	sym = FSstrutConnectorWire_4294771502
+	srfN = srfAttach,FSoblongNose_4294771276
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSstrutConnectorWire_4294771034
+	partName = StrutConnector
+	pos = 3.132892,6.391176,-1.348524
+	rot = -0.2029282,0.6773623,-0.6957073,0.1264596
+	attRot = 0,0,0,1
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	cData = tgt: FSbiPlaneWingMain_22; pos: -0.8346199,-0.07753333,-0.05874267; dir: -0.9932767,-0.09227315,-0.06991028
+	sym = FSstrutConnectorWire_4294771448
+	srfN = srfAttach,FSoblongNose_4294771276
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSoblongNose_4294770980
+	partName = Strut
+	pos = -0.0414029,5.571064,2.067261
+	rot = -1.256074E-15,0.7071069,0.7071068,-1.256074E-15
+	attRot = -2.117582E-22,5.960464E-08,0.9999999,-1.776357E-15
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 0
+	attN = bottom,FSoblongFuselageHalf_4294774284
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+}
+PART
+{
+	part = FSbiPlaneAileron_4294770792
+	partName = Part
+	pos = -0.9987298,5.824653,-8.127778
+	rot = -0.7462501,0.007236612,-0.008113941,-0.6655772
+	attRot = -0.06162845,0.7044163,-0.06162848,0.7044161
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	sym = FSbiPlaneAileron_4294770754
+	srfN = srfAttach,FSbiPlaneWingShort_4294772120
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FSwing
+		isEnabled = True
+		flapTarget = 0
+		pitchResponse = 1
+		rollResponse = 0
+		yawResponse = 0
+		flapResponse = 0
+		wingIsPointingLeft = True
+		wingIsPointingUp = True
+		isInFrontOfCoM = False
+		checkCoM = True
+		leadingEdgeExtended = False
+		positionOnVesselSet = False
+		deflectionLiftCoeff = 0
+		pitchResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		rollResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		yawResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		flapResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		EVENTS
+		{
+			showHelpEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Help
+				guiName = Help
+				category = Help
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			toggleLeadingEdgeEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Toggle Leading Edge
+				guiName = Toggle Leading Edge
+				category = Toggle Leading Edge
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			toggleLeadingEdgeAction
+			{
+				actionGroup = None
+			}
+			extendFlapAction
+			{
+				actionGroup = None
+			}
+			retractFlapAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 1
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/biPlaneRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSbiPlaneAileron_4294770754
+	partName = Part
+	pos = 0.915924,5.824653,-8.127778
+	rot = 0.008113906,0.6655769,0.7462502,-0.007236642
+	attRot = 0.06162845,-0.7044163,0.06162848,0.7044161
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 1
+	sym = FSbiPlaneAileron_4294770792
+	srfN = srfAttach,FSbiPlaneWingShort_4294772034
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FSwing
+		isEnabled = True
+		flapTarget = 0
+		pitchResponse = 1
+		rollResponse = 0
+		yawResponse = 0
+		flapResponse = 0
+		wingIsPointingLeft = True
+		wingIsPointingUp = True
+		isInFrontOfCoM = False
+		checkCoM = True
+		leadingEdgeExtended = False
+		positionOnVesselSet = False
+		deflectionLiftCoeff = 0
+		pitchResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		rollResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		yawResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		flapResponse_UIFlight
+		{
+			controlEnabled = True
+			minValue = -2
+			maxValue = 2
+			stepIncrement = 0.025
+		}
+		EVENTS
+		{
+			showHelpEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Help
+				guiName = Help
+				category = Help
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			toggleLeadingEdgeEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Toggle Leading Edge
+				guiName = Toggle Leading Edge
+				category = Toggle Leading Edge
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			toggleLeadingEdgeAction
+			{
+				actionGroup = None
+			}
+			extendFlapAction
+			{
+				actionGroup = None
+			}
+			retractFlapAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+	MODULE
+	{
+		name = FSliftSurface
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FStextureSwitch
+		isEnabled = True
+		selectedTexture = 1
+		selectedTextureURL = Firespitter/Parts/biPlane/textures/biPlaneRed
+		selectedMapURL = 
+		EVENTS
+		{
+			listAllObjects
+			{
+				active = True
+				guiActive = False
+				guiIcon = Debug: Log Objects
+				guiName = Debug: Log Objects
+				category = Debug: Log Objects
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEvent
+			{
+				active = True
+				guiActive = False
+				guiActiveEditor = True
+				guiIcon = Next Texture
+				guiName = Next Texture
+				category = Next Texture
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			nextTextureEVAEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Repaint
+				guiName = Repaint
+				category = Repaint
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+		}
+	}
+}
+PART
+{
+	part = FSnoseEngine_4294770716
+	partName = Part
+	pos = 2.768095,6.076141,-1.660815
+	rot = -5.098967E-09,-0.7071068,0.7071068,5.098974E-09
+	attRot = 0,-0.9999999,5.960464E-08,-1.776357E-15
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 0
+	sym = FSnoseEngine_4294770584
+	attN = top,FSoblongNose_4294771276
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FSengineSounds
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleEngines
+		isEnabled = True
+		staged = False
+		flameout = False
+		EngineIgnited = False
+		engineShutdown = False
+		currentThrottle = 0
+		thrustPercentage = 36
+		manuallyOverridden = False
+		thrustPercentage_UIFlight
+		{
+			controlEnabled = True
+			minValue = 0
+			maxValue = 100
+			stepIncrement = 0.5
+		}
+		EVENTS
+		{
+			Activate
+			{
+				active = True
+				guiActive = True
+				guiIcon = Activate Engine
+				guiName = Activate Engine
+				category = Activate Engine
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+			Shutdown
+			{
+				active = False
+				guiActive = True
+				guiIcon = Shutdown Engine
+				guiName = Shutdown Engine
+				category = Shutdown Engine
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			OnAction
+			{
+				actionGroup = None
+			}
+			ShutdownAction
+			{
+				actionGroup = None
+			}
+			ActivateAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+	MODULE
+	{
+		name = FSpropellerAtmosphericNerf
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			hoverThrottleAction
+			{
+				actionGroup = None
+			}
+			normalThrottleAction
+			{
+				actionGroup = None
+			}
+			cargoThrottleAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+	MODULE
+	{
+		name = ModuleAlternator
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FXModuleAnimateThrottle
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSplanePropellerSpinner
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSswitchEngineThrustTransform
+		isEnabled = True
+		isReversed = True
+		EVENTS
+		{
+			reverseTTEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Set Reverse Thrust
+				guiName = Set Reverse Thrust
+				category = Set Reverse Thrust
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			normalTTEvent
+			{
+				active = True
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Set Normal Thrust
+				guiName = Set Normal Thrust
+				category = Set Normal Thrust
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			debugEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = debug
+				guiName = debug
+				category = debug
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			switchTTAction
+			{
+				actionGroup = None
+			}
+			reverseTTAction
+			{
+				actionGroup = None
+			}
+			normalTTAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+	MODULE
+	{
+		name = FSengineHandCrank
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	RESOURCE
+	{
+		name = IntakeAir
+		amount = 0
+		maxAmount = 15
+		flowState = True
+		isTweakable = False
+		hideFlow = False
+		flowMode = Both
+	}
+}
+PART
+{
+	part = FSnoseEngine_4294770584
+	partName = Part
+	pos = -2.850894,6.076141,-1.660814
+	rot = -5.266386E-09,-0.7071068,0.7071068,5.26641E-09
+	attRot = 0,0.9999999,-5.960464E-08,-1.776357E-15
+	mir = 1,1,1
+	istg = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	attm = 0
+	sym = FSnoseEngine_4294770716
+	attN = top,FSoblongNose_4294771690
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	MODULE
+	{
+		name = FSengineSounds
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleEngines
+		isEnabled = True
+		staged = False
+		flameout = False
+		EngineIgnited = False
+		engineShutdown = False
+		currentThrottle = 0
+		thrustPercentage = 36
+		manuallyOverridden = False
+		thrustPercentage_UIFlight
+		{
+			controlEnabled = True
+			minValue = 0
+			maxValue = 100
+			stepIncrement = 0.5
+		}
+		EVENTS
+		{
+			Activate
+			{
+				active = True
+				guiActive = True
+				guiIcon = Activate Engine
+				guiName = Activate Engine
+				category = Activate Engine
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+			Shutdown
+			{
+				active = False
+				guiActive = True
+				guiIcon = Shutdown Engine
+				guiName = Shutdown Engine
+				category = Shutdown Engine
+				guiActiveUnfocused = True
+				unfocusedRange = 5
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			OnAction
+			{
+				actionGroup = None
+			}
+			ShutdownAction
+			{
+				actionGroup = None
+			}
+			ActivateAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+	MODULE
+	{
+		name = FSpropellerAtmosphericNerf
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			hoverThrottleAction
+			{
+				actionGroup = None
+			}
+			normalThrottleAction
+			{
+				actionGroup = None
+			}
+			cargoThrottleAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+	MODULE
+	{
+		name = ModuleAlternator
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FXModuleAnimateThrottle
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSplanePropellerSpinner
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	MODULE
+	{
+		name = FSswitchEngineThrustTransform
+		isEnabled = True
+		isReversed = True
+		EVENTS
+		{
+			reverseTTEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = Set Reverse Thrust
+				guiName = Set Reverse Thrust
+				category = Set Reverse Thrust
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			normalTTEvent
+			{
+				active = True
+				guiActive = True
+				guiActiveEditor = True
+				guiIcon = Set Normal Thrust
+				guiName = Set Normal Thrust
+				category = Set Normal Thrust
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+			debugEvent
+			{
+				active = True
+				guiActive = False
+				guiIcon = debug
+				guiName = debug
+				category = debug
+				guiActiveUnfocused = False
+				unfocusedRange = 2
+				externalToEVAOnly = True
+			}
+		}
+		ACTIONS
+		{
+			switchTTAction
+			{
+				actionGroup = None
+			}
+			reverseTTAction
+			{
+				actionGroup = None
+			}
+			normalTTAction
+			{
+				actionGroup = None
+			}
+		}
+	}
+	MODULE
+	{
+		name = FSengineHandCrank
+		isEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+	}
+	RESOURCE
+	{
+		name = IntakeAir
+		amount = 0
+		maxAmount = 15
+		flowState = True
+		isTweakable = False
+		hideFlow = False
+		flowMode = Both
+	}
+}
