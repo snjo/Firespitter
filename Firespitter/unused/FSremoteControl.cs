@@ -16,7 +16,7 @@ public class FSremoteControl : PartModule //This is just a testing class for var
     {
         base.OnUpdate();
 
-        if (FlightGlobals.fetch.vesselTargetMode != FlightGlobals.VesselTargetModes.None)
+        if (FlightGlobals.fetch.vesselTargetMode != VesselTargetModes.None)
         {
             Vessel target = (Vessel)FlightGlobals.fetch.VesselTarget;
             //target.ctrlState.mainThrottle = 1f;

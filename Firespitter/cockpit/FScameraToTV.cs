@@ -116,7 +116,7 @@ public class FScameraToTV : InternalModule
         if (TVcam != null && CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA)
         {          
             TVcam.transform.rotation = originalRotation;
-            if (FlightGlobals.fetch.vesselTargetMode != FlightGlobals.VesselTargetModes.None)
+            if (FlightGlobals.fetch.vesselTargetMode != VesselTargetModes.None)
             {
                 ITargetable target = FlightGlobals.fetch.VesselTarget;                
                 TVcam.transform.LookAt(target.GetTransform(), Firespitter.Tools.WorldUp(vessel));
