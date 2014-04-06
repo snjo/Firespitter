@@ -66,6 +66,7 @@
     <Compile Include="engine\FSengineHover.cs" />
     <Compile Include="engine\FSheliLiftEngine.cs" />
     <Compile Include="engine\FSengine.cs" />
+    <Compile Include="tools\CompatabilityChecker.cs" />
     <Compile Include="tools\FSversionCheck.cs" />
     <Compile Include="unused\FShelicopterEngine.cs" />
     <Compile Include="engine\FSparticleFX.cs" />

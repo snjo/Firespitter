@@ -35,11 +35,11 @@ Some landing gear sound effects from freesound.org. Other effects recorded by me
 
 v6.2
 -Landing gear tires bump, screech and smoke when touching down, and have rolling and retract sounds.
+-Overhauled the Water launch system. Save your current position to re-use in new vessels. Launch anywhere on Kerbin! More reliable coordinate saving.
 -Scaled f-86 wing lift back to 72%, which should be around the realistic lift amount (still more than stock lift)
 -Subtle braking sound.
 -Fixed some old tail gear scaling and floating point error rendering issues (Scale has changed a little bit)
 -Support for part effects (sounds etc) in the animation module.
--Shrunk some sound files (but added a few more).
 
 v6.1.1
 -Fixed some FAR Values. Included two example craft re-tweaked for FAR.
@@ -349,3 +349,30 @@ Initial Release
 -Tail Gear
 -Propeller engine
 -Fighter Wings
+
+
+CompatibilityChecker License:
+/**
+ * Copyright (c) 2014, Majiir
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modification, are permitted 
+ * provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice, this list of 
+ * conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of 
+ * conditions and the following disclaimer in the documentation and/or other materials provided 
+ * with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR 
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY 
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
