@@ -40,6 +40,10 @@ public class FSGUIPopup
     /// Popup can be shown in the the flight scene, if showMenu is true. Beware window ID conflicts from multiple popup sources
     /// </summary>
     public bool useInFlight = false;
+    /// <summary>
+    /// Popup is used in main menus, space center or similar. No reference to vessel etc.
+    /// </summary>
+    public bool useInMenus = false;
 
     public delegate void HideMenuEvent();
     public HideMenuEvent hideMenuEvent;
@@ -80,6 +84,14 @@ public class FSGUIPopup
         parentPart = part;
         moduleName = module;
         moduleID = ID;
+        GUIlayer = Windowlayer;
+        windowRect = windowDimensions;
+        windowTitle = windowName;
+        windowRect.y += (moduleID * windowRect.height) + 20;
+    }
+
+    public FSGUIPopup(int Windowlayer, Rect windowDimensions, string windowName)
+    {
         GUIlayer = Windowlayer;
         windowRect = windowDimensions;
         windowTitle = windowName;
@@ -260,6 +272,13 @@ public class FSGUIPopup
         if (useInFlight && HighLogic.LoadedSceneIsFlight)
         {
             if (showMenu && parentPart.vessel.isActiveVessel)
+            {
+                windowRect = GUI.Window(GUIlayer, windowRect, drawWindow, windowTitle);
+            }
+        }
+        if (useInMenus && !HighLogic.LoadedSceneIsFlight && !HighLogic.LoadedSceneIsEditor)
+        {
+            if (showMenu)
             {
                 windowRect = GUI.Window(GUIlayer, windowRect, drawWindow, windowTitle);
             }
