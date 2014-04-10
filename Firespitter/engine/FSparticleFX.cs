@@ -33,6 +33,7 @@ namespace Firespitter
         public Vector3 EmitterLocalVelocity = new Vector3(0f, 0f, 1f);
         public Vector3 EmitterRndVelocity = new Vector3(0f, 0.1f, 0.1f);
         public bool EmitterUseWorldSpace = true;
+        public bool EmitterRandomRotation = true;
 
         public bool AnimatorDoesAnimateColor = true;
             

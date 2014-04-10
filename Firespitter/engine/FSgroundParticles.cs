@@ -83,11 +83,11 @@ namespace Firespitter.engine
                 particleFX.AnimatorSizeGrow = 1f;
 
                 particleFX.EmitterLocalVelocity = new Vector3(0f, 0f, 0f);
-                particleFX.EmitterRndVelocity = new Vector3(0f, 0f, 0f);  
+                particleFX.EmitterRndVelocity = new Vector3(0f, 0f, 0f);                
                 // creates the emitters etc and assigns the above values
                 particleFX.setupFXValues();
 
-                particleFX.pEmitter.rndRotation = true;
+                //particleFX.pEmitter.rndRotation = true;
 
                 // Can't turn on Interpolate Triangles on the emitter, casue it's not exposed to code. REALLY?!? WHY?
             }
