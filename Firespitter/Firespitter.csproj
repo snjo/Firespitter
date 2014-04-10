@@ -64,8 +64,10 @@
     <Compile Include="cockpit\FSpitchIndicator.cs" />
     <Compile Include="cockpit\FStachometer.cs" />
     <Compile Include="engine\FSengineHover.cs" />
+    <Compile Include="engine\FSgroundParticles.cs" />
     <Compile Include="engine\FSheliLiftEngine.cs" />
     <Compile Include="engine\FSengine.cs" />
+    <Compile Include="tools\MeshCreator.cs" />
     <Compile Include="tools\CompatabilityChecker.cs" />
     <Compile Include="tools\FSversionCheck.cs" />
     <Compile Include="unused\FShelicopterEngine.cs" />

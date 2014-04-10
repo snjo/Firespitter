@@ -188,7 +188,7 @@ class FSheliLiftEngine : PartModule
 
     public void FixedUpdate()
     {
-        if (!HighLogic.LoadedSceneIsFlight || !initialized) return;
+        if (!HighLogic.LoadedSceneIsFlight || !initialized || rigidbody==null) return;
 
         partVelocity = GetVelocity(rigidbody, transform.position);
         float airDirection = Vector3.Dot(baseTransform.up, partVelocity.normalized);
@@ -196,9 +196,9 @@ class FSheliLiftEngine : PartModule
         partFacingUp = Mathf.Sign(Vector3.Dot(vessel.upAxis, baseTransform.up));
 
         if (engineIgnited && !flameOut)
-            RPM += powerProduction; // + (3f * powerProduction * (RPM / maxRPM));
+            RPM += powerProduction * (TimeWarp.deltaTime * 50f); // + (3f * powerProduction * (RPM / maxRPM));
         else
-            RPM -= engineBrake;
+            RPM -= engineBrake * (TimeWarp.deltaTime * 50f);
 
         //else
         //{            
@@ -206,7 +206,7 @@ class FSheliLiftEngine : PartModule
 
             if (airDirection < 0f) // && collective <= 0f)
             {
-                RPM -= airSpeedThroughRotor * autoRotationGain;
+                RPM -= airSpeedThroughRotor * autoRotationGain * (TimeWarp.deltaTime * 50f);
                 //Debug.Log("adding rpm: " + -airSpeedThroughRotor * autoRotationGain);
             }
 
