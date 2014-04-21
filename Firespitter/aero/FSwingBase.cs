@@ -14,6 +14,8 @@ class FSwingBase : PartModule
     [KSPField]
     public string flapName = string.Empty;
     [KSPField]
+    public string leadingEdgeToggleName = string.Empty;
+    [KSPField]
     public string leadingEdgeTopName = string.Empty;
     [KSPField]
     public string leadingEdgeBottomName = string.Empty;

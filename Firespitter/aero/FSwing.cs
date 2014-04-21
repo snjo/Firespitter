@@ -7,10 +7,7 @@ using UnityEngine;
 
 class FSwing : FSwingBase
 {
-    #region kspfields
-
-    [KSPField]
-    public string leadingEdgeToggleName = string.Empty;
+    #region kspfields    
 
     [KSPEvent(guiName = "Help", guiActive = true, guiActiveEditor=true, active=true)]
     public override void showHelpEvent()

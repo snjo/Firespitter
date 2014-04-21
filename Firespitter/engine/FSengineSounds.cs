@@ -312,10 +312,12 @@ public class FSengineSounds : PartModule
                         {
                             engageGroup.audio.volume = GameSettings.SHIP_VOLUME * engageVolume;
                             engageGroup.audio.Play();
-                            if (disengageGroup.audio.isPlaying)
-                                disengageGroup.audio.Stop();
-                            if (flameoutGroup.audio.isPlaying)
-                                flameoutGroup.audio.Stop();
+                            if (disengageAssigned)
+                                if (disengageGroup.audio.isPlaying)
+                                    disengageGroup.audio.Stop();
+                            if (flameoutAssigned)
+                                if (flameoutGroup.audio.isPlaying)
+                                    flameoutGroup.audio.Stop();
                         }
                     }                    
                 }
@@ -329,8 +331,9 @@ public class FSengineSounds : PartModule
                         {
                             disengageGroup.audio.volume = GameSettings.SHIP_VOLUME * disengageVolume;
                             disengageGroup.audio.Play();
-                            if (engageGroup.audio.isPlaying)
-                                engageGroup.audio.Stop();
+                            if (engageAssigned)
+                                if (engageGroup.audio.isPlaying)
+                                    engageGroup.audio.Stop();
                         }
                     }                    
                 }
@@ -342,8 +345,9 @@ public class FSengineSounds : PartModule
                     {
                         flameoutGroup.audio.volume = GameSettings.SHIP_VOLUME * flameoutVolume;
                         flameoutGroup.audio.Play();
-                        if (engageGroup.audio.isPlaying)
-                            engageGroup.audio.Stop();
+                        if (engageAssigned)
+                            if (engageGroup.audio.isPlaying)
+                                engageGroup.audio.Stop();
                     }
                 }
 

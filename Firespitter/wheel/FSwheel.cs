@@ -40,6 +40,8 @@ class FSwheel : PartModule
     [KSPField]
     public int animationLayer = 1;
     [KSPField]
+    public float customAnimationSpeed = 1f;
+    [KSPField]
     public float deploymentCooldown = 0.5f;
 
     [KSPField(isPersistant = true)]
@@ -301,7 +303,7 @@ class FSwheel : PartModule
             {
                 if (deploymentState == "Retracted")
                     animTime = 1f;
-                animSpeed = -1f;
+                animSpeed = -1f * customAnimationSpeed;
                 deploymentState = "Deploying";
                 if (startDeployEffect != string.Empty)
                 {
@@ -312,7 +314,7 @@ class FSwheel : PartModule
             {
                 if (deploymentState == "Deployed")
                     animTime = 0f;
-                animSpeed = 1f;
+                animSpeed = 1f * customAnimationSpeed;
                 deploymentState = "Retracting";
                 if (startRetractEffect != string.Empty)
                 {
@@ -506,11 +508,11 @@ class FSwheel : PartModule
             if (deploymentState == "Retracted")
             {
                 startAnimTime = 1f;
-                animSpeed = 1f;
+                animSpeed = 1f * customAnimationSpeed;
             }
             else
             {
-                animSpeed = -1f;
+                animSpeed = -1f * customAnimationSpeed;
             }
             anim[animationName].normalizedTime = startAnimTime;
             anim[animationName].speed = animSpeed;
