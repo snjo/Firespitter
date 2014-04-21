@@ -58,10 +58,18 @@ public class FSengineSounds : PartModule
     /// </summary>
     [KSPField]
     public float powerLowerThreshold = 0.0f; //add functionality
+    [KSPField]
+    public float runningVolume = 1.0f;
 	[KSPField]
     public float powerVolume = 1.0f;
     [KSPField]
     public float engageVolume = 1.0f;
+    [KSPField]
+    public float disengageVolume = 1.0f;
+    [KSPField]
+    public float flameoutVolume = 1.0f;
+    [KSPField]
+    public float warningVolume = 1.0f;
     /// <summary>
     /// random start delay for the power sound, to make several engines not play in sync. makes for a better soundscape.
     /// </summary>
@@ -125,7 +133,7 @@ public class FSengineSounds : PartModule
     public bool warningAssigned;
 
     //private AudioHighPassFilter highPassFilter;
-    private float highPassTest = 100.0f;
+    //private float highPassTest = 100.0f;
 
     /// <summary>
     /// Fills an FXGroup with sound values
@@ -162,13 +170,23 @@ public class FSengineSounds : PartModule
 
     public void OnPause()
     {
-        powerGroup.audio.volume = 0f;
+        if (engageAssigned) engageGroup.audio.volume = 0f;
+        if (runningAssigned) runningGroup.audio.volume = 0f;
+        if (powerAssigned) powerGroup.audio.volume = 0f;        
+        if (disengageAssigned) disengageGroup.audio.volume = 0f;
+        if (flameoutAssigned) flameoutGroup.audio.volume = 0f;
+        if (warningAssigned) warningGroup.audio.volume = 0f;
         paused = true;
     }
 
     public void OnResume()
-    {
-        powerGroup.audio.volume = GameSettings.SHIP_VOLUME;
+    {        
+        if (engageAssigned) engageGroup.audio.volume = GameSettings.SHIP_VOLUME * engageVolume;
+        if (runningAssigned) runningGroup.audio.volume = GameSettings.SHIP_VOLUME * runningVolume;
+        if (powerAssigned) powerGroup.audio.volume = GameSettings.SHIP_VOLUME * powerVolume;
+        if (disengageAssigned) disengageGroup.audio.volume = GameSettings.SHIP_VOLUME * disengageVolume;
+        if (flameoutAssigned) flameoutGroup.audio.volume = GameSettings.SHIP_VOLUME * flameoutVolume;
+        if (warningAssigned) warningGroup.audio.volume = GameSettings.SHIP_VOLUME * warningVolume;
         paused = false;
     }
 
@@ -179,7 +197,7 @@ public class FSengineSounds : PartModule
         engageAssigned = createGroup(engageGroup, engage, false);
         runningAssigned = createGroup(runningGroup, running, true);
         powerAssigned = createGroup(powerGroup, power, true);
-        disengageAssigned = createGroup(disengageGroup, disengage, true);
+        disengageAssigned = createGroup(disengageGroup, disengage, false);
         flameoutAssigned = createGroup(flameoutGroup, flameout, false);
         warningAssigned = createGroup(warningGroup, warning, false);
 
@@ -220,7 +238,7 @@ public class FSengineSounds : PartModule
             if (TimeWarp.WarpMode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRate > 1.1f)
             {
                 if (powerAssigned)
-                    powerGroup.audio.volume = 0f;                            
+                    powerGroup.audio.volume = 0f;
             }
             else
             {                     
@@ -228,7 +246,7 @@ public class FSengineSounds : PartModule
                 if (engine.getIgnitionState && !engine.getFlameoutState)
                 {
                     if (powerAssigned)
-                    {
+                    {                        
                         if (currentPowerDelay > 0f)
                             currentPowerDelay -= Time.deltaTime;
 
@@ -242,10 +260,27 @@ public class FSengineSounds : PartModule
                                 if (currentPowerFadeIn > 1f)
                                     currentPowerFadeIn = 1f;
                             }
-                            powerGroup.audio.volume = GameSettings.SHIP_VOLUME * currentPowerFadeIn * powerVolume;
+                            
+                            if ((engine.finalThrust / maxThrust) > powerLowerThreshold)
+                            {
+                                powerGroup.audio.volume = GameSettings.SHIP_VOLUME * currentPowerFadeIn * powerVolume;                                
+                            }
+                            else
+                            {
+                                powerGroup.audio.volume = Mathf.Lerp(powerGroup.audio.volume, 0f, 0.06f);                                
+                            }                            
+
                             if (!powerGroup.audio.isPlaying)
                                 powerGroup.audio.Play();
                             powerGroup.audio.pitch = smoothedPowerPitch;
+                        }
+                    }
+                    if (runningAssigned)
+                    {
+                        if (!runningGroup.audio.isPlaying)
+                        {
+                            runningGroup.audio.volume = GameSettings.SHIP_VOLUME * runningVolume;
+                            runningGroup.audio.Play();
                         }
                     }
                 }
@@ -255,8 +290,16 @@ public class FSengineSounds : PartModule
                     {
                         if (powerGroup.audio.isPlaying)
                             powerGroup.audio.Stop();
-                        currentPowerFadeIn = 0f;
-                        currentPowerDelay = powerFadeInDelay + ((float)(rand.NextDouble()) * randomStartDelay);
+                        if (!engine.getIgnitionState)
+                        {
+                            currentPowerFadeIn = 0f;
+                            currentPowerDelay = powerFadeInDelay + ((float)(rand.NextDouble()) * randomStartDelay);
+                        }
+                    }
+                    if (runningAssigned)
+                    {
+                        if (runningGroup.audio.isPlaying)
+                            runningGroup.audio.Stop();
                     }
                 }
 
@@ -269,13 +312,47 @@ public class FSengineSounds : PartModule
                         {
                             engageGroup.audio.volume = GameSettings.SHIP_VOLUME * engageVolume;
                             engageGroup.audio.Play();
+                            if (disengageGroup.audio.isPlaying)
+                                disengageGroup.audio.Stop();
+                            if (flameoutGroup.audio.isPlaying)
+                                flameoutGroup.audio.Stop();
                         }
-                    }
-                    oldIgnitionState = engine.getIgnitionState;
+                    }                    
                 }
+
+                //disangage sound
+                if (disengageAssigned)
+                {
+                    if (!engine.getIgnitionState && oldIgnitionState)
+                    {
+                        if (!engine.getFlameoutState)
+                        {
+                            disengageGroup.audio.volume = GameSettings.SHIP_VOLUME * disengageVolume;
+                            disengageGroup.audio.Play();
+                            if (engageGroup.audio.isPlaying)
+                                engageGroup.audio.Stop();
+                        }
+                    }                    
+                }
+
+                //flameout
+                if (flameoutAssigned)
+                {
+                    if (engine.getFlameoutState && !oldFlameOutState)
+                    {
+                        flameoutGroup.audio.volume = GameSettings.SHIP_VOLUME * flameoutVolume;
+                        flameoutGroup.audio.Play();
+                        if (engageGroup.audio.isPlaying)
+                            engageGroup.audio.Stop();
+                    }
+                }
+
+                oldIgnitionState = engine.getIgnitionState;
+                oldFlameOutState = engine.getFlameoutState;
 
             }
 
+            //overheat warning
             if (warningAssigned)
             {
                 if (warningCountDown > 0f)
@@ -285,6 +362,7 @@ public class FSengineSounds : PartModule
                 {
                     if (warningCountDown <= 0)
                     {
+                        warningGroup.audio.volume = GameSettings.SHIP_VOLUME * warningVolume;
                         warningGroup.audio.Play();
                         warningCountDown = warningCooldownTime;
                     }

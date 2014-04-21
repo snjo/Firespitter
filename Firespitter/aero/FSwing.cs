@@ -9,6 +9,9 @@ class FSwing : FSwingBase
 {
     #region kspfields
 
+    [KSPField]
+    public string leadingEdgeToggleName = string.Empty;
+
     [KSPEvent(guiName = "Help", guiActive = true, guiActiveEditor=true, active=true)]
     public override void showHelpEvent()
     {
@@ -27,7 +30,7 @@ class FSwing : FSwingBase
         toggleLeadingEdgeEvent();
     }
 
-    [KSPAction("Extend Flap")]
+    [KSPAction("Increase Flap")]
     public override void extendFlapAction(KSPActionParam param)
     {
         flapTarget += flapIncrements;
@@ -35,7 +38,7 @@ class FSwing : FSwingBase
             flapTarget = flapMax;
     }
 
-    [KSPAction("Retract Flap")]
+    [KSPAction("Decrease Flap")]
     public override void retractFlapAction(KSPActionParam param)
     {
         flapTarget -= flapIncrements;
@@ -92,6 +95,12 @@ class FSwing : FSwingBase
             Fields["rollResponse"].guiName = displayName + " Roll";            
             Fields["yawResponse"].guiName = displayName + " Yaw";
             Fields["flapResponse"].guiName = displayName + " Flap";            
+        }
+
+        if (leadingEdgeToggleName != string.Empty)
+        {
+            Events["toggleLeadingEdgeEvent"].guiName = leadingEdgeToggleName;
+            Actions["toggleLeadingEdgeAction"].guiName = leadingEdgeToggleName;
         }
     }   
 
