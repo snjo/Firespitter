@@ -57,7 +57,7 @@ public class FSengineSounds : PartModule
     /// thrust values below this level will yield a silent engine sound
     /// </summary>
     [KSPField]
-    public float powerLowerThreshold = 0.0f; //add functionality
+    public float powerLowerThreshold = 0.0f;
     [KSPField]
     public float runningVolume = 1.0f;
 	[KSPField]
@@ -261,7 +261,7 @@ public class FSengineSounds : PartModule
                                     currentPowerFadeIn = 1f;
                             }
                             
-                            if ((engine.finalThrust / maxThrust) > powerLowerThreshold)
+                            if ((engine.finalThrust / maxThrust) > powerLowerThreshold || powerLowerThreshold <= 0f)
                             {
                                 powerGroup.audio.volume = GameSettings.SHIP_VOLUME * currentPowerFadeIn * powerVolume;                                
                             }
