@@ -97,8 +97,11 @@ public class FSanimateThrottle : PartModule
             anim[animationName].layer = animationLayer;
             anim[animationName].speed = 0f;
             anim[animationName].normalizedTime = 0f;   
-            anim[animationName].wrapMode = WrapMode.ClampForever;
-            
+            anim[animationName].wrapMode = WrapMode.ClampForever;            
+        }
+        else
+        {
+            Debug.Log("FSanimateThrottle: no animation found called " + animationName);
         }
     }
 
@@ -108,7 +111,7 @@ public class FSanimateThrottle : PartModule
         if (!HighLogic.LoadedSceneIsFlight)
             return; 
 
-        if (engine != null)
+        if (engine != null && anim != null)
         {
             if (!anim.IsPlaying(animationName))
                 anim.Play(animationName);
