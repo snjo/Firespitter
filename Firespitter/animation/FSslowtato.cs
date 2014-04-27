@@ -21,9 +21,9 @@ namespace Firespitter.animation
         [KSPField]
         public bool useKeys = true;
 
-        [KSPField]
+        [KSPField(isPersistant=true)]
         public bool rotationInitialized = false;
-        [KSPField]
+        [KSPField(isPersistant=true)]
         public Vector3 currentRotation = Vector3.zero;
 
         private float rotationAmount = 0f;
@@ -73,11 +73,11 @@ namespace Firespitter.animation
             {
                 if (rotationInitialized)
                 {
-                    rotator.rotation = Quaternion.Euler(currentRotation);
+                    rotator.localRotation = Quaternion.Euler(currentRotation);
                 }
                 else
                 {
-                    currentRotation = rotator.rotation.eulerAngles;
+                    currentRotation = rotator.localRotation.eulerAngles;
                     rotationInitialized = true;
                 }
             }
@@ -107,7 +107,9 @@ namespace Firespitter.animation
                 }
 
                 if (rotationAmount != 0)
-                    rotator.Rotate(rotationAxis, rotationSpeed * rotationAmount * TimeWarp.deltaTime);
+                    //rotator.Rotate(rotationAxis, rotationSpeed * rotationAmount * TimeWarp.deltaTime);
+                    currentRotation += rotationAmount * rotationAxis * rotationSpeed;
+                    rotator.localRotation = Quaternion.Euler(currentRotation);
             }
         }
     }
