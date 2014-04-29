@@ -33,6 +33,17 @@ Mustang sound from this video: http://www.youtube.com/watch?v=-yTHDQZL1dE
 Tire screech and bump: http://soundbible.com/1178-Tires-Squealing.html http://soundbible.com/1120-Bounce.html
 Some landing gear sound effects from freesound.org. Other effects recorded by me.
 
+v6.3
+-Oblong round noses, short and long
+-Oblong to 0.625m adapter
+-Helicopter landing pads by Justin Kerbice
+-Warning message on the Main Menu if you are using an incompatible KSP version
+
+-FSengineSounds: Implemented disengage, running, flameout sounds, fixed bugs.
+-FSwing: Made leading edge action name cfg editable for use in extending flaps etc.
+-FSwheel: supports altering retract animation speed in cfg
+-FSslowtato: key/action group based rotator module
+
 v6.2
 -Landing gear tires bump, screech and smoke when touching down, and have rolling and retract sounds.
 -Overhauled the Water launch system. Save your current position to re-use in new vessels. Launch anywhere on Kerbin! More reliable coordinate saving.
