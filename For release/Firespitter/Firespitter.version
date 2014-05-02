@@ -1,0 +1,13 @@
+{
+  "NAME": "Firespitter",
+  "URL": "https://raw.githubusercontent.com/snjo/Firespitter/master/For\ release/Firespitter/Firespitter.version",
+  "VERSION": {
+    "MAJOR": 6,
+    "MINOR": 3
+  },
+  "KSP_VERSION": {
+    "MAJOR": 0,
+    "MINOR": 23,
+    "PATCH": 5
+  }
+}
