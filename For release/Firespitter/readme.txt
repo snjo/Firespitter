@@ -20,10 +20,10 @@ Q: Everything is broken and I am sad
 A: Make sure you use the latest version of KSP and Firespitter. Do not post support questions on the spaceport, no one reads it. Use the forum if installing correctly didn't work. Keep in mind that lots of people are using the mod successfully, so unless it's a new bug introduced in the latest FS version, you probably messed up the install.
 
 License:
-You may reuse any part of this pack, as long as you give credit in the download file and on the download post/page. No reselling. No redistribution of the whole pack without permission.
+You may reuse code and textures from this mod, as long as you give credit in the download file and on the download post/page. Reuse of models with permission. No reselling. No redistribution of the whole pack without permission.
 UV map texture guides are included so you can re-skin to your liking.
 
-For reuse of the plugin, please either direct people to download the dll from my official release on the spaceport, OR recompile the wanted partmodule/class with a new class name to avoid conflicts.
+For reuse of the plugin, please either direct people to download the dll from my official release, OR recompile the wanted partmodule/class with a new class name to avoid conflicts.
 For modders re-using the dll directly, you MUST place it in the Firespitter folder in your zip file, so people don't end up with two copies of the dll.
 The right path is: [KSP_OS]\GameData\Firespitter\Plugins\
 
@@ -38,11 +38,13 @@ v6.3
 -Oblong to 0.625m adapter
 -Helicopter landing pads by Justin Kerbice
 -Warning message on the Main Menu if you are using an incompatible KSP version
+-W.I.P. turboprop engine. This will see changes to performance, sound and looks
 
 -FSengineSounds: Implemented disengage, running, flameout sounds, fixed bugs.
 -FSwing: Made leading edge action name cfg editable for use in extending flaps etc.
 -FSwheel: supports altering retract animation speed in cfg
 -FSslowtato: key/action group based rotator module
+-FSmeshSwitch: swap meshes instead of textures for better memory conservation
 
 v6.2
 -Landing gear tires bump, screech and smoke when touching down, and have rolling and retract sounds.
