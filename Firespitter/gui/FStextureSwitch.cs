@@ -87,8 +87,17 @@ class FStextureSwitch : PartModule
             selectedTexture = 0;
         useTextureAll();
     }
-
-    [KSPEvent(guiActiveUnfocused = true, unfocusedRange = 5f, guiActive = false, guiActiveEditor = false, guiName = "Repaint")]
+	
+	[KSPEvent(guiActive = false, guiActiveEditor=true, guiName = "Previous Texture")]
+    public void previousTextureEvent()
+    {
+        selectedTexture--;
+        if (selectedTexture < 0)
+            selectedTexture = texList.Count -1;
+        useTextureAll();
+    }
+    
+	[KSPEvent(guiActiveUnfocused = true, unfocusedRange = 5f, guiActive = false, guiActiveEditor = false, guiName = "Repaint")]
     public void nextTextureEVAEvent()
     {
         nextTextureEvent();
@@ -220,6 +229,7 @@ class FStextureSwitch : PartModule
         useTextureAll();
 
         if (switchableInFlight) Events["nextTextureEvent"].guiActive = true;
+		if (switchableInFlight) Events["previousTextureEvent"].guiActive = true;
         if (showListButton) Events["listAllObjects"].guiActiveEditor = true;
         if (!repaintableEVA) Events["nextTextureEVAEvent"].guiActiveUnfocused = false;
     }
