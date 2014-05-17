@@ -105,7 +105,7 @@ public class FSengineSounds : PartModule
     [KSPField]
     public bool showVolumeDebug = false;
 
-    private ModuleEngines engine;
+    private Firespitter.engine.FSengineWrapper engine;
     private bool oldIgnitionState;
     private bool oldFlameOutState;
     private float currentPowerFadeIn;
@@ -201,7 +201,7 @@ public class FSengineSounds : PartModule
         flameoutAssigned = createGroup(flameoutGroup, flameout, false);
         warningAssigned = createGroup(warningGroup, warning, false);
 
-        engine = part.GetComponent<ModuleEngines>();
+        engine = new Firespitter.engine.FSengineWrapper(part);
 
         if (engine != null)
         {

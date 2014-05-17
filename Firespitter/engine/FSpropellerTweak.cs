@@ -28,6 +28,12 @@ namespace Firespitter.engine
         public float minThrust = 0f;
         [KSPField]
         public float maxThrust = 0f;
+        [KSPField]
+        public float baseWeight = 0.2f;
+        [KSPField]
+	    public float engineMaxWeight = 1.0f;
+        [KSPField]
+        public float bladeWeight = 0.01f;        
 
         [KSPField]
         public string engineEndPointName = "engineEndPoint";
@@ -72,7 +78,7 @@ namespace Firespitter.engine
         private int exhaustNumber = 0;
         [KSPField]
         public float engineMaxScale = 5f;
-        [KSPField(guiName = "Engine Size"), UI_FloatRange(minValue = 0f, maxValue = 1f, stepIncrement = 0.1f)]
+        [KSPField(guiName = "Engine Size"), UI_FloatRange(minValue = 0f, maxValue = 1f, stepIncrement = 0.01f)]
         private float engineLengthSliderRaw = 0f;
         private GameObject engineExtension;
         private List<GameObject> exhausts = new List<GameObject>();
@@ -81,9 +87,18 @@ namespace Firespitter.engine
         private Transform movableSection;
         public Transform engineEndPoint;
 
-        private FSengine engine;
+        private Firespitter.engine.FSengineWrapper engine;
 
         private bool initialized = false;
+        private bool maxThrustSet = false;
+
+        public float finalWeight
+        {
+            get
+            {
+                return baseWeight + (engineMaxWeight * engineLengthSlider) + (bladeWeight * blades.Count * bladeLengthSlider);
+            }
+        }
 
         private void updateBladeList()
         {            
@@ -202,7 +217,7 @@ namespace Firespitter.engine
         {
             if (!HighLogic.LoadedSceneIsFlight && !HighLogic.LoadedSceneIsEditor) return;
 
-            Debug.Log("FSpropellerTweak: Onstart");
+            engine = new FSengineWrapper(part);
 
             bladeNumberRaw = bladeNumber;
             engineLengthSliderRaw = engineLengthSlider;
@@ -244,8 +259,8 @@ namespace Firespitter.engine
             updateBladeList();
             updateEngineLength();
             updateBladeLength();
-
-            engine = part.Modules.OfType<FSengine>().FirstOrDefault();
+            
+            part.mass = finalWeight;            
 
             initialized = true;
         }
@@ -262,8 +277,18 @@ namespace Firespitter.engine
 
                 updateBladeList();
                 updateEngineLength();
-                updateBladeLength();               
+                updateBladeLength();
+
+                part.mass = finalWeight;
             }
+        }
+
+        // In flight
+        public override void OnUpdate()
+        {
+            // make sure max thrust is set
+            if (!maxThrustSet)
+                engine.maxThrust = Mathf.Lerp(minThrust, maxThrust, engineLengthSlider);            
         }
 
         private Rect sliderRect(int current)
@@ -282,22 +307,5 @@ namespace Firespitter.engine
             Rect newRect = sliderRect(currentGUILine);
             return new Rect(newRect.x + newRect.width + 10f, newRect.y, 150f, newRect.height);
         }
-
-        //public void OnGUI()
-        //{
-        //    currentGUILine = 0;
-        //    bladeNumberRaw = GUI.HorizontalSlider(nextRect(), bladeNumberRaw, minBlades, maxBlades + 0.9f);
-        //    bladeNumber = Mathf.FloorToInt(bladeNumberRaw);
-        //    GUI.Label(labelRect(), bladeNumber.ToString() + " : No of Blades");
-
-        //    engineLengthSliderRaw = GUI.HorizontalSlider(nextRect(), engineLengthSliderRaw, 0f, 4f);
-        //    exhaustNumber = Mathf.FloorToInt(engineLengthSliderRaw);
-        //    engineLengthSlider = (float)Math.Round(engineLengthSliderRaw, 2);
-        //    GUI.Label(labelRect(), engineLengthSlider.ToString() + " : Engine Power");
-
-        //    BladeLengthSliderRaw = GUI.HorizontalSlider(nextRect(), BladeLengthSliderRaw, 0.5f, 3f);
-        //    bladeLengthSlider = (float)Math.Round(BladeLengthSliderRaw, 2);
-        //    GUI.Label(labelRect(), bladeLengthSlider.ToString() + " : Blade Length");            
-        //}
     }
 }

@@ -46,7 +46,7 @@ public class FSplanePropellerSpinner : PartModule
     [KSPField]
     public bool deployAnimationStartsDeployed = true;
 
-    private ModuleEngines engine;
+    private Firespitter.engine.FSengineWrapper engine;
     private Transform propeller;
     private Transform rotorDisc;
     private float targetRPM = 0f;
@@ -69,16 +69,18 @@ public class FSplanePropellerSpinner : PartModule
     public override void OnStart(PartModule.StartState state)
     {
         base.OnStart(state);
-        engine = part.Modules.OfType<ModuleEngines>().FirstOrDefault();
-        propeller = part.FindModelTransform(propellerName);        
-            
+        engine = new Firespitter.engine.FSengineWrapper(part);
+
+        propeller = part.FindModelTransform(propellerName);
+
         if (engine != null)
         {
             maxThrust = engine.maxThrust;
         }
+
         if (maxThrust <= 0f) // to avoid division by zero
         {
-            maxThrust = 50f;
+            maxThrust = 50f;            
         }
 
         //assign blade meshes so they gan be hidden
@@ -145,19 +147,25 @@ public class FSplanePropellerSpinner : PartModule
                     engine.EngineIgnited = false;
                 }
             }
-
-            //check if the engine is running, or the airplane is moving through the air
-            if (!engine.getIgnitionState || engine.getFlameoutState)
-            {
-                if (FlightGlobals.ship_srfSpeed > windmillMinAirspeed && vessel.atmDensity > 0.1f)
-                    targetRPM = windmillRPM + (windmillRPM * FlightInputHandler.state.mainThrottle); //spins depending on the blade angle
-                else
-                    targetRPM = 0f;
+            
+            if (engine.type == Firespitter.engine.FSengineWrapper.EngineType.FSengine)
+            {                
+                currentRPM = engine.fsengine.momentum;
             }
             else
-                targetRPM = 1f;            
-            
-            currentRPM = Mathf.Lerp(currentRPM, targetRPM, engine.engineAccelerationSpeed/spinUpTime * TimeWarp.deltaTime);
+            {
+                //check if the engine is running, or the airplane is moving through the air
+                if (!engine.getIgnitionState || engine.getFlameoutState)
+                {
+                    if (FlightGlobals.ship_srfSpeed > windmillMinAirspeed && vessel.atmDensity > 0.1f)
+                        targetRPM = windmillRPM + (windmillRPM * FlightInputHandler.state.mainThrottle); //spins depending on the blade angle
+                    else
+                        targetRPM = 0f;
+                }
+                else
+                    targetRPM = 1f;
+                currentRPM = Mathf.Lerp(currentRPM, targetRPM, engine.engineAccelerationSpeed / spinUpTime * TimeWarp.deltaTime);
+            }            
 
             if (currentRPM != 0f)
             {
@@ -186,26 +194,7 @@ public class FSplanePropellerSpinner : PartModule
                     {
                         rotorDisc.renderer.enabled = false;
                         setBladeRendererState(true);
-                    }
-
-                    //if (currentRPM > rotorDiscFadeInStart)
-                    //{
-                    //    rotorDisc.renderer.enabled = true;
-                    //    if (currentRPM > rotorDiscFadeInEnd)
-                    //    {
-                    //        setBladeRendererState(false);
-                    //        rotorDisc.Rotate(Vector3.forward * ((rotorDiscSpeed * 6) * TimeWarp.deltaTime));
-                    //    }
-                    //    else
-                    //    {
-                    //        setBladeRendererState(true);
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    rotorDisc.renderer.enabled = false;
-                    //    setBladeRendererState(true);
-                    //}                     
+                    }                   
                 }
             }
         }

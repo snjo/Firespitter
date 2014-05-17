@@ -37,7 +37,7 @@ public class FSanimateThrottle : PartModule
     public List<mode> modeList = new List<mode>();
     public float animTime = 0f;
 
-    private ModuleEngines engine;
+    private Firespitter.engine.FSengineWrapper engine;
     private int _engineMode = 0;
     private Animation anim;
     private float targetTime = 0f;
@@ -80,15 +80,7 @@ public class FSanimateThrottle : PartModule
 
         modeList.Add(new mode(primaryModeRange.x, primaryModeRange.y));
 
-        engine = part.Modules.OfType<ModuleEngines>().FirstOrDefault();
-        if (engine != null)
-        {
-
-        }
-        else
-        {
-            Debug.Log("FSanimateThrottle: no engine module found");
-        }
+        engine = new Firespitter.engine.FSengineWrapper(part);
 
         anim = part.FindModelAnimators(animationName).FirstOrDefault();
         if (anim != null)
