@@ -18,6 +18,33 @@ namespace Firespitter
 
         public static String AppPath = KSPUtil.ApplicationRootPath.Replace("\\", "/");
         public static String PlugInDataPath = AppPath + "GameData/Firespitter/PluginData/";
+
+        public static FloatCurve stringToFloatCurve(string curveString)
+        {
+            FloatCurve resultCurve = new FloatCurve();
+
+            string[] keyString = curveString.Split(';');
+            for (int i = 0; i < keyString.Length; i++)
+            {
+                string[] valueString = keyString[i].Split(',');
+                if (valueString.Length >= 2)
+                {
+                    Vector4 key = Vector4.zero;
+                    float.TryParse(valueString[0], out key.x);
+                    float.TryParse(valueString[1], out key.y);
+                    if (valueString.Length == 4)
+                    {
+                        float.TryParse(valueString[2], out key.z);
+                        float.TryParse(valueString[3], out key.w);
+                    }
+
+                    resultCurve.Add(key.x, key.y, key.z, key.w);
+                    Debug.Log("FStools: Added key to FloatCurve: " + key.ToString());
+                }
+            }
+
+            return resultCurve;
+        }
     }
 
     public class MouseEventHandler : MonoBehaviour
@@ -62,5 +89,5 @@ namespace Firespitter
         {
             return ("(" + x + ", " + y + ")");
         }
-    }
+    }    
 }

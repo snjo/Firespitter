@@ -10,6 +10,10 @@ namespace Firespitter.gui
     {
         [KSPField]
         public string buttonName = "Next part variant";
+        [KSPField]
+        public string previousButtonName = "Prev part variant";
+        [KSPField]
+        public bool showPreviousButton = true;
 
         [KSPField]
         public string objects = string.Empty;
@@ -35,6 +39,17 @@ namespace Firespitter.gui
             if (selectedObject >= objectTransforms.Count)
             {
                 selectedObject = 0;
+            }
+            switchToObject(selectedObject);
+        }
+
+        [KSPEvent(guiActive = false, guiActiveEditor = true, guiActiveUnfocused = false, guiName = "Prev part variant")]
+        public void previousObjectEvent()
+        {
+            selectedObject--;
+            if (selectedObject < 0)
+            {
+                selectedObject = objectTransforms.Count - 1;
             }
             switchToObject(selectedObject);
         }
@@ -81,6 +96,7 @@ namespace Firespitter.gui
             parseObjectNames();
             switchToObject(selectedObject);
             Events["nextObjectEvent"].guiName = buttonName;
+            if (!showPreviousButton) Events["previousObjectEvent"].guiActiveEditor = false;
         }
     }
 }

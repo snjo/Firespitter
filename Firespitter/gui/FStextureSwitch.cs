@@ -33,6 +33,8 @@ class FStextureSwitch : PartModule
     public bool repaintableEVA = true;
     [KSPField]
     public Vector4 GUIposition = new Vector4(FSGUIwindowID.standardRect.x, FSGUIwindowID.standardRect.y, FSGUIwindowID.standardRect.width, FSGUIwindowID.standardRect.height);
+    [KSPField]
+    public bool showPreviousButton = true;
 
     List<Transform> targetObjectTransforms = new List<Transform>();
     List<Material> targetMats = new List<Material>();
@@ -85,6 +87,15 @@ class FStextureSwitch : PartModule
         selectedTexture++;
         if (selectedTexture >= texList.Count)
             selectedTexture = 0;
+        useTextureAll();
+    }
+
+    [KSPEvent(guiActive = false, guiActiveEditor = true, guiName = "Previous Texture")]
+    public void previousTextureEvent()
+    {
+        selectedTexture--;
+        if (selectedTexture < 0)
+            selectedTexture = texList.Count - 1;
         useTextureAll();
     }
 
@@ -173,7 +184,7 @@ class FStextureSwitch : PartModule
     {
         nodeLoader = new FSnodeLoader(part, moduleName, moduleID.ToString(), nodeName, valueName);
         nodeLoader.debugMode = debugMode;
-        outputList = nodeLoader.ProcessNode(node);
+        outputList = nodeLoader.ProcessNodeAsStringList(node);
         if (!outputDict.ContainsKey(uniqueModuleID))
             outputDict.Add(uniqueModuleID, outputList);
     }    
@@ -220,7 +231,14 @@ class FStextureSwitch : PartModule
         useTextureAll();
 
         if (switchableInFlight) Events["nextTextureEvent"].guiActive = true;
+        if (switchableInFlight && showPreviousButton) Events["previousTextureEvent"].guiActive = true;
         if (showListButton) Events["listAllObjects"].guiActiveEditor = true;
         if (!repaintableEVA) Events["nextTextureEVAEvent"].guiActiveUnfocused = false;
+        if (!showPreviousButton)
+        {
+            Events["previousTextureEvent"].guiActive = false;
+            Events["previousTextureEvent"].guiActiveEditor = false;
+        }
+        
     }
 }

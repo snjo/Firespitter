@@ -68,6 +68,7 @@
     <Compile Include="engine\FSgroundParticles.cs" />
     <Compile Include="engine\FSheliLiftEngine.cs" />
     <Compile Include="engine\FSengine.cs" />
+    <Compile Include="engine\FSpropellerTweak.cs" />
     <Compile Include="gui\FSmeshSwitch.cs" />
     <Compile Include="tools\MeshCreator.cs" />
     <Compile Include="tools\CompatabilityChecker.cs" />

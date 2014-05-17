@@ -447,7 +447,8 @@ class FSheliLiftEngine : PartModule
             Fields["invertYaw"].guiActive = true;
             Fields["invertYaw"].guiActiveEditor = true;
             Events["toggleHover"].guiActive = false;
-        }        
+        }
+
     }
 
     private void animateRotor()

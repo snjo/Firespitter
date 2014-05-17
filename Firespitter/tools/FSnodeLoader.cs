@@ -35,17 +35,42 @@ class FSnodeLoader
     {
         if (debugMode)
         {
-            FSdebugMessages.Post(input, true, 5f);
+            FSdebugMessages.Post("ProcessNodeAsStringList: " + input, true, 5f);
         }
     }
 
+    public FloatCurve ProcessNodeAsFloatCurve(ConfigNode node)
+    {
+        FloatCurve resultCurve = new FloatCurve();
+        ConfigNode[] moduleNodeArray = node.GetNodes(nodeName);
+        debugMessage("ProcessNodeAsFloatCurve: moduleNodeArray.length " + moduleNodeArray.Length);
+        for (int k = 0; k < moduleNodeArray.Length; k++)
+        {
+            debugMessage("found node");
+            string[] valueArray = moduleNodeArray[k].GetValues(valueName);
+            debugMessage("found " + valueArray.Length + " values");
+            for (int l = 0; l < valueArray.Length; l++)
+            {
+                string[] splitString = valueArray[l].Split(' ');
+                try
+                {
+                    Vector2 v2 = new Vector2(float.Parse(splitString[0]), float.Parse(splitString[1]));
+                    resultCurve.Add(v2.x, v2.y, 0, 0);
+                }
+                catch
+                {
+                    Debug.Log("Error parsing vector2");
+                }
+            }
+        }
+        return resultCurve;
+    }
 
-
-    public List<String> ProcessNode(ConfigNode node)
+    public List<String> ProcessNodeAsStringList(ConfigNode node)
     {
         List<String> resultList = new List<string>();
         ConfigNode[] moduleNodeArray = node.GetNodes(nodeName);
-        debugMessage("moduleNodeArray.length " + moduleNodeArray.Length);
+        debugMessage("ProcessNodeAsStringList: moduleNodeArray.length " + moduleNodeArray.Length);
         for (int k = 0; k < moduleNodeArray.Length; k++)
         {
             debugMessage("found node");
@@ -109,7 +134,7 @@ class FSnodeLoader
                                 if (correctModuleFound)
                                 {
                                     debugMessage("Found module with matching or blank ID, proceeding");
-                                    valueList = ProcessNode(nodes[j]);
+                                    valueList = ProcessNodeAsStringList(nodes[j]);
                                     //ConfigNode[] moduleNodeArray = nodes[j].GetNodes(nodeName);
                                     //debugMessage("moduleNodeArray.length " + moduleNodeArray.Length);
                                     //for (int k = 0; k < moduleNodeArray.Length; k++)
