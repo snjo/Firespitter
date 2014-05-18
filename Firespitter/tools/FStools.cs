@@ -39,7 +39,7 @@ namespace Firespitter
                     }
 
                     resultCurve.Add(key.x, key.y, key.z, key.w);
-                    Debug.Log("FStools: Added key to FloatCurve: " + key.ToString());
+                    //Debug.Log("FStools: Added key to FloatCurve: " + key.ToString());
                 }
             }
 

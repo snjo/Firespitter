@@ -11,12 +11,11 @@ namespace Firespitter.engine
         {
             base.OnStart(state);
 
-
         }
 
         public override void OnFixedUpdate()
         {
-            
+            base.OnFixedUpdate();
         }
     }
 }

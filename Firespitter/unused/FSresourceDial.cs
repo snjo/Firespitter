@@ -19,8 +19,8 @@ public class FSresourceDial : InternalModule
     public bool isController = false;
 
     private bool hasIntitialized = false;
-    private GameObject needleObject;
-    private GameObject[] spinnerObjects;
+    //private GameObject needleObject;
+    //private GameObject[] spinnerObjects;
 
     private void getResourcesFromVessel()
     {

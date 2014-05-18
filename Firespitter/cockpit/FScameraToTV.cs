@@ -18,7 +18,7 @@ public class FScameraToTV : InternalModule
     private float lerpProgress = 0f;
     public Shader repl = null;
 
-    Vector3 originalPosition = new Vector3();
+    //Vector3 originalPosition = new Vector3();
     Quaternion originalRotation = new Quaternion();
 
     public static Material normal = new Material(

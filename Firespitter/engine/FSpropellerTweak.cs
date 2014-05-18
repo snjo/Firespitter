@@ -12,7 +12,7 @@ namespace Firespitter.engine
         [KSPField]
         public string bladeRootName = "bladeRoot";
         [KSPField]
-        public string bladeName = "blade";
+        public string bladeScalerName = "bladeScaler";
         [KSPField(isPersistant=true, guiActive=true, guiName="Blades")]
         public int bladeNumber = 2;
         [KSPField]
@@ -33,14 +33,18 @@ namespace Firespitter.engine
         [KSPField]
 	    public float engineMaxWeight = 1.0f;
         [KSPField]
-        public float bladeWeight = 0.01f;        
+        public float bladeWeight = 0.01f;
 
+        [KSPField]
+        public string previewObjectsName = "preview";
         [KSPField]
         public string engineEndPointName = "engineEndPoint";
         [KSPField]
         public string movableSectionName = "movableSection";
         [KSPField]
         public string engineExtenderName = "engineExtender";
+        [KSPField]
+        public string centerOfMassName = "centerOfMass";
         [KSPField(isPersistant=true)]
         public float engineLengthSlider = 0f;
         [KSPField]
@@ -85,12 +89,14 @@ namespace Firespitter.engine
 
         private Transform propellerRoot;
         private Transform movableSection;
-        public Transform engineEndPoint;
+        private Transform engineEndPoint;
+        private Transform centerOfMass;
 
         private Firespitter.engine.FSengineWrapper engine;
 
         private bool initialized = false;
         private bool maxThrustSet = false;
+        private bool previewObjectsDestroyed = false;
 
         public float finalWeight
         {
@@ -138,10 +144,9 @@ namespace Firespitter.engine
                 {                    
                     foreach (Transform t in blades[i].GetComponentsInChildren<Transform>())
                     {
-                        if (t.gameObject.name == bladeName)
+                        if (t.gameObject.name == bladeScalerName)
                         {                            
-                            t.localScale = new Vector3(bladeLengthSlider, 1f + ((bladeLengthSlider - 1f) * widthMultiplier), 1f);
-                            Debug.Log("FSpropellerTweak: updating blade length for blade " + i + " scale: " + t.localScale);
+                            t.localScale = new Vector3(bladeLengthSlider, 1f + ((bladeLengthSlider - 1f) * widthMultiplier), 1f);                            
                         }
                     }
                 }
@@ -153,7 +158,14 @@ namespace Firespitter.engine
             if (engineExtension != null)
             {
                 engineExtension.transform.localScale = Vector3.one + (engineExtensionAxis * engineLengthSlider * engineMaxScale);
-                updateExhaustNumber((int)(engineLengthSlider * exhaustFrequency));
+                if (engineLengthSlider == 0f)
+                {
+                    updateExhaustNumber(0);
+                }
+                else
+                {
+                    updateExhaustNumber((int)((engineLengthSlider * exhaustFrequency) + 1f));
+                }
 
                 if (engineEndPoint != null && movableSection != null)
                 {
@@ -164,6 +176,11 @@ namespace Firespitter.engine
                 {
                     engine.maxThrust = Mathf.Lerp(minThrust, maxThrust, engineLengthSlider);
                 }
+
+                //if (centerOfMass != null)
+                //{
+                //    part.rigidbody.centerOfMass = centerOfMass.po;
+                //}
             }
         }
 
@@ -185,10 +202,10 @@ namespace Firespitter.engine
                 {
                     GameObject newExhaust = (GameObject)GameObject.Instantiate(exhausts[0]);
                     exhausts.Add(newExhaust);
-                    newExhaust.transform.parent = gameObject.transform;
+                    newExhaust.transform.parent = exhausts[0].transform.parent;
                     newExhaust.transform.position = exhausts[0].transform.position;
                     newExhaust.transform.localRotation = exhausts[0].transform.localRotation;
-                    newExhaust.transform.localScale = Vector3.one * exhaustScale;
+                    newExhaust.transform.localScale = exhausts[0].transform.localScale; //Vector3.one * exhaustScale;
                 }
 
                 if (exhausts.Count > amount && exhausts.Count > 1)
@@ -217,13 +234,15 @@ namespace Firespitter.engine
         {
             if (!HighLogic.LoadedSceneIsFlight && !HighLogic.LoadedSceneIsEditor) return;
 
+            destroyPreviewObjects();
+
             engine = new FSengineWrapper(part);
 
             bladeNumberRaw = bladeNumber;
             engineLengthSliderRaw = engineLengthSlider;
             BladeLengthSliderRaw = bladeLengthSlider;
 
-            Debug.Log("FSpropellerTweak: find blade root");
+            //Debug.Log("FSpropellerTweak: find blade root");
 
             Transform originalBlade = part.FindModelTransform(bladeRootName);
             if (originalBlade != null)
@@ -231,7 +250,7 @@ namespace Firespitter.engine
                 blades.Add(originalBlade.gameObject);
             }
 
-            Debug.Log("FSpropellerTweak: find exhaust");
+            //Debug.Log("FSpropellerTweak: find exhaust");
 
             //GameObject originalExhaust = GameObject.Find(exhaustName);
             Transform originalExhaust = part.FindModelTransform(exhaustName);
@@ -240,21 +259,22 @@ namespace Firespitter.engine
                 exhausts.Add(originalExhaust.gameObject);
             }
 
-            Debug.Log("FSpropellerTweak: find engine extension");
+            //Debug.Log("FSpropellerTweak: find engine extension");
 
             Transform engineExtensionTransform = part.FindModelTransform(engineExtenderName);
             if (engineExtensionTransform != null)
                 engineExtension = engineExtensionTransform.gameObject;
 
-            Debug.Log("FSpropellerTweak: find propeller root");
+            //Debug.Log("FSpropellerTweak: find propeller root");
 
             propellerRoot = part.FindModelTransform(propellerRootName);
             if (propellerRoot == null) Debug.Log("FSpropellerTweak: Nasty error, no propeller root found named " + propellerRootName);
 
             movableSection = part.FindModelTransform(movableSectionName);
             engineEndPoint = part.FindModelTransform(engineEndPointName);
+            centerOfMass = part.FindModelTransform(centerOfMassName);
 
-            Debug.Log("FSpropellerTweak: Blades: " + blades.Count);
+            //Debug.Log("FSpropellerTweak: Blades: " + blades.Count);
 
             updateBladeList();
             updateEngineLength();
@@ -263,6 +283,33 @@ namespace Firespitter.engine
             part.mass = finalWeight;            
 
             initialized = true;
+        }
+
+        private void destroyPreviewObjects()
+        {
+            Transform[] previewObjects = part.FindModelTransforms(previewObjectsName);
+            for (int i = 0; i < previewObjects.Length; i++)
+            {
+                Destroy(previewObjects[i].gameObject);
+            }
+            previewObjectsDestroyed = true;
+        }
+
+        private void destroyBladeObjects()
+        {
+            for (int i = blades.Count - 1; i > 0; i--)
+            {                
+                blades.RemoveAt(i);
+            }
+            foreach (Transform t in gameObject.GetComponentsInChildren<Transform>())
+            {
+                if (t.gameObject.name == bladeRootName + "(Clone)")
+                {
+                    Destroy(t.gameObject);
+                }
+            }
+            //GameObject targetBlade = blades[target];            
+            //GameObject.Destroy(targetBlade);
         }
 
         // In hangar
@@ -275,12 +322,17 @@ namespace Firespitter.engine
                 engineLengthSlider = (float)Math.Round(engineLengthSliderRaw, 2);
                 bladeLengthSlider = (float)Math.Round(BladeLengthSliderRaw, 2);
 
+                
+                destroyBladeObjects();
+                
                 updateBladeList();
                 updateEngineLength();
                 updateBladeLength();
 
                 part.mass = finalWeight;
             }
+            if (!previewObjectsDestroyed)
+                destroyPreviewObjects();
         }
 
         // In flight

@@ -71,7 +71,7 @@ public class FSmultiAxisEngine : PartModule // This if for the swamp engine, and
 
     private float gimbalAngleYaw = 0f;
     private float gimbalAnglePitch = 0f;
-    private float gimbalAngleRoll = 0f;
+    //private float gimbalAngleRoll = 0f;
 
     [KSPEvent(name = "invertPitch", active = true, guiActive = false, guiName = "Invert pitch")]
     public void toggleInvertPitch()

@@ -11,7 +11,7 @@ using UnityEngine;
     {
         public bool debugMode = true;
         private List<debugLine> outputLines = new List<debugLine>();
-        private float nextPostDuration = 5f;
+        //private float nextPostDuration = 5f;
         public Rect screenPosition = new Rect(500f, 500f, 300f, 100f);
         public float lineSpacing = 25f;
         //public string debugMessageOutput = "both";

@@ -41,12 +41,12 @@ public class FSrotorTrim : PartModule
     public bool altInputModeEnabled = false;
 
     private Vector3 currentRotation = new Vector3(0, 0, 0);
-    private float defaultHeatProduction = 300f;
+    //private float defaultHeatProduction = 300f;
     //private int timeCounter = 0;
 
     //private static AudioSource heatDing;
 
-    ModuleEngines engine = new ModuleEngines();
+    //ModuleEngines engine = new ModuleEngines();
     Transform rootTransform = new GameObject().transform;
 
     [KSPAction("Toggle Steering")]
@@ -104,7 +104,7 @@ public class FSrotorTrim : PartModule
     
     public void steerPart(float steerDegrees, Vector3 axis)
     {
-        float steerThrustModifier = engine.currentThrottle / 1.7f;
+        float steerThrustModifier = vessel.ctrlState.mainThrottle / 1.7f; // engine.currentThrottle / 1.7f;
         //currentRotation = currentTrim + (steerDegrees * axis * (1-steerThrustModifier));
         currentRotation = steerDegrees * axis * (1 - steerThrustModifier);
     }
@@ -160,9 +160,9 @@ public class FSrotorTrim : PartModule
     public override void OnStart(PartModule.StartState state)
     {
         base.OnStart(state);
-        engine = part.Modules.OfType<ModuleEngines>().FirstOrDefault();
+        //engine = part.Modules.OfType<ModuleEngines>().FirstOrDefault();
         rootTransform = part.FindModelTransform(targetPartObject);
-        defaultHeatProduction = engine.heatProduction;
+        //defaultHeatProduction = engine.heatProduction;
 
         // Sound code from kethane kethanedetector.cs
         /*
@@ -233,12 +233,12 @@ public class FSrotorTrim : PartModule
         if (Input.GetKey(hoverKey)) //Auto hover
         {
             autoHover();
-            engine.heatProduction = defaultHeatProduction * hoverHeatModifier;
+            //engine.heatProduction = defaultHeatProduction * hoverHeatModifier;
         }
         else
         {
             setPartRotation();
-            engine.heatProduction = defaultHeatProduction;
+            //engine.heatProduction = defaultHeatProduction;
         }
 
         //if (part.temperature > part.maxTemp * warningSound)

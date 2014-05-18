@@ -21,6 +21,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <NoWarn>0649</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -51,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="aero\FSbladeLiftSurface.cs" />
     <Compile Include="aero\FSliftSurface.cs" />
     <Compile Include="aero\FSwingBase.cs" />
     <Compile Include="animation\FSslowtato.cs" />
@@ -85,7 +88,7 @@
     <Compile Include="tools\FSgenericButtonHandler.cs" />
     <Compile Include="tools\FSrandomNumberGenerator.cs" />
     <Compile Include="tools\FStools.cs" />
-    <Compile Include="unused\transformTest.cs" />
+    <None Include="unused\transformTest.cs" />
     <Compile Include="water\FSbuoyancy.cs" />
     <Compile Include="gui\FSdebugMessages.cs" />
     <Compile Include="gui\FSGUIPopup.cs" />
@@ -109,8 +112,8 @@
     <Compile Include="unused\FSplaceStaticMesh.cs" />
     <Compile Include="engine\FSplanePropellerSpinner.cs" />
     <Compile Include="gui\FSradarAltitude.cs" />
-    <Compile Include="unused\FSremoteControl.cs" />
-    <Compile Include="cockpit\FSresourceDial.cs" />
+    <None Include="unused\FSremoteControl.cs" />
+    <None Include="unused\FSresourceDial.cs" />
     <Compile Include="water\FSrudder.cs" />
     <Compile Include="engine\FSengineSounds.cs" />
     <Compile Include="cockpit\FSswitchButtonHandler.cs" />
@@ -126,7 +129,7 @@
     <Compile Include="wheel\FSwheel.cs" />
     <Compile Include="aero\FSwing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="engine\Stock based modules\FSrotorTrim.cs" />
+    <Compile Include="engine\FSrotorTrim.cs" />
     <Compile Include="engine\Stock based modules\FStailRotorThrust.cs" />
     <Compile Include="engine\Stock based modules\FSthrottlePropSpinner.cs" />
     <Compile Include="engine\Stock based modules\FSVTOLrotator.cs" />

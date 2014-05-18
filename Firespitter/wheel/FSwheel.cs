@@ -185,7 +185,7 @@ class FSwheel : PartModule
     PopupElement suspensionUpdateElement;
     PopupElement suspensionDistanceElement;
     PopupElement wheelRadiusElement;
-    Light brakeLight;
+    //Light brakeLight;
     Transform brakeEmissiveObject;
 
 
