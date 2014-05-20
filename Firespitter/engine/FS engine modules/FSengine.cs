@@ -6,32 +6,70 @@ using UnityEngine;
 
 namespace Firespitter.engine
 {
-    class FSengine : PartModule
+    public class FSengine : PartModule
     {
+        /// <summary>
+        /// The total force applied when at full RPM, and full throttle, scaled by the various curves
+        /// </summary>
         [KSPField(guiName = "Max Thrust", guiActiveEditor = true)]
         public float maxThrust = 100f;
+        /// <summary>
+        /// Current Thrust is scaled by the (current RPM / maxRPM) value. RPM is built up by the powerProduction value, and taken away by powerDrain and engineBrake
+        /// </summary>
         [KSPField]
         public float maxRPM = 600f;
+        /// <summary>
+        /// Sets how much thrust you get at different atmospheric densities. Fuel consumption remains constant.
+        /// Fed to a floatCurve in the format "key,value;key,value" or "key,value,inTangent,outTangent;key,value,inTangent,outTangent"
+        /// </summary>
         [KSPField]
-        public string atmosphericThrust;
+        public string atmosphericThrust = "0,0;1,1";
+        /// <summary>
+        /// Basically the same as the velocityCurve in stock, tells you how much thrust to give at different speeds.
+        /// Fed to a floatCurve in the format "key,value;key,value" or "key,value,inTangent,outTangent;key,value,inTangent,outTangent"
+        /// </summary>
         [KSPField]
-        public string velocityLimit;
+        public string velocityLimit = "0,1;200,1;500,0";
+        /// <summary>
+        /// Sets how much fuel is spent at the curent throttle setting. Allows for fuel use when idling, and fuel use ramping up as the throttle is higher.
+        /// Fed to a floatCurve in the format "key,value;key,value" or "key,value,inTangent,outTangent;key,value,inTangent,outTangent"
+        /// </summary>
         [KSPField]
-        public string fuelConsumption = "0,0;1,0.01";
+        public string fuelConsumption = "0,0001;1,0.01";
+        /// <summary>
+        /// Sets the thrust at various throttle settings. This means built in afterburner support. In tandem with fuelConsumption, you could have a steep thrust and fuel use ramp up at 70%-100%.
+        /// Fed to a floatCurve in the format "key,value;key,value" or "key,value,inTangent,outTangent;key,value,inTangent,outTangent"
+        /// </summary>
+        [KSPField]
+        public string throttleThrust = "0,0;1,1";
+        /// <summary>
+        /// Fuel values in the format "resourceName,ratio;resourceName,ratio". I prefer normalized values over integers, but that's optional.
+        /// </summary>
         [KSPField]
         public string resources = "LiquidFuel,1;IntakeAir,15";
         [KSPField]
         public string thrustTransformName = "thrustTransform";
+        /// <summary>
+        /// The teakable slider value for max throttle value seen in flight and in the hangar.
+        /// </summary>
         [KSPField(guiActive = true, guiActiveEditor = true, guiName = "Max throttle", isPersistant = true), UI_FloatRange(minValue = 0f, maxValue = 100f, stepIncrement = 0.01f)]
         public float maxThrottle = 100f;
-
+        /// <summary>
+        /// If the engine receives less than this amount of fuel (normalized), it flames out. a low threshold makes sense for electric engines that could run on partial power.
+        /// Should be less than 1f to account for math issues with the supplied fuel amount
+        /// </summary>
+        [KSPField]
+        public float flameoutThreshold = 0.7f;
+        /// <summary>
+        /// Is the engine powered up? (It might still be flamed out)
+        /// </summary>
         [KSPField(isPersistant = true)]
         public bool EngineIgnited = false;
-
+        /// <summary>
+        /// If the engine is ignited but gets insufficient fuel, it will flame out.
+        /// </summary>
         public bool flameout = false;
-        public bool staged = false;
-        //public List<Propellant> propellants;    
-        public FlightCtrlState ctrl;
+        public bool staged = false;                
         public Transform[] thrustTransforms;
 
         public float finalThrust = 0f;
@@ -63,14 +101,14 @@ namespace Firespitter.engine
         private FloatCurve atmosphericThrustCurve = new FloatCurve();
         private FloatCurve velocityCurve = new FloatCurve();
         private FloatCurve fuelConsumptionCurve = new FloatCurve();
+        private FloatCurve throttleThrustCurve = new FloatCurve();
         private List<FSresource> resourceList = new List<FSresource>();
 
         [KSPEvent(guiName = "Activate Engine", guiActive = true, guiActiveUnfocused = true, unfocusedRange = 5f)]
         public void Activate()
         {
             EngineIgnited = true;
-            staged = true;
-            Debug.Log("igniting engine");
+            staged = true;            
         }
 
         [KSPEvent(guiName = "Deactivate Engine", guiActive = true, guiActiveUnfocused = true, unfocusedRange = 5f)]
@@ -111,7 +149,7 @@ namespace Firespitter.engine
                 part.Effect("running", 0f);
         }
 
-        public float maxThottleNormalized
+        public float maxThrottleNormalized
         {
             get
             {
@@ -157,21 +195,49 @@ namespace Firespitter.engine
             velocityCurve = Firespitter.Tools.stringToFloatCurve(velocityLimit);
             atmosphericThrustCurve = Firespitter.Tools.stringToFloatCurve(atmosphericThrust);
             fuelConsumptionCurve = Firespitter.Tools.stringToFloatCurve(fuelConsumption);
+            throttleThrustCurve = Firespitter.Tools.stringToFloatCurve(throttleThrust);
             fillResourceList(resources);
         }
 
         public override void OnFixedUpdate()
         {
-
-            //int flameoutCounter = 0;
-
-            //float useMomentum = Mathf.Clamp(momentum, 0f, 1f);
-
-            finalThrust = maxThrust * Mathf.Clamp(requestedThrottle, -maxThottleNormalized, maxThottleNormalized) * velocityCurve.Evaluate(part.rigidbody.velocity.magnitude);
-            thrustPerTransform = finalThrust / thrustTransforms.Length;
-            finalThrustNormalized = finalThrust / maxThrust;
+            calculateFinalThrust();
 
             //burn fuel        
+            float fuelReceivedNormalized = consumeResources();
+
+            if (EngineIgnited && !flameout)
+            {
+                RPM += powerProduction * TimeWarp.deltaTime * fuelReceivedNormalized;
+            }
+            else
+            {
+                RPM -= (engineBrake + (Mathf.Abs(requestedThrottle) * powerDrain)) * TimeWarp.deltaTime; // for reducing engine power when it's no longer ignited                
+            }
+
+            RPM = Mathf.Clamp(RPM, 0f, maxRPM);
+
+            float applyThrust = thrustPerTransform * RPMnormalized * atmosphericThrustCurve.Evaluate((float)vessel.atmDensity) * velocityCurve.Evaluate(part.rigidbody.velocity.magnitude);
+            thrustInfo = applyThrust * thrustTransforms.Length;
+
+            for (int i = 0; i < thrustTransforms.Length; i++)
+            {
+                rigidbody.AddForceAtPosition(-thrustTransforms[i].forward * applyThrust, thrustTransforms[i].position);
+            }
+            smoothFxThrust = Mathf.Lerp(smoothFxThrust, finalThrustNormalized, smoothFXSpeed);
+
+            updateStatus();
+        }
+
+        private void calculateFinalThrust()
+        {
+            finalThrust = maxThrust * Mathf.Clamp(requestedThrottle, -maxThrottleNormalized, maxThrottleNormalized) * throttleThrustCurve.Evaluate(requestedThrottle);
+            thrustPerTransform = finalThrust / thrustTransforms.Length;
+            finalThrustNormalized = finalThrust / maxThrust;
+        }
+
+        private float consumeResources()
+        {
             float fuelReceivedNormalized = 0f;
             float lowestResourceSupply = 1f;
             if (EngineIgnited)
@@ -190,31 +256,19 @@ namespace Firespitter.engine
                 }
 
                 fuelReceivedNormalized = lowestResourceSupply;
-                if (fuelReceivedNormalized < 0.1f) flameout = true;
+                if (fuelReceivedNormalized < flameoutThreshold && fuelConsumptionCurve.Evaluate(finalThrustNormalized) > 0f) flameout = true;
                 else flameout = false;
             }
+            return fuelReceivedNormalized;
+        }
 
-            if (EngineIgnited && !flameout)
-            {
-                RPM += powerProduction * TimeWarp.deltaTime * fuelReceivedNormalized;
-            }
-            else
-            {
-                RPM -= (engineBrake + (Mathf.Abs(requestedThrottle) * powerDrain)) * TimeWarp.deltaTime; // for reducing engine power when it's no longer ignited                
-            }
-
-            RPM = Mathf.Clamp(RPM, 0f, maxRPM);
-
-            float applyThrust = thrustPerTransform * RPMnormalized * atmosphericThrustCurve.Evaluate((float)vessel.atmDensity);
-            thrustInfo = applyThrust * thrustTransforms.Length;
-
-            for (int i = 0; i < thrustTransforms.Length; i++)
-            {
-                rigidbody.AddForceAtPosition(-thrustTransforms[i].forward * applyThrust, thrustTransforms[i].position);
-            }
-            smoothFxThrust = Mathf.Lerp(smoothFxThrust, finalThrustNormalized, smoothFXSpeed);
-
-            updateStatus();
+        /// <summary>
+        /// this can be overriden to make other modules control the throttle instead of reading the game's central throttle.
+        /// </summary>
+        /// <returns>Returns a normalized float</returns>
+        public virtual float getThrottle()
+        {
+            return vessel.ctrlState.mainThrottle;
         }
 
         public override void OnUpdate()
@@ -223,7 +277,7 @@ namespace Firespitter.engine
 
             if (HighLogic.LoadedSceneIsFlight)
             {
-                requestedThrottle = vessel.ctrlState.mainThrottle;
+                requestedThrottle = getThrottle();
                 updateFX();
             }
         }

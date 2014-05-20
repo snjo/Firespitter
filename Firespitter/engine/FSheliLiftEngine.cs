@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Firespitter.engine
 {
-    class FSheliLiftEngine : PartModule
+    public class FSheliLiftEngine : PartModule
     {
         [KSPField]
         public string rotorHubName = "rotor";

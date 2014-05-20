@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Firespitter.engine
 {
-    class FSengineBladed : FSengine
+    public class FSengineBladed : FSengine
     {
         public override void OnStart(PartModule.StartState state)
         {

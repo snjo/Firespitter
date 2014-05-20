@@ -5,64 +5,145 @@ using UnityEngine;
 
 namespace Firespitter.engine
 {
+    /// <summary>
+    /// In game tweaking of the engine size, number of propeller blades and their length
+    /// </summary>
     public class FSpropellerTweak : PartModule
     {
+        /// <summary>
+        /// The name of the spinning root transform that holds all the propeller blades
+        /// </summary>
         [KSPField]
-        public string propellerRootName = "propellerRoot";
+        public string propellerRootName = "propellerRoot";  
+        /// <summary>
+        /// The name of the blade object that gets duplicated to create the other blades
+        /// </summary>
         [KSPField]
         public string bladeRootName = "bladeRoot";
+        /// <summary>
+        /// The name of the transform that gets scaled with blade length. Should contain both the blade mesh and the blur mesh
+        /// </summary>
         [KSPField]
         public string bladeScalerName = "bladeScaler";
+        /// <summary>
+        /// The current (starting) number of blades on the engine
+        /// </summary>
         [KSPField(isPersistant=true, guiActive=true, guiName="Blades")]
         public int bladeNumber = 2;
+        /// <summary>
+        /// The lowest allowed number of blades. 1 or higher.
+        /// </summary>
         [KSPField]
         public int minBlades = 2;
+        /// <summary>
+        /// The highest allowed number of blades
+        /// </summary>
         [KSPField]
         public int maxBlades = 8;
+        /// <summary>
+        /// if for some reason the original blade rotation is non-zero (like 0,270,0), this is the starting rotation for blade 0
+        /// </summary>
         [KSPField]
         public float originalBladeRotation = 0f;
+        /// <summary>
+        /// The axis around which blades are duplicated. NOT the axis the whole propeller spins on when the engine is running (That is handled by another module)
+        /// </summary>
         [KSPField]
-        public Vector3 propellerRotationAxis = Vector3.forward;
-
+        public Vector3 propellerRotationAxis = Vector3.forward;        
+        /// <summary>
+        /// The engine's maxThrust at the lowest engine size setting
+        /// </summary>
         [KSPField]
         public float minThrust = 0f;
+        /// <summary>
+        /// The engine's maxThrust at the highest engine size setting
+        /// </summary>
         [KSPField]
         public float maxThrust = 0f;
+        /// <summary>
+        /// The weight of the part with 0 engine size (blades still get added to this)
+        /// </summary>
         [KSPField]
         public float baseWeight = 0.2f;
+        /// <summary>
+        /// The weight added to the part if the engine is at max size (scales between 0 to 1 times this value)
+        /// </summary>
         [KSPField]
 	    public float engineMaxWeight = 1.0f;
+        /// <summary>
+        /// The weight of a single blade at scale 1. Gets scaled up by length, and multiplied by the number of blades
+        /// </summary>
         [KSPField]
         public float bladeWeight = 0.01f;
-
+        /// <summary>
+        /// All objects with this name get destroyed immediately. These objects are for there for correct looks in the part catalog thumbnail.
+        /// </summary>
         [KSPField]
         public string previewObjectsName = "preview";
+        /// <summary>
+        /// The name of a transfrom at the end of the scaling section of the engine. The movableSection gets moved to this location as the engine scales.
+        /// </summary>
         [KSPField]
         public string engineEndPointName = "engineEndPoint";
+        /// <summary>
+        /// The name of the section that moves (but doesn't stretch) when the engine scales. Can contain the blades etc.
+        /// </summary>
         [KSPField]
         public string movableSectionName = "movableSection";
+        /// <summary>
+        /// The name of the scaling, stretching section of the engine.
+        /// </summary>
         [KSPField]
         public string engineExtenderName = "engineExtender";
-        [KSPField]
-        public string centerOfMassName = "centerOfMass";
+        //[KSPField]
+        //public string centerOfMassName = "centerOfMass";
+
+        /// <summary>
+        /// The current length multiplier of the engine
+        /// </summary>
         [KSPField(isPersistant=true)]
         public float engineLengthSlider = 0f;
+        /// <summary>
+        /// The max scale of the engine. The mesh gets scaled on one axis by this 1 to 1 + this amount
+        /// </summary>
+        [KSPField]
+        public float engineMaxScale = 5f;
+        /// <summary>
+        /// The engine scales along this axis
+        /// </summary>
         [KSPField]
         public Vector3 engineExtensionAxis = Vector3.forward;
+        /// <summary>
+        /// The name of the object that gets duplicated to make more exhaust sections
+        /// </summary>
         [KSPField]
         public string exhaustName = "exhaust";
+        /// <summary>
+        /// How many exhausts to add at full engine scale. Might be this value + 1.
+        /// </summary>
         [KSPField]
         public float exhaustFrequency = 1f;
+        /// <summary>
+        /// The distance between duplicated exhaust sections
+        /// </summary>
         [KSPField]
         public float exhaustDistance = 0.25f;
+        /// <summary>
+        /// The exhaust sections are placed at an interval along this local axis
+        /// </summary>
         [KSPField]
         public Vector3 exhaustTranslateAxis = Vector3.up;
-        [KSPField]
-        public float exhaustScale = 1.0f;
+        //[KSPField]
+        //public float exhaustScale = 1.0f;
 
-
+        /// <summary>
+        /// The current length of the blades
+        /// </summary>
         [KSPField(isPersistant=true)]
         public float bladeLengthSlider = 1f;
+        /// <summary>
+        /// When the blades are scaled lengthwise, they are also scaled in width, muliplied by this amount.
+        /// </summary>
         [KSPField]
         public float widthMultiplier = 0.5f;
         
@@ -80,8 +161,7 @@ namespace Firespitter.engine
         private List<GameObject> blades = new List<GameObject>();
 
         private int exhaustNumber = 0;
-        [KSPField]
-        public float engineMaxScale = 5f;
+        
         [KSPField(guiName = "Engine Size"), UI_FloatRange(minValue = 0f, maxValue = 1f, stepIncrement = 0.01f)]
         private float engineLengthSliderRaw = 0f;
         private GameObject engineExtension;
@@ -98,10 +178,13 @@ namespace Firespitter.engine
         private bool maxThrustSet = false;
         private bool previewObjectsDestroyed = false;
 
+        /// <summary>
+        /// the calculated total weight of the part based on engine scale, blade length and number of blades, plus a base weight
+        /// </summary>
         public float finalWeight
         {
             get
-            {
+            {                
                 return baseWeight + (engineMaxWeight * engineLengthSlider) + (bladeWeight * blades.Count * bladeLengthSlider);
             }
         }
@@ -272,7 +355,7 @@ namespace Firespitter.engine
 
             movableSection = part.FindModelTransform(movableSectionName);
             engineEndPoint = part.FindModelTransform(engineEndPointName);
-            centerOfMass = part.FindModelTransform(centerOfMassName);
+            //centerOfMass = part.FindModelTransform(centerOfMassName);
 
             //Debug.Log("FSpropellerTweak: Blades: " + blades.Count);
 
@@ -343,21 +426,21 @@ namespace Firespitter.engine
                 engine.maxThrust = Mathf.Lerp(minThrust, maxThrust, engineLengthSlider);            
         }
 
-        private Rect sliderRect(int current)
-        {
-            return new Rect(sliderRectBase.x, sliderRectBase.y + lineHeight * currentGUILine, sliderRectBase.width, sliderRectBase.height);
-        }
+        //private Rect sliderRect(int current)
+        //{
+        //    return new Rect(sliderRectBase.x, sliderRectBase.y + lineHeight * currentGUILine, sliderRectBase.width, sliderRectBase.height);
+        //}
 
-        private Rect nextRect()
-        {
-            currentGUILine++;
-            return sliderRect(currentGUILine - 1);
-        }
+        //private Rect nextRect()
+        //{
+        //    currentGUILine++;
+        //    return sliderRect(currentGUILine - 1);
+        //}
 
-        private Rect labelRect()
-        {
-            Rect newRect = sliderRect(currentGUILine);
-            return new Rect(newRect.x + newRect.width + 10f, newRect.y, 150f, newRect.height);
-        }
+        //private Rect labelRect()
+        //{
+        //    Rect newRect = sliderRect(currentGUILine);
+        //    return new Rect(newRect.x + newRect.width + 10f, newRect.y, 150f, newRect.height);
+        //}
     }
 }
