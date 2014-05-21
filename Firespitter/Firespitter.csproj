@@ -134,6 +134,7 @@
     <Compile Include="engine\Stock based modules\FSthrottlePropSpinner.cs" />
     <Compile Include="engine\Stock based modules\FSVTOLrotator.cs" />
     <Compile Include="aero\FSwingletRangeAdjustment.cs" />
+    <Compile Include="wheel\FSwheelAlignment.cs" />
     <Compile Include="wheel\WheelClass.cs" />
     <Compile Include="wheel\WheelList.cs" />
   </ItemGroup>

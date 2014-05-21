@@ -3,7 +3,11 @@ agogstad@gmail.com
 
 Installation:
 Check out Scott Manleys video on installing mods http://www.youtube.com/watch?v=1_0PNkIyHrU
+Unzip the contents of the zip file directly to the KSP GameData folder, so the Firespitter folder ends up in the GameData catalog. For example: c:\games\KSP_win\GameData\Firespitter.
+If you are on a mac, take care when overwriting a folder, as it might default to wiping the target folder of other content.
 Make sure you put the Firespitter files in the GameData folder the way it is presented in the zip file. This mod relies on many assets that have to be in the right folder, like sounds and textures. If you get creative with the file and folder names, stuff will break!
+
+Plugin source code avialable at https://github.com/snjo/Firespitter
 
 Troubleshooting:
 Q: I have no engine sounds, but the propellers spin
