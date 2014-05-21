@@ -38,7 +38,7 @@ namespace Firespitter.wheel
             guideLine.SetWidth(0.02f, 0.02f);
             guideLine.material = new Material(Shader.Find("Unlit/Texture"));
             guideLine.material.SetTexture("_MainTex", guideLineTex);
-            guideLine.SetVertexCount(4);
+            guideLine.SetVertexCount(14);
 
             Debug.Log("create wheelLine");
 
@@ -105,15 +105,59 @@ namespace Firespitter.wheel
         {
             if (wheel != null)
             {
-                guideLine.SetPosition(0, wheel.transform.position + Vector3.up.normalized * lineLength);
-                guideLine.SetPosition(1, wheel.transform.position);
-                guideLine.SetPosition(2, wheel.transform.position + Vector3.forward.normalized * lineLength);
-                guideLine.SetPosition(3, wheel.transform.position - Vector3.forward.normalized * lineLength);
+                Vector3 anglePointForwardHorizontal;
+                Vector3 anglePointForwardVertical;
+                Vector3 anglePointBackHorizontal;
+                Vector3 anglePointBackVertical;
+                Vector3 anglePointUpX;
+                Vector3 anglePointUpZ;
 
-                wheelLine.SetPosition(0, wheel.transform.position + wheel.transform.up.normalized * lineLength);
-                wheelLine.SetPosition(1, wheel.transform.position);
-                wheelLine.SetPosition(2, wheel.transform.position + wheel.transform.forward.normalized * lineLength);
-                wheelLine.SetPosition(3, wheel.transform.position - wheel.transform.forward.normalized * lineLength);
+                Vector3 centerPoint = wheel.transform.position;
+                Vector3 guidePointForward = wheel.transform.position + Vector3.forward.normalized * lineLength;
+                Vector3 guidePointBack = wheel.transform.position - Vector3.forward.normalized * lineLength;
+                Vector3 guidePointUp = wheel.transform.position + Vector3.up.normalized * lineLength;
+
+                Vector3 wheelPointForward = wheel.transform.position + wheel.transform.forward.normalized * lineLength;
+                Vector3 wheelPointBack = wheel.transform.position - wheel.transform.forward.normalized * lineLength;
+                Vector3 wheelPointUp = wheel.transform.position + wheel.transform.up.normalized * lineLength;
+
+                if (Vector3.Distance(wheelPointForward, guidePointForward) < Vector3.Distance(wheelPointForward, guidePointBack))
+                {
+                    anglePointForwardHorizontal = new Vector3(wheelPointForward.x, guidePointBack.y, guidePointForward.z);
+                    anglePointForwardVertical = new Vector3(guidePointBack.x, wheelPointForward.y, guidePointForward.z);
+                    anglePointBackHorizontal = new Vector3(wheelPointBack.x, guidePointForward.y, guidePointBack.z);
+                    anglePointBackVertical = new Vector3(guidePointForward.x, wheelPointBack.y, guidePointBack.z);
+
+                }
+                else
+                {
+                    anglePointForwardHorizontal = new Vector3(wheelPointBack.x, guidePointBack.y, guidePointForward.z);
+                    anglePointForwardVertical = new Vector3(guidePointBack.x, wheelPointBack.y, guidePointForward.z);
+                    anglePointBackHorizontal = new Vector3(wheelPointForward.x, guidePointForward.y, guidePointBack.z);
+                    anglePointBackVertical = new Vector3(guidePointForward.x, wheelPointForward.y, guidePointBack.z);
+                }
+                anglePointUpX = new Vector3(wheelPointUp.x, guidePointUp.y, guidePointUp.z);
+                anglePointUpZ = new Vector3(guidePointUp.x, guidePointUp.y, wheelPointUp.z);
+
+                guideLine.SetPosition(0, anglePointUpX);
+                guideLine.SetPosition(1, guidePointUp);
+                guideLine.SetPosition(2, anglePointUpZ);
+                guideLine.SetPosition(3, guidePointUp);
+                guideLine.SetPosition(4, centerPoint);
+                guideLine.SetPosition(5, guidePointForward);
+                guideLine.SetPosition(6, anglePointForwardHorizontal);
+                guideLine.SetPosition(7, guidePointForward);
+                guideLine.SetPosition(8, anglePointForwardVertical);
+                guideLine.SetPosition(9, guidePointForward);
+                guideLine.SetPosition(10, guidePointBack);
+                guideLine.SetPosition(11, anglePointBackHorizontal);
+                guideLine.SetPosition(12, guidePointBack);
+                guideLine.SetPosition(13, anglePointBackVertical);
+
+                wheelLine.SetPosition(0, wheelPointUp);
+                wheelLine.SetPosition(1, centerPoint);
+                wheelLine.SetPosition(2, wheelPointForward);
+                wheelLine.SetPosition(3, wheelPointBack);
             }
         }
     }
