@@ -30,8 +30,8 @@ public class FSrotorTrim : PartModule
     public float steerAmount = 20f;
     [KSPField]
     public float hoverHeatModifier = 5f;
-    [KSPField]
-    public string rootPart = "copterEngineMain";
+    //[KSPField]
+    //public string rootPart = "copterEngineMain";
 
     [KSPField(guiActive = true, guiName = "Steering", isPersistant = true)]
     public bool steeringEnabled = false;

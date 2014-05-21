@@ -14,6 +14,27 @@ namespace Firespitter.wheel
         int textureSize = 1;
         float lineLength = 5f;
 
+        Vector3 anglePointForwardHorizontal;
+        Vector3 anglePointForwardVertical;
+        Vector3 anglePointBackHorizontal;
+        Vector3 anglePointBackVertical;
+        Vector3 anglePointUpX;
+        Vector3 anglePointUpZ;
+
+        Vector3 centerPoint;
+        Vector3 guidePointForward;
+        Vector3 guidePointBack;
+        Vector3 guidePointUp;
+
+        Vector3 wheelPointForward;
+        Vector3 wheelPointBack;
+        Vector3 wheelPointUp;
+
+        float forwardAngleHorizontal;
+        float forwardAngleVertical;
+        float upAngleX;
+        float upAngleZ;
+
         [KSPField]
         public bool showToggle = true;
 
@@ -105,21 +126,14 @@ namespace Firespitter.wheel
         {
             if (wheel != null)
             {
-                Vector3 anglePointForwardHorizontal;
-                Vector3 anglePointForwardVertical;
-                Vector3 anglePointBackHorizontal;
-                Vector3 anglePointBackVertical;
-                Vector3 anglePointUpX;
-                Vector3 anglePointUpZ;
+                centerPoint = wheel.transform.position;
+                guidePointForward = wheel.transform.position + Vector3.forward.normalized * lineLength;
+                guidePointBack = wheel.transform.position - Vector3.forward.normalized * lineLength;
+                guidePointUp = wheel.transform.position + Vector3.up.normalized * lineLength;
 
-                Vector3 centerPoint = wheel.transform.position;
-                Vector3 guidePointForward = wheel.transform.position + Vector3.forward.normalized * lineLength;
-                Vector3 guidePointBack = wheel.transform.position - Vector3.forward.normalized * lineLength;
-                Vector3 guidePointUp = wheel.transform.position + Vector3.up.normalized * lineLength;
-
-                Vector3 wheelPointForward = wheel.transform.position + wheel.transform.forward.normalized * lineLength;
-                Vector3 wheelPointBack = wheel.transform.position - wheel.transform.forward.normalized * lineLength;
-                Vector3 wheelPointUp = wheel.transform.position + wheel.transform.up.normalized * lineLength;
+                wheelPointForward = wheel.transform.position + wheel.transform.forward.normalized * lineLength;
+                wheelPointBack = wheel.transform.position - wheel.transform.forward.normalized * lineLength;
+                wheelPointUp = wheel.transform.position + wheel.transform.up.normalized * lineLength;
 
                 if (Vector3.Distance(wheelPointForward, guidePointForward) < Vector3.Distance(wheelPointForward, guidePointBack))
                 {
@@ -158,6 +172,44 @@ namespace Firespitter.wheel
                 wheelLine.SetPosition(1, centerPoint);
                 wheelLine.SetPosition(2, wheelPointForward);
                 wheelLine.SetPosition(3, wheelPointBack);
+
+                Vector3 forwardLineHorizontal = new Vector3(anglePointForwardHorizontal.x, centerPoint.y, anglePointForwardHorizontal.z) - centerPoint;
+                forwardAngleHorizontal = Vector3.Angle(Vector3.forward, forwardLineHorizontal);
+                Vector3 forwardLineVertical = new Vector3(centerPoint.x, anglePointForwardVertical.y, anglePointForwardVertical.z) - centerPoint;
+                forwardAngleVertical = Vector3.Angle(Vector3.forward, forwardLineVertical);
+
+                Vector3 upLineX = new Vector3(anglePointUpX.x, anglePointUpX.y, centerPoint.z) - centerPoint;
+                upAngleX = Vector3.Angle(Vector3.up, upLineX);
+                Vector3 upLineZ = new Vector3(centerPoint.x, anglePointUpZ.y, anglePointUpZ.z) - centerPoint;
+                upAngleZ = Vector3.Angle(Vector3.up, upLineZ);
+
+            }
+        }
+
+        private float clampAngle(float angle)
+        {
+            if (angle > 180f) angle = 180f - angle;
+            if (angle > 90f) angle = 180f - angle;
+            return angle;
+        }
+
+        private void drawAngleText(Vector3 worldPosition, float value)
+        {
+            Vector3 labelPos = Camera.main.WorldToScreenPoint(worldPosition);
+            GUI.Label(new Rect(labelPos.x, Screen.height - labelPos.y - 15f, 100f, 100f), ((int)(clampAngle(value))).ToString());
+
+        }
+
+        public void OnGUI()
+        {
+            if (showGuides)
+            {
+                drawAngleText(anglePointForwardHorizontal, forwardAngleHorizontal);
+                drawAngleText(anglePointForwardVertical, forwardAngleVertical);
+                drawAngleText(anglePointBackHorizontal, forwardAngleHorizontal);
+                drawAngleText(anglePointBackVertical, forwardAngleVertical);
+                drawAngleText(anglePointUpX, upAngleX);
+                drawAngleText(anglePointUpZ, upAngleZ);
             }
         }
     }
