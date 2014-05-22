@@ -37,6 +37,11 @@ Mustang sound from this video: http://www.youtube.com/watch?v=-yTHDQZL1dE
 Tire screech and bump: http://soundbible.com/1178-Tires-Squealing.html http://soundbible.com/1120-Bounce.html
 Some landing gear sound effects from freesound.org. Other effects recorded by me.
 
+v6.4
+-Tweakable engines! Adjust the number of propeller blades, their length, and the engine size in the hangar!
+-Wheel alignment guides end the scourge of crooked gear placement. Press F2 to toggle guide lines.
+-A new engine module that supports atmospheric engines much better, separates engine start up time from throttle response, and allows for electric engines without the extra FScoolant resource.
+
 v6.3
 -Oblong round noses, short and long
 -Oblong to 0.625m adapter
