@@ -222,7 +222,8 @@ namespace Firespitter.engine
                             }
                             else
                             {
-                                setBladeRendererState(true);                                
+                                setBladeRendererState(true);
+                                propeller.transform.Rotate(Vector3.forward * ((finalRotationSpeed * 6) * TimeWarp.deltaTime * currentRPM));   
                             }
                         }
                         else

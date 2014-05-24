@@ -47,6 +47,8 @@ namespace Firespitter.wheel
 
         public override void OnStart(PartModule.StartState state)
         {
+            if (!HighLogic.LoadedSceneIsEditor) return;
+
             findWheel();
 
             createTextures();
@@ -202,6 +204,8 @@ namespace Firespitter.wheel
 
         public void OnGUI()
         {
+            if (!HighLogic.LoadedSceneIsEditor) return;
+
             if (showGuides)
             {
                 drawAngleText(anglePointForwardHorizontal, forwardAngleHorizontal);

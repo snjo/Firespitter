@@ -125,6 +125,8 @@ namespace Firespitter.engine
                 {
                     status = "Flameout!";                    
                     Fields["cause"].guiActive = true;
+                                        
+                    //toadicus: UIPartActionWindow::displayDirty = true /does/ make the tweakable window redraw next frame                    
                 }
                 else
                 {
