@@ -76,6 +76,7 @@
     <Compile Include="engine\FS engine modules\FSengine.cs" />
     <Compile Include="engine\FSpropellerTweak.cs" />
     <Compile Include="gui\FSmeshSwitch.cs" />
+    <Compile Include="gui\FStextureSwitch2.cs" />
     <Compile Include="tools\MeshCreator.cs" />
     <Compile Include="tools\CompatabilityChecker.cs" />
     <Compile Include="tools\FSversionCheck.cs" />
