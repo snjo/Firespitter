@@ -68,7 +68,7 @@
     <Compile Include="cockpit\FSpitchIndicator.cs" />
     <Compile Include="cockpit\FStachometer.cs" />
     <Compile Include="engine\FS engine modules\FSengineBladed.cs" />
-    <Compile Include="gui\FSpartAlignment.cs" />
+    <Compile Include="gui\FSpartDirectionGuide.cs" />
     <Compile Include="engine\Stock based modules\FSengineHover.cs" />
     <Compile Include="engine\FSengineWrapper.cs" />
     <Compile Include="engine\FSgroundParticles.cs" />

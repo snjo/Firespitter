@@ -9,7 +9,9 @@ namespace Firespitter.gui
     public class FSpartDirectionGuide : PartModule
     {
         [KSPField]
-        public string guideDirection = "forward";
+        public Vector3 guideDirection = Vector3.forward;
+        [KSPField]
+        public Vector3 correctWorldDirection = Vector3.forward;
         [KSPField]
         public bool visibleWhenAttached = false;
         [KSPField]
@@ -19,36 +21,44 @@ namespace Firespitter.gui
         [KSPField]
         public string guideText = "This way forward";
         [KSPField]
-        public Vector4 colour = new Vector4(0f, 1f, 0f, 1f);
+        public Vector4 correctColor = new Vector4(0f, 1f, 0f, 1f);
+        [KSPField]
+        public Vector4 wrongColor = new Vector4(0f, 1f, 0f, 1f);
 
         private bool visible = false;
 
-        private enum TransformDirection
-        {
-            forward,
-            back,
-            up,
-            down,
-            right,
-            left
-        }
+        //private enum TransformDirection
+        //{
+        //    forward,
+        //    back,
+        //    up,
+        //    down,
+        //    right,
+        //    left
+        //}
 
-        private TransformDirection transformDirection = TransformDirection.forward;
+        //private TransformDirection transformDirection = TransformDirection.forward;
 
         LineRenderer guideLine;
-        Texture2D guideLineTex;
+        Texture2D guideLineTexCorrect;
+        Texture2D guideLineTexWrong;
 
         Vector3 centerPoint;
         Vector3 guidePointForward;
         Transform guidePointArrowLineLeft;
         Transform guidePointArrowLineRight;
 
+        private GameObject worldDirection;
+
         public override void OnStart(PartModule.StartState state)
         {
             if (!HighLogic.LoadedSceneIsEditor) return;
 
-            parseGuideDirectionString();
-            createTexture();
+            worldDirection = new GameObject();
+
+            //parseGuideDirectionString();
+            guideLineTexCorrect = createTexture(correctColor);
+            guideLineTexWrong = createTexture(wrongColor);
             createLineRenderer();
 
             guidePointArrowLineLeft = new GameObject().transform;
@@ -62,86 +72,43 @@ namespace Firespitter.gui
                 guideLine = part.gameObject.AddComponent<LineRenderer>();
             guideLine.SetWidth(0.02f, 0.02f);
             guideLine.material = new Material(Shader.Find("Unlit/Texture"));
-            guideLine.material.SetTexture("_MainTex", guideLineTex);
+            guideLine.material.SetTexture("_MainTex", guideLineTexCorrect);
             guideLine.SetVertexCount(5);
             guideLine.useWorldSpace = true;
-        }
-
-        private void parseGuideDirectionString()
-        {
-            switch (guideDirection)
-            {
-                case "forward":
-                    transformDirection = TransformDirection.forward;
-                    break;
-                case "back":
-                    transformDirection = TransformDirection.back;
-                    break;
-                case "up":
-                    transformDirection = TransformDirection.up;
-                    break;
-                case "down":
-                    transformDirection = TransformDirection.down;
-                    break;
-                case "right":
-                    transformDirection = TransformDirection.right;
-                    break;
-                case "left":
-                    transformDirection = TransformDirection.left;
-                    break;
-            }
         }
 
         private void Update()
         {
             if (!HighLogic.LoadedSceneIsEditor) return;
 
-            //part.attached and .connected seem simmilar, but I'll try attached.
-
             updateVisibility();
             if (visible)
+            {
                 updateLinePosition();
+                updateLineColor();
+            }
         }
 
-        private Vector3 getArrowForward()
+        private void updateLineColor()
         {
-            switch (transformDirection)
+            if (Vector3.Dot(part.transform.TransformDirection(guideDirection), worldDirection.transform.TransformDirection(correctWorldDirection)) > 0.5f)
             {
-                case TransformDirection.forward:
-                    return part.transform.forward.normalized;
-                case TransformDirection.back:
-                    return -part.transform.forward.normalized;
-                case TransformDirection.up:
-                    return part.transform.up.normalized;
-                case TransformDirection.down:
-                    return -part.transform.up.normalized;
-                case TransformDirection.right:
-                    return part.transform.right.normalized;
-                case TransformDirection.left:
-                    return -part.transform.right.normalized;
-                default:
-                    return part.transform.forward.normalized;
+                guideLine.material.SetTexture("_MainTex", guideLineTexCorrect);
+            }
+            else
+            {
+                guideLine.material.SetTexture("_MainTex", guideLineTexWrong);
             }
         }
 
         private void updateLinePosition()
         {
             centerPoint = part.transform.position;
-            guidePointForward = part.transform.position + getArrowForward() * lineLength;
+            guidePointForward = part.transform.position + part.transform.TransformDirection(guideDirection) * lineLength;
             Vector3 arrowHeadRear = Vector3.Lerp(centerPoint, guidePointForward, 0.8f);
 
-            switch (transformDirection)
-            {
-                case TransformDirection.right:
-                    setupArrowLines(arrowHeadRear, part.transform.forward);
-                    break;
-                case TransformDirection.left:
-                    setupArrowLines(arrowHeadRear, -part.transform.forward);
-                    break;
-                default:
-                    setupArrowLines(arrowHeadRear, part.transform.right);
-                    break;
-            }
+            setupArrowLines(arrowHeadRear, part.transform.right);                
+            
             guideLine.SetPosition(0, centerPoint);
             guideLine.SetPosition(1, guidePointForward);
             guideLine.SetPosition(2, guidePointArrowLineLeft.position);
@@ -189,11 +156,12 @@ namespace Firespitter.gui
             }
         }
 
-        private void createTexture()
+        private Texture2D createTexture(Vector4 color)
         {
-            guideLineTex = new Texture2D(1, 1);            
-            guideLineTex.SetPixel(1, 1, new Color(colour.x, colour.y, colour.z, colour.w));            
-            guideLineTex.Apply();
+            Texture2D tex = new Texture2D(1, 1);
+            tex.SetPixel(1, 1, new Color(color.x, color.y, color.z, color.w));
+            tex.Apply();
+            return tex;
         }
     }
 }
