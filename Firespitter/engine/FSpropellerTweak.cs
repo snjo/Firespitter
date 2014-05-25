@@ -146,9 +146,15 @@ namespace Firespitter.engine
         /// </summary>
         [KSPField]
         public float widthMultiplier = 0.5f;
-        
+        /// <summary>
+        /// Should the engine size affect the maxThrust of the engine module? Set to false for a purely decorative engine scaler. Mass is still set according to the other weight values.
+        /// </summary>
+        [KSPField]
+        public bool affectEngineModule = true;
+
         [KSPField(guiName="Blade Length"), UI_FloatRange(minValue=0.3f, maxValue=3f, stepIncrement=0.1f)]
         private float BladeLengthSliderRaw = 1f;
+        
         private float oldBladeLength = 0f;
 
         private Rect sliderRectBase = new Rect(30f, 30f, 200f, 30f);
@@ -255,7 +261,7 @@ namespace Firespitter.engine
                     movableSection.position = engineEndPoint.position;
                 }
 
-                if (engine != null)
+                if (engine != null && affectEngineModule)
                 {
                     engine.maxThrust = Mathf.Lerp(minThrust, maxThrust, engineLengthSlider);
                 }
@@ -422,7 +428,7 @@ namespace Firespitter.engine
         public override void OnUpdate()
         {
             // make sure max thrust is set
-            if (!maxThrustSet)
+            if (!maxThrustSet && affectEngineModule && engine != null)
                 engine.maxThrust = Mathf.Lerp(minThrust, maxThrust, engineLengthSlider);            
         }
 
