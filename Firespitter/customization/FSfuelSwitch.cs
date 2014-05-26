@@ -26,6 +26,9 @@ namespace Firespitter.customization
         [KSPField(isPersistant = true)]
         public bool hasLaunched = false;
 
+        [KSPField(guiActive = false, guiActiveEditor=false, guiName = "Structural")]
+        public string info = "";
+
         private List<FSmodularTank> tankList = new List<FSmodularTank>();        
 
         public override void OnStart(PartModule.StartState state)
@@ -113,9 +116,13 @@ namespace Firespitter.customization
                             Debug.Log("add node to part");
                             currentPart.AddResource(newResourceNode);
                             //part.Resources[tankList[i].resources[j].name].enabled = true;
+                            Fields["info"].guiActiveEditor = false;
                         }
                         else
+                        {
+                            Fields["info"].guiActiveEditor = true;
                             Debug.Log("Skipping structural fuel type");
+                        }
                     }
                 }
             }
@@ -134,8 +141,15 @@ namespace Firespitter.customization
                     for (int i = 0; i < tankList[selectedTankSetup].resources.Count; i++)
                     {
                         //Debug.Log("tL " + i + ": res count " + tankList[selectedTankSetup].resources.Count);
-                        if (tankList[selectedTankSetup].resources[i].name != "Structural")
+                        if (tankList[selectedTankSetup].resources[i].name == "Structural")
+                        {
+                            //Fields["info"].guiActiveEditor = true;
+                        }
+                        else
+                        {
                             setResource(i, (float)part.Resources[tankList[selectedTankSetup].resources[i].name].amount);
+                            //Fields["info"].guiActiveEditor = false;
+                        }
                     }
                 }
             }
