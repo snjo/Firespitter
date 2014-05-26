@@ -35,7 +35,7 @@ class FSnodeLoader
     {
         if (debugMode)
         {
-            FSdebugMessages.Post("ProcessNodeAsStringList: " + input, true, 5f);
+            Firespitter.info.FSdebugMessages.Post("ProcessNodeAsStringList: " + input, true, 5f);
         }
     }
 

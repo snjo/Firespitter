@@ -128,7 +128,7 @@ class FSwingBase : PartModule
         return false;
     }
 
-    FSdebugMessages debug = new FSdebugMessages(false, FSdebugMessages.OutputMode.log, 2f);
+    Firespitter.info.FSdebugMessages debug = new Firespitter.info.FSdebugMessages(false, Firespitter.info.FSdebugMessages.OutputMode.log, 2f);
     //public bool useMainSrf;
     internal bool FARActive = false;
 
@@ -184,7 +184,7 @@ class FSwingBase : PartModule
     public string helpTextString = string.Empty;
     public static string defaultHelpText = "Each wing has three control axis, and the flap axis. The sliders in the tweakable menu set their response to the Pitch, Roll and Yaw, taking input from the keyboard/joystick.\n\n<color=#99ff00ff>Testing</color>\nWhile in the Action Group editor you can test the control surface movement by pressing the W/A, Q/E, A/D and F keys.\n\n<color=#99ff00ff>Axis response</color>\nA setting of 1 in an axis will give the default control surface response. a 0 will give no response on that axis, and -1 will give the normal amount, but in the opposite direction.\nEach part has a default control response. Wings respond top roll only, rudders to yaw, and elevators to pitch. You can override these if you want to use an elevator as a rudder for instance.\n\n<color=#99ff00ff>Tweaks</color>\nYou can set up a bit or pitch on the main wings, or roll response on the rudder by setting a low number to an axis that is 0 by default.\nSome special settings are easier to do in flight mode because of SPH tweakable symmetry constraints.\n\n<color=#99ff00ff>Flaps</color>\nThe flap axis responds to Action Group inputs set up in the Action Group editor. Some wings also have a separate flap surface controlled by the action group. This can not be tested in the editor.";
 
-    public Firespitter.gui.HelpPopup helpPopup;
+    public Firespitter.info.HelpPopup helpPopup;
 
     //private FSGUIPopup helpPopup;
     //private Rect windowRect = FSGUIwindowID.standardRect;
@@ -512,7 +512,7 @@ class FSwingBase : PartModule
         
         #region help popup
 
-        helpPopup = new Firespitter.gui.HelpPopup("Wing setup help", helpTextInternal);
+        helpPopup = new Firespitter.info.HelpPopup("Wing setup help", helpTextInternal);
 
         /*helpSection = new PopupSection();
         PopupElement helpText = new PopupElement(helpTextnternal, true);

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Firespitter.gui
+namespace Firespitter.info
 {
     class HelpPopup
     {

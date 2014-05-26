@@ -47,7 +47,7 @@ namespace Firespitter.engine
         private float requestThrottleRaw = 0f;
 
         private Transform rotorHubTransform;
-        private FSinputVisualizer inputVisualizer = new FSinputVisualizer();
+        private info.FSinputVisualizer inputVisualizer = new info.FSinputVisualizer();
 
         [KSPField(isPersistant = true)]
         public bool autoThrottle = true;

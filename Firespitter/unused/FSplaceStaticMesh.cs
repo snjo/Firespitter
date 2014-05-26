@@ -9,7 +9,7 @@ class FSplaceStaticMesh : PartModule
 {
     public GameObject structure;
     public int structureID = 0;
-    FSdebugMessages db = new FSdebugMessages(true, FSdebugMessages.OutputMode.screen, 5f);
+    Firespitter.info.FSdebugMessages db = new Firespitter.info.FSdebugMessages(true, Firespitter.info.FSdebugMessages.OutputMode.screen, 5f);
 
     [KSPField]
     public string meshName = "Firespitter/Parts/Command/FS_bomberCockpit/model";
@@ -43,6 +43,6 @@ class FSstaticMeshCollisionHandler : MonoBehaviour
     public Collider thisCollider;
     void OnTriggerEnter(Collider other)
     {
-        FSdebugMessages.Post("hit " + other.name, true, 5f);
+        Firespitter.info.FSdebugMessages.Post("hit " + other.name, true, 5f);
     }
 }

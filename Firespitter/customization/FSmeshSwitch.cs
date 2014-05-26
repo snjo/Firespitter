@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Firespitter.gui
+namespace Firespitter.customization
 {
     public class FSmeshSwitch : PartModule
     {
@@ -14,6 +14,10 @@ namespace Firespitter.gui
         public string previousButtonName = "Prev part variant";
         [KSPField]
         public bool showPreviousButton = true;
+        [KSPField]
+        public bool useFuelSwitchModule = false;
+        [KSPField]
+        public string fuelTankSetups = "0";
 
         [KSPField]
         public string objects = string.Empty;
@@ -31,6 +35,9 @@ namespace Firespitter.gui
 
         private string[] objectNames;
         private List<Transform> objectTransforms = new List<Transform>();
+        private List<int> fuelTankSetupList = new List<int>();
+
+        private FSfuelSwitch fuelSwitch;
 
         [KSPEvent(guiActive = false, guiActiveEditor = true, guiActiveUnfocused = false, guiName = "Next part variant")]
         public void nextObjectEvent()
@@ -80,20 +87,56 @@ namespace Firespitter.gui
 
         private void switchToObject(int objectNumber)
         {
+            setObject(objectNumber);
+
+            for (int i = 0; i < part.symmetryCounterparts.Count; i++)
+            {
+                FSmeshSwitch symSwitch = part.symmetryCounterparts[i].GetComponent<FSmeshSwitch>();
+                if (symSwitch != null)
+                {
+                    symSwitch.selectedObject = selectedObject;
+                    symSwitch.setObject(objectNumber);
+                }
+            }
+        }
+
+        private void setObject(int objectNumber)
+        {
             if (objectNumber >= objectTransforms.Count) return;
 
             for (int i = 0; i < objectTransforms.Count; i++)
-            {                
+            {
                 objectTransforms[i].gameObject.renderer.enabled = false;
             }
 
             // enable the selected one last because there might be several entries with the same object, and we don't want to disable it after it's been enabled.
             objectTransforms[objectNumber].gameObject.renderer.enabled = true;
+
+            if (useFuelSwitchModule)
+            {
+                Debug.Log("FStextureSwitch2 calling on FSfuelSwitch tank setup " + objectNumber);
+                if (objectNumber < fuelTankSetupList.Count)
+                    fuelSwitch.selectTankSetup(fuelTankSetupList[objectNumber]);
+                else
+                    Debug.Log("FStextureSwitch2: no such fuel tank setup");
+            }
         }
 
         public override void OnStart(PartModule.StartState state)
         {
             parseObjectNames();
+            fuelTankSetupList = Tools.parseIntegers(fuelTankSetups);
+
+            if (useFuelSwitchModule)
+            {
+                fuelSwitch = part.GetComponent<FSfuelSwitch>();
+                if (fuelSwitch == null)
+                {
+                    useFuelSwitchModule = false;
+                    Debug.Log("FStextureSwitch2: no FSfuelSwitch module found, despite useFuelSwitchModule being true");
+                }
+            }
+
             switchToObject(selectedObject);
             Events["nextObjectEvent"].guiName = buttonName;
             if (!showPreviousButton) Events["previousObjectEvent"].guiActiveEditor = false;

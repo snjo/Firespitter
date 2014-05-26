@@ -65,7 +65,7 @@ public class FSmonitorInterface : InternalModule
 
     //private GameObject targetObject;
     private FSmonitorScript targetScript;
-    private FSinfoPopup infoPopup;
+    private Firespitter.info.FSinfoPopup infoPopup;
     private string[] infoPopupStrings;
     private bool useInfoPopup = false;
         
@@ -203,7 +203,7 @@ public class FSmonitorInterface : InternalModule
     {        
         foreach (Part p in vessel.parts)
         {
-            infoPopup = p.GetComponent<FSinfoPopup>();
+            infoPopup = p.GetComponent<Firespitter.info.FSinfoPopup>();
             if (infoPopup != null)
             {
                 getInfoPopupText();

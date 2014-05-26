@@ -6,7 +6,8 @@ using System.Text;
 //using System.Threading.Tasks;
 using UnityEngine;
 
-
+namespace Firespitter.info
+{
     public class FSdebugMessages : MonoBehaviour
     {
         public bool debugMode = true;
@@ -108,7 +109,7 @@ using UnityEngine;
                         outputLines.RemoveAt(i);
                         i--;
                     }
-                }                
+                }
             }
         }
 
@@ -137,3 +138,4 @@ using UnityEngine;
             delay = _delay;
         }
     }
+}

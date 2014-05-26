@@ -103,7 +103,7 @@ namespace Firespitter.engine
 
         private Transform rotorHubTransform;
         private Transform baseTransform;
-        private FSinputVisualizer inputVisualizer = new FSinputVisualizer();
+        private info.FSinputVisualizer inputVisualizer = new Firespitter.info.FSinputVisualizer();
 
         //[KSPField(isPersistant = true)]
         //public bool autoThrottle = true;
