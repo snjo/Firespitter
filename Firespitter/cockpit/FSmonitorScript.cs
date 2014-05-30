@@ -24,6 +24,8 @@ public class FSmonitorScript : InternalModule
     public int linesPerPage = 17;
     [KSPField]
     public int useCustomStartStatesCfg = 1;
+    [KSPField]
+    public bool autoCreateGrid = true;
     public bool useCustomStartStates = true;
       
     public Material spriteSheetMat;
@@ -39,7 +41,7 @@ public class FSmonitorScript : InternalModule
     }
     public TextMode textMode = TextMode.singleString;
 
-    private bool arrayCreated = false;
+    public bool arrayCreated = false;
     private GameObject baseCharPlate;
     private bool monitorDefaultStateSet = false;
 
@@ -81,6 +83,11 @@ public class FSmonitorScript : InternalModule
             FSmonitorInterface.MenuState.flightData // front left
         };
 
+        if (autoCreateGrid) createTextGrid();       
+    }
+
+    public void createTextGrid()
+    {
         int charCount = 0;
         int lineCount = 0;
         spriteSheetMat = base.internalProp.FindModelTransform(charPlateObject).renderer.material;
@@ -123,7 +130,7 @@ public class FSmonitorScript : InternalModule
         {
             textArray[i] = "";
             oldTextArray[i] = "";
-        }        
+        }
     }
 
     // Update is called once per frame

@@ -136,6 +136,10 @@ public class FSmonitorInterface : InternalModule
     {
         //Debug.Log("FS button " + buttonNumber + " clicked");
         buttonArray[buttonNumber] = true;
+        if (!targetScript.arrayCreated)
+        {
+            targetScript.createTextGrid();
+        }
     }
 
     private void clearButtons()
@@ -623,14 +627,14 @@ public class FSmonitorInterface : InternalModule
 
     private void menuSplashScreen()
     {
-        textArray[0] = "Firespitter v4.0";
+        textArray[0] = "Firespitter v4.1";
         textArray[2] = "Booting OS";
         textArray[4] = "Checking RAM ";
         textArray[5] = RAMcount + "/512KB";
         if (RAMcount < 512)
         {
-            RAMcount += 4;
-            pause(60);
+            RAMcount += 8;
+            pause(10);
         }
         else
         {
