@@ -13,6 +13,8 @@ namespace Firespitter.customization
         [KSPField]
         public string previousButtonName = "Prev part variant";
         [KSPField]
+        public string objectDisplayNames = "Default";
+        [KSPField]
         public bool showPreviousButton = true;
         [KSPField]
         public bool useFuelSwitchModule = false;
@@ -22,13 +24,13 @@ namespace Firespitter.customization
         [KSPField]
         public string objects = string.Empty;
 
-        // in case of multiple instances of this module, on will be the master, the rest slaves.
-        [KSPField]
-        public bool isController = true;
+        //// in case of multiple instances of this module, on will be the master, the rest slaves.
+        //[KSPField]
+        //public bool isController = true;
 
-        // in case of multiple sets of master/slaves, only affect ones on the same channel.
-        [KSPField]
-        public int channel = 0;
+        //// in case of multiple sets of master/slaves, only affect ones on the same channel.
+        //[KSPField]
+        //public int channel = 0;
 
         [KSPField(isPersistant = true)]
         public int selectedObject = 0;
@@ -36,8 +38,12 @@ namespace Firespitter.customization
         private string[] objectNames;
         private List<Transform> objectTransforms = new List<Transform>();
         private List<int> fuelTankSetupList = new List<int>();
+        private List<string> objectDisplayList = new List<string>();
 
         private FSfuelSwitch fuelSwitch;
+
+        [KSPField(guiActiveEditor = true, guiName = "Current Variant")]
+        public string currentObjectName = string.Empty;
 
         [KSPEvent(guiActive = false, guiActiveEditor = true, guiActiveUnfocused = false, guiName = "Next part variant")]
         public void nextObjectEvent()
@@ -102,7 +108,7 @@ namespace Firespitter.customization
 
         private void setObject(int objectNumber)
         {
-            if (objectNumber >= objectTransforms.Count) return;
+            //if (objectNumber >= objectTransforms.Count) return;
 
             for (int i = 0; i < objectTransforms.Count; i++)
             {
@@ -114,11 +120,20 @@ namespace Firespitter.customization
 
             if (useFuelSwitchModule)
             {
-                Debug.Log("FStextureSwitch2 calling on FSfuelSwitch tank setup " + objectNumber);
+                //Debug.Log("FStextureSwitch2 calling on FSfuelSwitch tank setup " + objectNumber);
                 if (objectNumber < fuelTankSetupList.Count)
                     fuelSwitch.selectTankSetup(fuelTankSetupList[objectNumber]);
                 else
                     Debug.Log("FStextureSwitch2: no such fuel tank setup");
+            }
+
+            if (selectedObject > objectDisplayList.Count - 1)
+            {
+                currentObjectName = objectNames[selectedObject];
+            }
+            else
+            {
+                currentObjectName = objectDisplayList[selectedObject];
             }
         }
 
@@ -126,6 +141,7 @@ namespace Firespitter.customization
         {
             parseObjectNames();
             fuelTankSetupList = Tools.parseIntegers(fuelTankSetups);
+            objectDisplayList = Tools.parseNames(objectDisplayNames);
 
             if (useFuelSwitchModule)
             {

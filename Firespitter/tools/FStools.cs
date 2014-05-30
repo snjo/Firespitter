@@ -63,6 +63,32 @@ namespace Firespitter
             }
             return newIntList;
         }
+
+
+        public static List<float> parseFloats(string stringOfFloats)
+        {
+            System.Collections.Generic.List<float> list = new System.Collections.Generic.List<float>();
+            string[] array = stringOfFloats.Split(';');
+            for (int i = 0; i < array.Length; i++)
+            {
+                float item = 0f;
+                if (float.TryParse(array[i], out item))
+                {
+                    list.Add(item);
+                }
+                else
+                {
+                    Debug.Log("invalid float: " + array[i]);
+                }
+            }
+            return list;
+        }
+
+        public static List<string> parseNames(string names)
+        {
+            string[] source = names.Split(';');
+            return source.ToList<string>();
+        }
     }
 
     public class MouseEventHandler : MonoBehaviour

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Firespitter.info;
 
 namespace Firespitter.customization
 {
@@ -17,7 +18,7 @@ namespace Firespitter.customization
         [KSPField]
         public string mapNames = string.Empty;
         [KSPField]
-        public string textureDisplayNames = string.Empty;
+        public string textureDisplayNames = "Default";
 
         [KSPField(isPersistant = true)]
         public int selectedTexture = 0;
@@ -57,7 +58,7 @@ namespace Firespitter.customization
 
         private FSfuelSwitch fuelSwitch;
 
-        Firespitter.info.FSdebugMessages debug = new Firespitter.info.FSdebugMessages(false, Firespitter.info.FSdebugMessages.OutputMode.both, 2f); //set to true for debug   
+        FSdebugMessages debug = new FSdebugMessages(false, FSdebugMessages.OutputMode.both, 2f); //set to true for debug   
 
         [KSPField(guiActiveEditor = true, guiName = "Current Texture")]
         public string currentTextureName = string.Empty;
@@ -176,8 +177,8 @@ namespace Firespitter.customization
 
         public override string GetInfo()
         {
-            texList = parseNames(textureNames);
-            textureDisplayList = parseNames(textureDisplayNames);
+            texList = Tools.parseNames(textureNames);
+            textureDisplayList = Tools.parseNames(textureDisplayNames);
             StringBuilder info = new StringBuilder();
             info.AppendLine("Alternate textures available:");
             if (texList.Count == 0)
@@ -202,20 +203,14 @@ namespace Firespitter.customization
             return splitString[splitString.Length - 1];
         }
 
-        public List<string> parseNames(string names)
-        {            
-            string[] nameArray = names.Split(';');
-            return nameArray.ToList();
-        }        
-
         public override void OnStart(PartModule.StartState state)
         {
             debug.debugMode = debugMode;
 
-            objectList = parseNames(objectNames);
-            texList = parseNames(textureNames);
-            mapList = parseNames(mapNames);
-            textureDisplayList = parseNames(textureDisplayNames);
+            objectList = Tools.parseNames(objectNames);
+            texList = Tools.parseNames(textureNames);
+            mapList = Tools.parseNames(mapNames);
+            textureDisplayList = Tools.parseNames(textureDisplayNames);
             fuelTankSetupList = Tools.parseIntegers(fuelTankSetups);
 
             debug.debugMessage("FStextureSwitch2 found " + texList.Count + " textures, using number " + selectedTexture + ", found " + objectList.Count + " objects, " + mapList.Count + " maps");

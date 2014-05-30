@@ -13,28 +13,32 @@ namespace Firespitter.customization
         [KSPField]
         public string resourceAmounts = "100;75,25;200";
         [KSPField]
+        public float basePartMass = 0.25f;
+        [KSPField]
+        public string tankMass = "0;0;0;0";
+        [KSPField]
         public bool hasGUI = true;
         [KSPField]
         public bool availableInFlight = false;
         [KSPField]
         public bool availableInEditor = true;
-
-        [KSPField (isPersistant = true)]
+        [KSPField(isPersistant = true)]
         public Vector4 currentAmounts = Vector4.zero;
         [KSPField(isPersistant = true)]
         public int selectedTankSetup = 0;
         [KSPField(isPersistant = true)]
         public bool hasLaunched = false;
-
-        [KSPField(guiActive = false, guiActiveEditor=false, guiName = "Structural")]
-        public string info = "";
-
-        private List<FSmodularTank> tankList = new List<FSmodularTank>();        
+        [KSPField(guiActive = false, guiActiveEditor = false, guiName = "Structural")]
+        public string structuralInfo = "";
+        [KSPField(guiActive = false, guiActiveEditor = true, guiName = "Dry mass")]
+        public float dryMassInfo = 0f;
+        private List<FSmodularTank> tankList = new List<FSmodularTank>();
+        private List<float> weightList = new List<float>();     
 
         public override void OnStart(PartModule.StartState state)
         {            
             setupTankList();
-
+            this.weightList = Tools.parseFloats(this.tankMass);
             assignResourcesToPart();
             if (HighLogic.LoadedSceneIsFlight) hasLaunched = true;
             if (hasGUI)
@@ -66,15 +70,8 @@ namespace Firespitter.customization
 
         public void selectTankSetup(int i)
         {
-            //if (i < tankList.Count)
-            //{
-                selectedTankSetup = i;
-                assignResourcesToPart();
-            //}
-            //else
-            //{
-            //    Debug.Log("FSfuelSwitch: invalid tank setup, " + i);
-            //}
+            selectedTankSetup = i;
+            assignResourcesToPart();
         }
 
         private void assignResourcesToPart()
@@ -116,17 +113,26 @@ namespace Firespitter.customization
                             Debug.Log("add node to part");
                             currentPart.AddResource(newResourceNode);
                             //part.Resources[tankList[i].resources[j].name].enabled = true;
-                            Fields["info"].guiActiveEditor = false;
+                            Fields["structuralInfo"].guiActiveEditor = false;
                         }
                         else
                         {
-                            Fields["info"].guiActiveEditor = true;
+                            Fields["structuralInfo"].guiActiveEditor = true;
                             Debug.Log("Skipping structural fuel type");
                         }
                     }
                 }
             }
             currentPart.Resources.UpdateList();
+            updateWeight(currentPart, selectedTankSetup);
+        }
+
+        private void updateWeight(Part currentPart, int newTankSetup)
+        {
+            if (newTankSetup < weightList.Count)
+            {
+                currentPart.mass = basePartMass + weightList[newTankSetup];
+            }
         }
 
         public override void OnUpdate()
@@ -153,15 +159,15 @@ namespace Firespitter.customization
                     }
                 }
             }
-        }        
+        }
 
-        //public void Update()
-        //{
-        //    if (Input.GetKeyDown(KeyCode.F3))
-        //    {
-        //        nextTankSetupEvent();
-        //    }
-        //}
+        public void Update()
+        {
+            if (HighLogic.LoadedSceneIsEditor)
+            {
+                dryMassInfo = part.mass;
+            }
+        }
 
         private float getResource(int number)
         {
@@ -250,10 +256,5 @@ namespace Firespitter.customization
                 }
             }
         }        
-    }
-
-    public class FSmodularTank
-    {
-        public List<engine.FSresource> resources = new List<engine.FSresource>();
-    }
+    }    
 }
