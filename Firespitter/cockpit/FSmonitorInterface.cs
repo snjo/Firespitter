@@ -334,7 +334,7 @@ public class FSmonitorInterface : InternalModule
                 displaySpeed = FlightGlobals.ship_tgtSpeed;
                 break;
             default:
-                displaySpeed = FlightGlobals.ship_srfSpeed;
+                displaySpeed = vessel.srfSpeed; //FlightGlobals.ship_srfSpeed;
                 break;
         }
 

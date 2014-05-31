@@ -20,6 +20,13 @@ namespace Firespitter.customization
         [KSPField]
         public string textureDisplayNames = "Default";
 
+        [KSPField]
+        public string nextButtonText = "Next Texture";
+        [KSPField]
+        public string prevButtonText = "Previous Texture";
+        [KSPField]
+        public string statusText = "Current Texture";
+
         [KSPField(isPersistant = true)]
         public int selectedTexture = 0;
         [KSPField(isPersistant = true)]
@@ -89,7 +96,7 @@ namespace Firespitter.customization
         public void nextTextureEvent()
         {
             selectedTexture++;
-            if (selectedTexture >= texList.Count)
+            if (selectedTexture >= texList.Count && selectedTexture >= mapList.Count)
                 selectedTexture = 0;
             useTextureAll();
         }
@@ -99,7 +106,7 @@ namespace Firespitter.customization
         {
             selectedTexture--;
             if (selectedTexture < 0)
-                selectedTexture = texList.Count - 1;
+                selectedTexture = Mathf.Max(texList.Count - 1, mapList.Count-1);
             useTextureAll();
         }
 
@@ -130,7 +137,7 @@ namespace Firespitter.customization
             {
                 foreach (Material mat in matList)
                 {
-                    useTexture(mat);
+                    useTextureOrMap(mat);
                 }
             }
             if (useFuelSwitchModule)
@@ -143,9 +150,50 @@ namespace Firespitter.customization
             }
         }
 
-        public void useTexture(Material targetMat)
+        public void useTextureOrMap(Material targetMat)
         {
-            if (targetMat != null && texList.Count > 0)
+            if (targetMat != null)
+            {
+                useTexture(targetMat);
+
+                useMap(targetMat);
+            }
+            else
+            {
+                debug.debugMessage("FStextureSwitch: No target material in object.");
+            }
+        }
+
+        private void useMap(Material targetMat)
+        {
+            Debug.Log("maplist count: " + mapList.Count + ", selectedTexture: " + selectedTexture);
+            if (mapList.Count > selectedTexture)
+            {
+                if (GameDatabase.Instance.ExistsTexture(mapList[selectedTexture]))
+                {
+                    Debug.Log("map exists in db");
+                    targetMat.SetTexture(additionalMapType, GameDatabase.Instance.GetTexture(mapList[selectedTexture], mapIsNormal));
+                    selectedMapURL = mapList[selectedTexture];
+                }
+            }
+            else
+            {
+                if (mapList.Count > selectedTexture)
+                    debug.debugMessage("no such map: " + mapList[selectedTexture]);
+                else
+                {
+                    debug.debugMessage("useMap, index out of range error, maplist count: " + mapList.Count + ", selectedTexture: " + selectedTexture);
+                    for (int i = 0; i < mapList.Count; i++)
+                    {
+                        debug.debugMessage("map " + i + ": " + mapList[i]);
+                    }
+                }
+            }
+        }
+
+        private void useTexture(Material targetMat)
+        {
+            if (texList.Count > selectedTexture)
             {
                 if (GameDatabase.Instance.ExistsTexture(texList[selectedTexture]))
                 {
@@ -157,21 +205,11 @@ namespace Firespitter.customization
                         currentTextureName = getTextureDisplayName(texList[selectedTexture]);
                     else
                         currentTextureName = textureDisplayList[selectedTexture];
-
-                    if (mapList.Count > selectedTexture)
-                    {
-                        targetMat.SetTexture(additionalMapType, GameDatabase.Instance.GetTexture(mapList[selectedTexture], mapIsNormal));
-                        selectedMapURL = mapList[selectedTexture];
-                    }
                 }
                 else
                 {
                     debug.debugMessage("no such texture: " + texList[selectedTexture]);
                 }
-            }
-            else
-            {
-                debug.debugMessage("FStextureSwitch: No target material in object.");
             }
         }
 
@@ -207,11 +245,11 @@ namespace Firespitter.customization
         {
             debug.debugMode = debugMode;
 
-            objectList = Tools.parseNames(objectNames);
-            texList = Tools.parseNames(textureNames);
-            mapList = Tools.parseNames(mapNames);
+            objectList = Tools.parseNames(objectNames, true);
+            texList = Tools.parseNames(textureNames, true);
+            mapList = Tools.parseNames(mapNames, true);
             textureDisplayList = Tools.parseNames(textureDisplayNames);
-            fuelTankSetupList = Tools.parseIntegers(fuelTankSetups);
+            fuelTankSetupList = Tools.parseIntegers(fuelTankSetups);            
 
             debug.debugMessage("FStextureSwitch2 found " + texList.Count + " textures, using number " + selectedTexture + ", found " + objectList.Count + " objects, " + mapList.Count + " maps");
 
@@ -228,13 +266,13 @@ namespace Firespitter.customization
                         {
                             if (!matList.Contains(targetMat))
                             {
-                                matList.Add(targetMat);
+                                matList.Add(targetMat);                                
                             }
                         }                        
                     }                    
                 }
                 targetMats.Add(matList);
-            }
+            }            
 
             if (useFuelSwitchModule)
             {
@@ -244,9 +282,9 @@ namespace Firespitter.customization
                     useFuelSwitchModule = false;
                     Debug.Log("FStextureSwitch2: no FSfuelSwitch module found, despite useFuelSwitchModule being true");
                 }
-            }
+            }            
 
-            useTextureAll();
+            useTextureAll();            
 
             if (switchableInFlight) Events["nextTextureEvent"].guiActive = true;
             if (switchableInFlight && showPreviousButton) Events["previousTextureEvent"].guiActive = true;
@@ -256,9 +294,11 @@ namespace Firespitter.customization
             {
                 Events["previousTextureEvent"].guiActive = false;
                 Events["previousTextureEvent"].guiActiveEditor = false;
-            }
+            }            
 
-            
+            Events["nextTextureEvent"].guiName = nextButtonText;
+            Events["previousTextureEvent"].guiName = prevButtonText;
+            Fields["currentTextureName"].guiName = statusText;
 
         }
     }

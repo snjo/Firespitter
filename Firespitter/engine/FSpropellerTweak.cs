@@ -107,7 +107,7 @@ namespace Firespitter.engine
         /// The max scale of the engine. The mesh gets scaled on one axis by this 1 to 1 + this amount
         /// </summary>
         [KSPField]
-        public float engineMaxScale = 5f;
+        public Vector2 engineScaleRange = new Vector2(1f, 5f);
         /// <summary>
         /// The engine scales along this axis
         /// </summary>
@@ -246,7 +246,7 @@ namespace Firespitter.engine
         {
             if (engineExtension != null)
             {
-                engineExtension.transform.localScale = Vector3.one + (engineExtensionAxis * engineLengthSlider * engineMaxScale);
+                engineExtension.transform.localScale = Vector3.one + (engineExtensionAxis * Mathf.Lerp(engineScaleRange.x, engineScaleRange.y, engineLengthSlider));
                 if (engineLengthSlider == 0f)
                 {
                     updateExhaustNumber(0);
@@ -275,45 +275,48 @@ namespace Firespitter.engine
 
         private void updateExhaustNumber(int amount)
         {
-            if (amount <= 0)
+            if (exhausts.Count > 0)
             {
-                exhausts[0].renderer.enabled = false;
-            }
-            else
-            {
-                exhausts[0].renderer.enabled = true;
-            }
-
-            if (amount != exhausts.Count)
-            {
-
-                while (exhausts.Count < amount) // booo!
+                if (amount == 0)
                 {
-                    GameObject newExhaust = (GameObject)GameObject.Instantiate(exhausts[0]);
-                    exhausts.Add(newExhaust);
-                    newExhaust.transform.parent = exhausts[0].transform.parent;
-                    newExhaust.transform.position = exhausts[0].transform.position;
-                    newExhaust.transform.localRotation = exhausts[0].transform.localRotation;
-                    newExhaust.transform.localScale = exhausts[0].transform.localScale; //Vector3.one * exhaustScale;
+                    exhausts[0].renderer.enabled = false;
+                }
+                else
+                {
+                    exhausts[0].renderer.enabled = true;
                 }
 
-                if (exhausts.Count > amount && exhausts.Count > 1)
+                if (amount != exhausts.Count)
                 {
-                    //Debug.Log("too many exhausts");
-                    for (int i = amount; i < exhausts.Count; i++)
+
+                    while (exhausts.Count < amount) // booo!
                     {
-                        if (i > 0)
+                        GameObject newExhaust = (GameObject)GameObject.Instantiate(exhausts[0]);
+                        exhausts.Add(newExhaust);
+                        newExhaust.transform.parent = exhausts[0].transform.parent;
+                        newExhaust.transform.position = exhausts[0].transform.position;
+                        newExhaust.transform.localRotation = exhausts[0].transform.localRotation;
+                        newExhaust.transform.localScale = exhausts[0].transform.localScale; //Vector3.one * exhaustScale;
+                    }
+
+                    if (exhausts.Count > amount && exhausts.Count > 1)
+                    {
+                        //Debug.Log("too many exhausts");
+                        for (int i = amount; i < exhausts.Count; i++)
                         {
-                            //Debug.Log("destroying exhaust " + i);
-                            GameObject.Destroy(exhausts[i]);
-                            exhausts.RemoveAt(i);
+                            if (i > 0)
+                            {
+                                //Debug.Log("destroying exhaust " + i);
+                                GameObject.Destroy(exhausts[i]);
+                                exhausts.RemoveAt(i);
+                            }
                         }
                     }
-                }
 
-                for (int i = 1; i < exhausts.Count; i++)
-                {
-                    exhausts[i].transform.localPosition = exhausts[0].transform.localPosition + exhaustTranslateAxis * exhaustDistance * i;
+                    for (int i = 1; i < exhausts.Count; i++)
+                    {
+                        exhausts[i].transform.localPosition = exhausts[0].transform.localPosition + exhaustTranslateAxis * exhaustDistance * i;
+                    }
                 }
             }
         }
