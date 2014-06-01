@@ -288,5 +288,19 @@ namespace Firespitter.engine
         {
             Activate();
         }
+
+        public void OnCenterOfThrustQuery(CenterOfThrustQuery CoTquery)
+        {
+            Vector3 newPos = Vector3.zero;
+            Vector3 newDir = Vector3.zero;
+            for (int i = 0; i < thrustTransforms.Length; i++)
+            {
+                newPos += thrustTransforms[i].position - part.transform.position;
+                newDir += thrustTransforms[i].forward;
+            }            
+            CoTquery.pos = part.transform.position + (newPos / thrustTransforms.Length);
+            CoTquery.dir = newDir.normalized;
+            CoTquery.thrust = maxThrust * (maxThrottle / 100f);
+        }        
     }
 }

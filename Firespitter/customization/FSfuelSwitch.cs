@@ -65,7 +65,7 @@ namespace Firespitter.customization
             {
                 currentAmounts = Vector4.zero;
             }
-            assignResourcesToPart();
+            assignResourcesToPart();            
         }
 
         public void selectTankSetup(int i)
@@ -83,6 +83,11 @@ namespace Firespitter.customization
                 for (int s = 0; s < part.symmetryCounterparts.Count; s++)
                 {
                     setupTankInPart(part.symmetryCounterparts[s]);
+                    FSfuelSwitch symSwitch = part.symmetryCounterparts[s].GetComponent<FSfuelSwitch>();
+                    if (symSwitch != null)
+                    {
+                        symSwitch.selectedTankSetup = selectedTankSetup;
+                    }
                 }
             }
         }
