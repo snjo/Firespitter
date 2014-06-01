@@ -10,6 +10,8 @@ namespace Firespitter.customization
     public class FStextureSwitch2 : PartModule
     {
         [KSPField]
+        public int moduleID = 0;
+        [KSPField]
         public string displayName = "Texture switcher";
         [KSPField]
         public string objectNames = string.Empty;
@@ -122,11 +124,15 @@ namespace Firespitter.customization
 
             for (int i = 0; i < part.symmetryCounterparts.Count; i++)
             {
-                FStextureSwitch2 symSwitch = part.symmetryCounterparts[i].GetComponent<FStextureSwitch2>();
-                if (symSwitch != null)
+                // check that the moduleID mathces to make sure we don't target the wrong tex switcher
+                FStextureSwitch2[] symSwitch = part.symmetryCounterparts[i].GetComponents<FStextureSwitch2>();
+                for (int j = 0; j < symSwitch.Length; j++)
                 {
-                    symSwitch.selectedTexture = selectedTexture;
-                    symSwitch.applyTexToPart();
+                    if (symSwitch[j].moduleID == moduleID)
+                    {
+                        symSwitch[j].selectedTexture = selectedTexture;
+                        symSwitch[j].applyTexToPart();
+                    }
                 }
             }
         }
@@ -276,7 +282,7 @@ namespace Firespitter.customization
 
             if (useFuelSwitchModule)
             {
-                fuelSwitch = part.GetComponent<FSfuelSwitch>();
+                fuelSwitch = part.GetComponent<FSfuelSwitch>(); // only looking for first, not supporting multiple fuel switchers
                 if (fuelSwitch == null)
                 {
                     useFuelSwitchModule = false;

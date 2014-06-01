@@ -5,6 +5,8 @@ using System.Text;
 //using System.Threading.Tasks;
 using UnityEngine;
 
+namespace Firespitter.engine
+{
     public class FSswitchEngineThrustTransform : PartModule
     {
         [KSPField]
@@ -17,7 +19,7 @@ using UnityEngine;
         private Transform thrustTransform;
         private Transform defaultTT;
         private Transform alternateTT;
-        private ModuleEngines engine;
+        private FSengineWrapper engine;
 
         private int animateThrottleMode = 1;
         private FSanimateThrottle animateThrottle;
@@ -36,13 +38,13 @@ using UnityEngine;
         //private FSGUIPopup popup;
 
         public override void OnStart(PartModule.StartState state)
-        {            
+        {
 
-            engine = part.Modules.OfType<ModuleEngines>().FirstOrDefault();
-            if (engine != null)
+            engine = new FSengineWrapper(part);
+            if (engine.type != FSengineWrapper.EngineType.NONE)
             {
                 //Debug.Log("FSswitchEngineThrustTransform: Engine module found");
-                thrustTransform = part.FindModelTransform(defaultTTName);                
+                thrustTransform = part.FindModelTransform(defaultTTName);
                 defaultTT = new GameObject().transform;
                 defaultTT.localPosition = thrustTransform.localPosition;
                 defaultTT.localRotation = thrustTransform.localRotation;
@@ -101,13 +103,13 @@ using UnityEngine;
             setTTReverseState(false);
         }
 
-        [KSPEvent(name = "reverseTT", active = true, guiActive = true, guiName = "Set Reverse Thrust", guiActiveEditor=true)]
+        [KSPEvent(name = "reverseTT", active = true, guiActive = true, guiName = "Set Reverse Thrust", guiActiveEditor = true)]
         public void reverseTTEvent()
         {
-            setTTReverseState(true);            
+            setTTReverseState(true);
         }
 
-        [KSPEvent(name = "normalTT", active = true, guiActive = false, guiName = "Set Normal Thrust", guiActiveEditor=true)]
+        [KSPEvent(name = "normalTT", active = true, guiActive = false, guiName = "Set Normal Thrust", guiActiveEditor = true)]
         public void normalTTEvent()
         {
             setTTReverseState(false);
@@ -149,7 +151,7 @@ using UnityEngine;
                 isReversed = doReverse;
                 if (doReverse)
                 {
-                    thrustTransform.localRotation = alternateTT.localRotation;                    
+                    thrustTransform.localRotation = alternateTT.localRotation;
                 }
                 else
                 {
@@ -199,3 +201,4 @@ using UnityEngine;
         //    popup.popup();
         //}
     }
+}
