@@ -5,39 +5,52 @@ using System.Text;
 //using System.Threading.Tasks;
 using UnityEngine;
 
-class FSengineHandCrank : PartModule
+namespace Firespitter.engine
 {
-    private ModuleEngines engine;
-
-    public override void OnStart(PartModule.StartState state)
+    class FSengineHandCrank : PartModule
     {
-        base.OnStart(state);
-        engine = part.GetComponent<ModuleEngines>();
-        engine.Events["Activate"].guiActiveUnfocused = true;
-        engine.Events["Activate"].unfocusedRange = 5f;
-        engine.Events["Shutdown"].guiActiveUnfocused = true;
-        engine.Events["Shutdown"].unfocusedRange = 5f;
-    }
+        private FSengineWrapper engine;
 
-    /*
-    [KSPEvent(name = "ignitionOn", guiActive = false, active = true, guiName = "Ignition On", externalToEVAOnly = true, unfocusedRange = 6f, guiActiveUnfocused = true)]
-    public void ignitionOnEvent()
-    {
-        if (engine != null)
+        public override void OnStart(PartModule.StartState state)
         {
-            //gameObject.active = true;
-            //engine.staged = true;
-            engine.EngineIgnited = true;            
+            base.OnStart(state);
+            engine = new FSengineWrapper(part);
+            if (engine.type == FSengineWrapper.EngineType.ModuleEngine)
+            {
+                engine.engine.Events["Activate"].guiActiveUnfocused = true;
+                engine.engine.Events["Activate"].unfocusedRange = 5f;
+                engine.engine.Events["Shutdown"].guiActiveUnfocused = true;
+                engine.engine.Events["Shutdown"].unfocusedRange = 5f;
+            }
+            else if (engine.type == FSengineWrapper.EngineType.ModuleEngineFX)
+            {
+                engine.engineFX.Events["Activate"].guiActiveUnfocused = true;
+                engine.engineFX.Events["Activate"].unfocusedRange = 5f;
+                engine.engineFX.Events["Shutdown"].guiActiveUnfocused = true;
+                engine.engineFX.Events["Shutdown"].unfocusedRange = 5f;
+            }
         }
-    }
 
-    [KSPEvent(name = "ignitionOff", guiActive = false, active = true, guiName = "Ignition Off", externalToEVAOnly = true, unfocusedRange = 6f, guiActiveUnfocused = true)]
-    public void ignitionOffEvent()
-    {
-        if (engine != null)
+        /*
+        [KSPEvent(name = "ignitionOn", guiActive = false, active = true, guiName = "Ignition On", externalToEVAOnly = true, unfocusedRange = 6f, guiActiveUnfocused = true)]
+        public void ignitionOnEvent()
         {
-            //engine.staged = true;
-            engine.EngineIgnited = false;
+            if (engine != null)
+            {
+                //gameObject.active = true;
+                //engine.staged = true;
+                engine.EngineIgnited = true;            
+            }
         }
-    }*/
+
+        [KSPEvent(name = "ignitionOff", guiActive = false, active = true, guiName = "Ignition Off", externalToEVAOnly = true, unfocusedRange = 6f, guiActiveUnfocused = true)]
+        public void ignitionOffEvent()
+        {
+            if (engine != null)
+            {
+                //engine.staged = true;
+                engine.EngineIgnited = false;
+            }
+        }*/
+    }
 }
