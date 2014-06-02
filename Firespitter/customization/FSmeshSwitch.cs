@@ -9,6 +9,8 @@ namespace Firespitter.customization
     public class FSmeshSwitch : PartModule
     {
         [KSPField]
+        public int moduleID = 0;
+        [KSPField]
         public string buttonName = "Next part variant";
         [KSPField]
         public string previousButtonName = "Prev part variant";
@@ -97,11 +99,14 @@ namespace Firespitter.customization
 
             for (int i = 0; i < part.symmetryCounterparts.Count; i++)
             {
-                FSmeshSwitch symSwitch = part.symmetryCounterparts[i].GetComponent<FSmeshSwitch>();
-                if (symSwitch != null)
+                FSmeshSwitch[] symSwitch = part.symmetryCounterparts[i].GetComponents<FSmeshSwitch>();
+                for (int j = 0; j < symSwitch.Length; j++)
                 {
-                    symSwitch.selectedObject = selectedObject;
-                    symSwitch.setObject(objectNumber);
+                    if (symSwitch[j].moduleID == moduleID)
+                    {
+                        symSwitch[j].selectedObject = selectedObject;
+                        symSwitch[j].setObject(objectNumber);
+                    }
                 }
             }
         }

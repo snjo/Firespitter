@@ -124,7 +124,7 @@ namespace Firespitter.customization
 
             for (int i = 0; i < part.symmetryCounterparts.Count; i++)
             {
-                // check that the moduleID mathces to make sure we don't target the wrong tex switcher
+                // check that the moduleID matches to make sure we don't target the wrong tex switcher
                 FStextureSwitch2[] symSwitch = part.symmetryCounterparts[i].GetComponents<FStextureSwitch2>();
                 for (int j = 0; j < symSwitch.Length; j++)
                 {
