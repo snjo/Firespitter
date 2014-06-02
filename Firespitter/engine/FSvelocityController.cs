@@ -4,161 +4,164 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public class FSvelocityController : PartModule
+namespace Firespitter.engine
 {
-    [KSPField]
-    public string thrustTransformName = "thruster";
-    [KSPField]
-    public float maxThrust = 2f;
-    [KSPField]
-    public float resourceConsumption = 0.1f;
-    [KSPField]
-    public string resourceName = "MonoPropellant";
-    [KSPField]
-    public float lowerSpeedThreshold = 0.1f;
-    [KSPField]
-    public float upperSpeedThreshold = 2.0f;
-    [KSPField]
-    public bool useFX = true;
-    [KSPField]
-    public string particleTextureName = string.Empty;
-    [KSPField]
-    public Vector3 EmitterLocalVelocity = new Vector3(0f, 0f, 1f);
-    [KSPField]
-    public string transformThrustDirection = "forward";
-    [KSPField]
-    public string thrustKey = "delete";
-    [KSPField]
-    public float minVelocityToActivate = 0.1f;
-
-    public bool controllerActive = false;
-
-    Transform[] transformArray;
-    private bool transformsFound = false;
-    private Vector3 velocityDirection = new Vector3(0f, 0f, 0f);
-    private Firespitter.FSparticleFX[] particleFX;
-    private Texture2D particleTexture;
-    private Vector3 finalThrust = new Vector3(0f, 0f, 0f);
-
-    private float defaultEmitterMinEmission = 120f;
-    private float defaultEmitterMaxEmission = 160f;
-
-    public override void OnStart(PartModule.StartState state)
+    public class FSvelocityController : PartModule
     {
-        base.OnStart(state);
-        if (!HighLogic.LoadedSceneIsFlight) return;
+        [KSPField]
+        public string thrustTransformName = "thruster";
+        [KSPField]
+        public float maxThrust = 2f;
+        [KSPField]
+        public float resourceConsumption = 0.1f;
+        [KSPField]
+        public string resourceName = "MonoPropellant";
+        [KSPField]
+        public float lowerSpeedThreshold = 0.1f;
+        [KSPField]
+        public float upperSpeedThreshold = 2.0f;
+        [KSPField]
+        public bool useFX = true;
+        [KSPField]
+        public string particleTextureName = string.Empty;
+        [KSPField]
+        public Vector3 EmitterLocalVelocity = new Vector3(0f, 0f, 1f);
+        [KSPField]
+        public string transformThrustDirection = "forward";
+        [KSPField]
+        public string thrustKey = "delete";
+        [KSPField]
+        public float minVelocityToActivate = 0.1f;
 
-        transformArray = part.FindModelTransforms(thrustTransformName);
-        if (transformArray.Length > 0)
-        {
-            transformsFound = true;
-            particleFX = new Firespitter.FSparticleFX[transformArray.Length];
-        }
-        else
-        {
-            Debug.Log("KTvelocityController: Transforms not found named " + thrustTransformName + ", disabling the module");
-            this.enabled = false;
-        }
+        public bool controllerActive = false;
 
-        if (this.enabled && particleTextureName != string.Empty)
+        Transform[] transformArray;
+        private bool transformsFound = false;
+        private Vector3 velocityDirection = new Vector3(0f, 0f, 0f);
+        private Firespitter.FSparticleFX[] particleFX;
+        private Texture2D particleTexture;
+        private Vector3 finalThrust = new Vector3(0f, 0f, 0f);
+
+        private float defaultEmitterMinEmission = 120f;
+        private float defaultEmitterMaxEmission = 160f;
+
+        public override void OnStart(PartModule.StartState state)
         {
-            // set up fx ---- TODO, assign each transform its own FX
-            particleTexture = GameDatabase.Instance.GetTexture(particleTextureName, false);
-            if (particleTexture != null)
+            base.OnStart(state);
+            if (!HighLogic.LoadedSceneIsFlight) return;
+
+            transformArray = part.FindModelTransforms(thrustTransformName);
+            if (transformArray.Length > 0)
             {
-                for (int i = 0; i < particleFX.Length; i++)
-                {
-                    particleFX[i] = new Firespitter.FSparticleFX(transformArray[i].gameObject, particleTexture);
-                    particleFX[i].EmitterLocalVelocity = EmitterLocalVelocity;
-                    //Debug.Log("KTvelocityController: particle texture found: " + particleTextureName);
-                    particleFX[i].setupFXValues();
-                    particleFX[i].pEmitter.minEmission = 0f;
-                    particleFX[i].pEmitter.maxEmission = 0f;
-                    particleFX[i].pEmitter.useWorldSpace = false;
-                }
+                transformsFound = true;
+                particleFX = new Firespitter.FSparticleFX[transformArray.Length];
             }
             else
             {
-                useFX = false;
-                Debug.Log("KTvelocityController: particle texture not found, disabling fx");
-            }
-        }
-    }
-
-    public override void OnFixedUpdate()
-    {
-        base.OnFixedUpdate();
-        if (transformsFound)
-        {
-            //Debug.Log("Entering fixed update");
-            try
-            {
-                velocityDirection = part.gameObject.rigidbody.velocity;
-            }
-            catch
-            {
-                //Debug.Log("failed to find rigidbody velocity");
-                return;
+                Debug.Log("KTvelocityController: Transforms not found named " + thrustTransformName + ", disabling the module");
+                this.enabled = false;
             }
 
-            int i = 0;
-                        
-            bool doThrust = Input.GetKey(thrustKey);
-
-            foreach (Transform t in transformArray)
+            if (this.enabled && particleTextureName != string.Empty)
             {
-                float thrustUsed = updateThruster(i, doThrust, t);
-                bool resourceReceived = consumeResource(thrustUsed * maxThrust);
-                if (!resourceReceived)
-                    thrustUsed = 0f;
-                if (thrustUsed > 0f)
-                    part.gameObject.rigidbody.AddForceAtPosition(finalThrust, t.transform.position);                
-                if (useFX)
+                // set up fx ---- TODO, assign each transform its own FX
+                particleTexture = GameDatabase.Instance.GetTexture(particleTextureName, false);
+                if (particleTexture != null)
                 {
-                    particleFX[i].pEmitter.minEmission = defaultEmitterMinEmission * thrustUsed;
-                    particleFX[i].pEmitter.maxEmission = defaultEmitterMaxEmission * thrustUsed;
+                    for (int i = 0; i < particleFX.Length; i++)
+                    {
+                        particleFX[i] = new Firespitter.FSparticleFX(transformArray[i].gameObject, particleTexture);
+                        particleFX[i].EmitterLocalVelocity = EmitterLocalVelocity;
+                        //Debug.Log("KTvelocityController: particle texture found: " + particleTextureName);
+                        particleFX[i].setupFXValues();
+                        particleFX[i].pEmitter.minEmission = 0f;
+                        particleFX[i].pEmitter.maxEmission = 0f;
+                        particleFX[i].pEmitter.useWorldSpace = false;
+                    }
                 }
-                i++;
+                else
+                {
+                    useFX = false;
+                    Debug.Log("KTvelocityController: particle texture not found, disabling fx");
+                }
             }
         }
-    }
 
-    private bool consumeResource(float modifier)
-    {        
-        float resourceRequested = resourceConsumption * modifier * TimeWarp.deltaTime;
-        if (CheatOptions.InfiniteRCS)
-            return true;
-        if (modifier > 0f)
+        public override void OnFixedUpdate()
         {
-            if (base.part.RequestResource(resourceName, resourceRequested) > 0f)
+            base.OnFixedUpdate();
+            if (transformsFound)
+            {
+                //Debug.Log("Entering fixed update");
+                try
+                {
+                    velocityDirection = part.gameObject.rigidbody.velocity;
+                }
+                catch
+                {
+                    //Debug.Log("failed to find rigidbody velocity");
+                    return;
+                }
+
+                int i = 0;
+
+                bool doThrust = Input.GetKey(thrustKey);
+
+                foreach (Transform t in transformArray)
+                {
+                    float thrustUsed = updateThruster(i, doThrust, t);
+                    bool resourceReceived = consumeResource(thrustUsed * maxThrust);
+                    if (!resourceReceived)
+                        thrustUsed = 0f;
+                    if (thrustUsed > 0f)
+                        part.gameObject.rigidbody.AddForceAtPosition(finalThrust, t.transform.position);
+                    if (useFX)
+                    {
+                        particleFX[i].pEmitter.minEmission = defaultEmitterMinEmission * thrustUsed;
+                        particleFX[i].pEmitter.maxEmission = defaultEmitterMaxEmission * thrustUsed;
+                    }
+                    i++;
+                }
+            }
+        }
+
+        private bool consumeResource(float modifier)
+        {
+            float resourceRequested = resourceConsumption * modifier * TimeWarp.deltaTime;
+            if (CheatOptions.InfiniteRCS)
                 return true;
+            if (modifier > 0f)
+            {
+                if (base.part.RequestResource(resourceName, resourceRequested) > 0f)
+                    return true;
+            }
+            return false;
         }
-        return false;
-    }
 
-    private float updateThruster(int fxNumber, bool doThrust, Transform t)
-    {
-        Vector3 thrustDirection;        
-        float thrustModifier = 0f;
-        if (doThrust)
+        private float updateThruster(int fxNumber, bool doThrust, Transform t)
         {
-            if (transformThrustDirection == "up")
-                thrustDirection = t.transform.up;
-            else
-                thrustDirection = t.transform.forward;
+            Vector3 thrustDirection;
+            float thrustModifier = 0f;
+            if (doThrust)
+            {
+                if (transformThrustDirection == "up")
+                    thrustDirection = t.transform.up;
+                else
+                    thrustDirection = t.transform.forward;
 
-            thrustModifier = Vector3.Dot(thrustDirection, velocityDirection.normalized);
-            if (thrustModifier > 0f && velocityDirection.magnitude > minVelocityToActivate)
-            {
-                finalThrust = -thrustDirection * thrustModifier * maxThrust;
-                //part.gameObject.rigidbody.AddForceAtPosition(-thrustDirection * thrustModifier * maxThrust, t.transform.position);
+                thrustModifier = Vector3.Dot(thrustDirection, velocityDirection.normalized);
+                if (thrustModifier > 0f && velocityDirection.magnitude > minVelocityToActivate)
+                {
+                    finalThrust = -thrustDirection * thrustModifier * maxThrust;
+                    //part.gameObject.rigidbody.AddForceAtPosition(-thrustDirection * thrustModifier * maxThrust, t.transform.position);
+                }
+                else
+                {
+                    thrustModifier = 0f;
+                }
             }
-            else
-            {
-                thrustModifier = 0f;
-            }
+
+            return thrustModifier;
         }
-        
-        return thrustModifier;
     }
 }

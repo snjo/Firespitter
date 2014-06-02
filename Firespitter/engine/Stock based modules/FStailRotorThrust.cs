@@ -5,9 +5,10 @@ using System.Text;
 //using System.Threading.Tasks;
 using UnityEngine;
 
-
+namespace Firespitter.engine
+{
     public class FStailRotorThrust : PartModule
-    {                
+    {
         ModuleEngines engine = new ModuleEngines();
         Transform partTransform;
 
@@ -29,8 +30,8 @@ using UnityEngine;
         //[KSPField(guiActive = true, guiName = "Trim", isPersistant = true)]
         //public float trim = 0f;
 
-        [KSPField(guiActive = true, guiName = "max Thrust", isPersistant = true)]        
-        public float maxThrust = 1;        
+        [KSPField(guiActive = true, guiName = "max Thrust", isPersistant = true)]
+        public float maxThrust = 1;
 
         [KSPField(guiActive = true, guiName = "use QE, not AD", isPersistant = true)]
         public bool altInputModeEnabled = false;
@@ -90,7 +91,7 @@ using UnityEngine;
                 vessel.ctrlState.rollTrim = 0f;
             }
             else
-            {                
+            {
                 vessel.ctrlState.yawTrim = 0f;
             }
         }
@@ -111,18 +112,19 @@ using UnityEngine;
 
         public override void OnStart(PartModule.StartState state)
         {
- 	        base.OnStart(state);
+            base.OnStart(state);
             engine = part.Modules.OfType<ModuleEngines>().FirstOrDefault();
-           partTransform = part.FindModelTransform(thrustTransform);
+            partTransform = part.FindModelTransform(thrustTransform);
             //maxThrust = engine.maxThrust;            
         }
 
-        public override void OnUpdate(){
+        public override void OnUpdate()
+        {
             if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
             FlightCtrlState ctrl = vessel.ctrlState;
             Vector3 steeringInput = new Vector3(0, 0, 0);
-            
-            
+
+
 
 
             if (altInputModeEnabled)
@@ -183,7 +185,7 @@ using UnityEngine;
             if (timeCount < 0) timeCount = 0; // in case people give the spinUpTime in an unexpected way
 
             float currentSpeed = ((rotationSpeed * 6) * TimeWarp.deltaTime * ((float)timeCount / 1000));
-            RotorParent.transform.Rotate(Vector3.forward * currentSpeed);            
+            RotorParent.transform.Rotate(Vector3.forward * currentSpeed);
         }
     }
-
+}

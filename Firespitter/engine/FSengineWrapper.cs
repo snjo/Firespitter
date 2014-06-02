@@ -79,6 +79,39 @@ namespace Firespitter.engine
             }
         }
 
+        public float minThrust
+        {
+            get
+            {
+                switch (type)
+                {
+                    case EngineType.ModuleEngine:
+                        return engine.minThrust;
+                    case EngineType.ModuleEngineFX:
+                        return engineFX.minThrust;
+                    //case EngineType.FSengine:
+                    //    return fsengine.minThrust;
+                    default:
+                        return 0f;
+                }
+            }
+            set
+            {
+                switch (type)
+                {
+                    case EngineType.ModuleEngine:
+                        engine.minThrust = value;
+                        break;
+                    case EngineType.ModuleEngineFX:
+                        engineFX.minThrust = value;
+                        break;
+                    //case EngineType.FSengine:
+                    //    fsengine.minThrust = value;
+                    //    break;
+                }
+            }
+        }
+
         public bool EngineIgnited
         {
             get
@@ -276,6 +309,39 @@ namespace Firespitter.engine
                     case EngineType.FSengine:
                         fsengine.finalThrust = value;  // not an accurate alternative
                         break;
+                }
+            }
+        }
+
+        public bool throttleLocked
+        {
+            get
+            {
+                switch (type)
+                {
+                    case EngineType.ModuleEngine:
+                        return engine.throttleLocked;
+                    case EngineType.ModuleEngineFX:
+                        return engineFX.throttleLocked;
+                    //case EngineType.FSengine:
+                    //    return fsengine.throttleLocked;
+                    default:
+                        return false;
+                }
+            }
+            set
+            {
+                switch (type)
+                {
+                    case EngineType.ModuleEngine:
+                        engine.throttleLocked = value;
+                        break;
+                    case EngineType.ModuleEngineFX:
+                        engineFX.throttleLocked = value;
+                        break;
+                    //case EngineType.FSengine:
+                    //    fsengine.flameout = value;
+                    //    break;
                 }
             }
         }

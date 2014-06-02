@@ -5,7 +5,7 @@ using System.Text;
 //using System.Threading.Tasks;
 using UnityEngine;
 
-// This is the Damned aerospace's basicpropspinner, only with a check for activer vessel.
+// This is the Damned aerospace's basicpropspinner, only with a check for active vessel.
 // This class has been deprecated in favor of FSplanePropellerSpinner
 
 [Obsolete("Use FSplanePropellerSpinner instead",false)]

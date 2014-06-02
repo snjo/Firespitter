@@ -4,151 +4,154 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-/// <summary>
-/// Helicopter steering module
-/// </summary>
-public class FSrotorTrim : PartModule
+namespace Firespitter.engine
 {
-
-    [KSPField]
-    public string targetPartObject = "thrustTrimObject";
-    [KSPField]
-    public string hoverKey = "f";
-    [KSPField]
-    public float rotationDirectionX = 0f;
-    [KSPField]
-    public float rotationDirectionY = 0f;
-    [KSPField]
-    public float rotationDirectionZ = 1f;
-    [KSPField]
-    public float defaultRotationX = 0f;
-    [KSPField]
-    public float defaultRotationY = 0f;
-    [KSPField]
-    public float defaultRotationZ = 0f;
-    [KSPField]
-    public float steerAmount = 20f;
-    [KSPField]
-    public float hoverHeatModifier = 5f;
-    //[KSPField]
-    //public string rootPart = "copterEngineMain";
-
-    [KSPField(guiActive = true, guiName = "Steering", isPersistant = true)]
-    public bool steeringEnabled = false;
-    [KSPField(guiActive = true, guiName = "use AD, not QE", isPersistant = true)]
-    public bool altInputModeEnabled = false;
-
-    private Vector3 currentRotation = new Vector3(0, 0, 0);
-
-    private Transform partTransform;
-
-    [KSPAction("Toggle Steering")]
-    public void toggleSteeringAction(KSPActionParam param)
+    /// <summary>
+    /// Helicopter steering module
+    /// </summary>
+    public class FSrotorTrim : PartModule
     {
-        toggleSteering();
-    }
 
-    [KSPEvent(name = "toggleSteering", active = true, guiActive = true, guiName = "Toggle Steering")]
-    public void toggleSteering()
-    {
-        steeringEnabled = !steeringEnabled;
-    }
+        [KSPField]
+        public string targetPartObject = "thrustTrimObject";
+        [KSPField]
+        public string hoverKey = "f";
+        [KSPField]
+        public float rotationDirectionX = 0f;
+        [KSPField]
+        public float rotationDirectionY = 0f;
+        [KSPField]
+        public float rotationDirectionZ = 1f;
+        [KSPField]
+        public float defaultRotationX = 0f;
+        [KSPField]
+        public float defaultRotationY = 0f;
+        [KSPField]
+        public float defaultRotationZ = 0f;
+        [KSPField]
+        public float steerAmount = 20f;
+        [KSPField]
+        public float hoverHeatModifier = 5f;
+        //[KSPField]
+        //public string rootPart = "copterEngineMain";
 
-    [KSPEvent(name = "toggleAltInputMode", active = true, guiActive = true, guiName = "QE or AD to rotate")]
-    public void toggleAltInputMode()
-    {
-        altInputModeEnabled = !altInputModeEnabled;
-    }
+        [KSPField(guiActive = true, guiName = "Steering", isPersistant = true)]
+        public bool steeringEnabled = false;
+        [KSPField(guiActive = true, guiName = "use AD, not QE", isPersistant = true)]
+        public bool altInputModeEnabled = false;
 
-    private double RadianToDegree(double angle)
-    {
-        return angle * (180.0 / Math.PI);
-    }
-    private double DegreeToRadian(double angle)
-    {
-        return Math.PI * angle / 180.0;
-    }
+        private Vector3 currentRotation = new Vector3(0, 0, 0);
 
-    private void resetTrim()
-    {
-        vessel.ctrlState.pitchTrim = 0f;
-        if (altInputModeEnabled)
+        private Transform partTransform;
+
+        [KSPAction("Toggle Steering")]
+        public void toggleSteeringAction(KSPActionParam param)
         {
-            vessel.ctrlState.yawTrim = 0f;
+            toggleSteering();
         }
-        else
+
+        [KSPEvent(name = "toggleSteering", active = true, guiActive = true, guiName = "Toggle Steering")]
+        public void toggleSteering()
         {
-            vessel.ctrlState.rollTrim = 0f;
+            steeringEnabled = !steeringEnabled;
         }
-    }
-    
-    public void steerPart(float steerDegrees, Vector3 axis)
-    {
-        float steerThrustModifier = vessel.ctrlState.mainThrottle / 1.7f; // engine.currentThrottle / 1.7f;
-        currentRotation = steerDegrees * axis * (1 - steerThrustModifier);
-    }
 
-
-    private void setPartRotation()
-    {
-        partTransform.localRotation = Quaternion.Euler(currentRotation + new Vector3(defaultRotationX,defaultRotationY,defaultRotationZ));
-    }
-
-    private void autoHover()
-    {        
+        [KSPEvent(name = "toggleAltInputMode", active = true, guiActive = true, guiName = "QE or AD to rotate")]
+        public void toggleAltInputMode()
         {
-            Vector3 heading = (Vector3d)this.vessel.transform.up;            
-            Vector3d up = (this.vessel.rigidbody.position - this.vessel.mainBody.position).normalized;
+            altInputModeEnabled = !altInputModeEnabled;
+        }
 
-            Transform modifiedUp = new GameObject().transform;
-            modifiedUp.rotation = Quaternion.LookRotation(up, heading);
-            modifiedUp.Rotate(new Vector3(-90,0,180));
+        private double RadianToDegree(double angle)
+        {
+            return angle * (180.0 / Math.PI);
+        }
+        private double DegreeToRadian(double angle)
+        {
+            return Math.PI * angle / 180.0;
+        }
 
+        private void resetTrim()
+        {
+            vessel.ctrlState.pitchTrim = 0f;
+            if (altInputModeEnabled)
+            {
+                vessel.ctrlState.yawTrim = 0f;
+            }
+            else
+            {
+                vessel.ctrlState.rollTrim = 0f;
+            }
+        }
+
+        public void steerPart(float steerDegrees, Vector3 axis)
+        {
+            float steerThrustModifier = vessel.ctrlState.mainThrottle / 1.7f; // engine.currentThrottle / 1.7f;
+            currentRotation = steerDegrees * axis * (1 - steerThrustModifier);
+        }
+
+
+        private void setPartRotation()
+        {
             partTransform.localRotation = Quaternion.Euler(currentRotation + new Vector3(defaultRotationX, defaultRotationY, defaultRotationZ));
-            partTransform.rotation = Quaternion.RotateTowards(partTransform.rotation, modifiedUp.rotation, steerAmount*4); 
         }
 
-    }
-
-    public override void OnStart(PartModule.StartState state)
-    {
-        partTransform = part.FindModelTransform(targetPartObject);        
-    }
-
-    public override void OnFixedUpdate()
-    {
-        if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
-
-        FlightCtrlState ctrl = vessel.ctrlState;
-
-        Vector3 steeringInput = new Vector3(0, 0, 0);
-
-        if (altInputModeEnabled)
-        {            
-            steeringInput.x = ctrl.yaw;
-        }
-        else
-        {                        
-            steeringInput.x = ctrl.roll;
-        }
-        
-        steeringInput.z = -ctrl.pitch;
-
-        bool inputReceived = (steeringInput != new Vector3(0, 0, 0));
-        
-        if (steeringEnabled && inputReceived)
+        private void autoHover()
         {
-            steerPart(steerAmount, new Vector3(steeringInput.x, steeringInput.y, steeringInput.z));
-        }
-        else steerPart(0, steeringInput);        
+            {
+                Vector3 heading = (Vector3d)this.vessel.transform.up;
+                Vector3d up = (this.vessel.rigidbody.position - this.vessel.mainBody.position).normalized;
 
-        if (Input.GetKey(hoverKey)) //Auto hover
-        {
-            autoHover();            
+                Transform modifiedUp = new GameObject().transform;
+                modifiedUp.rotation = Quaternion.LookRotation(up, heading);
+                modifiedUp.Rotate(new Vector3(-90, 0, 180));
+
+                partTransform.localRotation = Quaternion.Euler(currentRotation + new Vector3(defaultRotationX, defaultRotationY, defaultRotationZ));
+                partTransform.rotation = Quaternion.RotateTowards(partTransform.rotation, modifiedUp.rotation, steerAmount * 4);
+            }
+
         }
-        else
+
+        public override void OnStart(PartModule.StartState state)
         {
-            setPartRotation();           
-        }        
+            partTransform = part.FindModelTransform(targetPartObject);
+        }
+
+        public override void OnFixedUpdate()
+        {
+            if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+
+            FlightCtrlState ctrl = vessel.ctrlState;
+
+            Vector3 steeringInput = new Vector3(0, 0, 0);
+
+            if (altInputModeEnabled)
+            {
+                steeringInput.x = ctrl.yaw;
+            }
+            else
+            {
+                steeringInput.x = ctrl.roll;
+            }
+
+            steeringInput.z = -ctrl.pitch;
+
+            bool inputReceived = (steeringInput != new Vector3(0, 0, 0));
+
+            if (steeringEnabled && inputReceived)
+            {
+                steerPart(steerAmount, new Vector3(steeringInput.x, steeringInput.y, steeringInput.z));
+            }
+            else steerPart(0, steeringInput);
+
+            if (Input.GetKey(hoverKey)) //Auto hover
+            {
+                autoHover();
+            }
+            else
+            {
+                setPartRotation();
+            }
+        }
     }
 }
