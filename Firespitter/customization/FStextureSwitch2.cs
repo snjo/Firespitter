@@ -11,8 +11,8 @@ namespace Firespitter.customization
     {
         [KSPField]
         public int moduleID = 0;
-        [KSPField]
-        public string displayName = "Texture switcher";
+        //[KSPField]
+        //public string displayName = "Texture switcher";
         [KSPField]
         public string objectNames = string.Empty;
         [KSPField]
@@ -47,14 +47,17 @@ namespace Firespitter.customization
         public bool mapIsNormal = true;
         [KSPField]
         public bool repaintableEVA = true;
-        [KSPField]
-        public Vector4 GUIposition = new Vector4(FSGUIwindowID.standardRect.x, FSGUIwindowID.standardRect.y, FSGUIwindowID.standardRect.width, FSGUIwindowID.standardRect.height);
+        //[KSPField]
+        //public Vector4 GUIposition = new Vector4(FSGUIwindowID.standardRect.x, FSGUIwindowID.standardRect.y, FSGUIwindowID.standardRect.width, FSGUIwindowID.standardRect.height);
         [KSPField]
         public bool showPreviousButton = true;
         [KSPField]
         public bool useFuelSwitchModule = false;
         [KSPField]
         public string fuelTankSetups = "0";
+
+        [KSPField]
+        public bool updateSymmetry = true;
 
         private List<Transform> targetObjectTransforms = new List<Transform>();
         private List<List<Material>> targetMats = new List<List<Material>>();
@@ -122,16 +125,19 @@ namespace Firespitter.customization
         {
             applyTexToPart();
 
-            for (int i = 0; i < part.symmetryCounterparts.Count; i++)
+            if (updateSymmetry)
             {
-                // check that the moduleID matches to make sure we don't target the wrong tex switcher
-                FStextureSwitch2[] symSwitch = part.symmetryCounterparts[i].GetComponents<FStextureSwitch2>();
-                for (int j = 0; j < symSwitch.Length; j++)
+                for (int i = 0; i < part.symmetryCounterparts.Count; i++)
                 {
-                    if (symSwitch[j].moduleID == moduleID)
+                    // check that the moduleID matches to make sure we don't target the wrong tex switcher
+                    FStextureSwitch2[] symSwitch = part.symmetryCounterparts[i].GetComponents<FStextureSwitch2>();
+                    for (int j = 0; j < symSwitch.Length; j++)
                     {
-                        symSwitch[j].selectedTexture = selectedTexture;
-                        symSwitch[j].applyTexToPart();
+                        if (symSwitch[j].moduleID == moduleID)
+                        {
+                            symSwitch[j].selectedTexture = selectedTexture;
+                            symSwitch[j].applyTexToPart();
+                        }
                     }
                 }
             }
@@ -252,9 +258,9 @@ namespace Firespitter.customization
         {
             debug.debugMode = debugMode;
 
-            initializeData();           
+            initializeData();
 
-            useTextureAll();            
+            useTextureAll();
 
             if (switchableInFlight) Events["nextTextureEvent"].guiActive = true;
             if (switchableInFlight && showPreviousButton) Events["previousTextureEvent"].guiActive = true;
@@ -276,6 +282,9 @@ namespace Firespitter.customization
         {
             if (!initialized)
             {
+                // you can't have fuel switching without symmetry, it breaks the editor GUI.
+                if (useFuelSwitchModule) updateSymmetry = true;
+
                 objectList = Tools.parseNames(objectNames, true);
                 texList = Tools.parseNames(textureNames, true);
                 mapList = Tools.parseNames(mapNames, true);

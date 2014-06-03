@@ -26,6 +26,9 @@ namespace Firespitter.customization
         [KSPField]
         public string objects = string.Empty;
 
+        [KSPField]
+        public bool updateSymmetry = true;
+
         //// in case of multiple instances of this module, on will be the master, the rest slaves.
         //[KSPField]
         //public bool isController = true;
@@ -99,15 +102,18 @@ namespace Firespitter.customization
         {
             setObject(objectNumber);
 
-            for (int i = 0; i < part.symmetryCounterparts.Count; i++)
+            if (updateSymmetry)
             {
-                FSmeshSwitch[] symSwitch = part.symmetryCounterparts[i].GetComponents<FSmeshSwitch>();
-                for (int j = 0; j < symSwitch.Length; j++)
+                for (int i = 0; i < part.symmetryCounterparts.Count; i++)
                 {
-                    if (symSwitch[j].moduleID == moduleID)
+                    FSmeshSwitch[] symSwitch = part.symmetryCounterparts[i].GetComponents<FSmeshSwitch>();
+                    for (int j = 0; j < symSwitch.Length; j++)
                     {
-                        symSwitch[j].selectedObject = selectedObject;
-                        symSwitch[j].setObject(objectNumber);
+                        if (symSwitch[j].moduleID == moduleID)
+                        {
+                            symSwitch[j].selectedObject = selectedObject;
+                            symSwitch[j].setObject(objectNumber);
+                        }
                     }
                 }
             }
@@ -167,6 +173,9 @@ namespace Firespitter.customization
         {
             if (!initialized)
             {
+                // you can't have fuel switching without symmetry, it breaks the editor GUI.
+                if (useFuelSwitchModule) updateSymmetry = true;
+
                 parseObjectNames();
                 fuelTankSetupList = Tools.parseIntegers(fuelTankSetups);
                 objectDisplayList = Tools.parseNames(objectDisplayNames);

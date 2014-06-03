@@ -22,14 +22,18 @@ namespace Firespitter.customization
         public bool availableInFlight = false;
         [KSPField]
         public bool availableInEditor = true;
+
         [KSPField(isPersistant = true)]
         public Vector4 currentAmounts = Vector4.zero;
         [KSPField(isPersistant = true)]
         public int selectedTankSetup = 0;
         [KSPField(isPersistant = true)]
         public bool hasLaunched = false;
+
+        // this is toggled on and off in order to update the editor GUI. no other purpose
         [KSPField(guiActive = false, guiActiveEditor = false, guiName = "Structural")]
         public string structuralInfo = "";
+
         [KSPField(guiActive = false, guiActiveEditor = true, guiName = "Dry mass")]
         public float dryMassInfo = 0f;
         private List<FSmodularTank> tankList = new List<FSmodularTank>();
