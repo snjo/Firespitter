@@ -33,23 +33,33 @@ namespace Firespitter.customization
         [KSPField(guiActive = false, guiActiveEditor = true, guiName = "Dry mass")]
         public float dryMassInfo = 0f;
         private List<FSmodularTank> tankList = new List<FSmodularTank>();
-        private List<float> weightList = new List<float>();     
+        private List<float> weightList = new List<float>();
+        private bool initialized = false;
 
         public override void OnStart(PartModule.StartState state)
         {            
-            setupTankList();
-            this.weightList = Tools.parseFloats(this.tankMass);
+            initializeData();
             assignResourcesToPart();
-            if (HighLogic.LoadedSceneIsFlight) hasLaunched = true;
-            if (hasGUI)
+        }
+
+        private void initializeData()
+        {
+            if (!initialized)
             {
-                Events["nextTankSetupEvent"].guiActive = availableInFlight;
-                Events["nextTankSetupEvent"].guiActiveEditor = availableInEditor;
-            }
-            else
-            {
-                Events["nextTankSetupEvent"].guiActive = false;
-                Events["nextTankSetupEvent"].guiActiveEditor = false;
+                setupTankList();
+                this.weightList = Tools.parseFloats(this.tankMass);
+                if (HighLogic.LoadedSceneIsFlight) hasLaunched = true;
+                if (hasGUI)
+                {
+                    Events["nextTankSetupEvent"].guiActive = availableInFlight;
+                    Events["nextTankSetupEvent"].guiActiveEditor = availableInEditor;
+                }
+                else
+                {
+                    Events["nextTankSetupEvent"].guiActive = false;
+                    Events["nextTankSetupEvent"].guiActiveEditor = false;
+                }
+                initialized = true;
             }
         }
 
@@ -70,6 +80,7 @@ namespace Firespitter.customization
 
         public void selectTankSetup(int i)
         {
+            initializeData();
             selectedTankSetup = i;
             assignResourcesToPart();
         }

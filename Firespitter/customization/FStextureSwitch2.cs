@@ -62,10 +62,10 @@ namespace Firespitter.customization
         private List<String> mapList = new List<string>();
         private List<String> objectList = new List<string>();
         private List<String> textureDisplayList = new List<string>();
-
         private List<int> fuelTankSetupList = new List<int>();
-
         private FSfuelSwitch fuelSwitch;
+
+        private bool initialized = false;
 
         FSdebugMessages debug = new FSdebugMessages(false, FSdebugMessages.OutputMode.both, 2f); //set to true for debug   
 
@@ -139,6 +139,7 @@ namespace Firespitter.customization
 
         private void applyTexToPart()
         {
+            initializeData();
             foreach (List<Material> matList in targetMats)
             {
                 foreach (Material mat in matList)
@@ -251,44 +252,7 @@ namespace Firespitter.customization
         {
             debug.debugMode = debugMode;
 
-            objectList = Tools.parseNames(objectNames, true);
-            texList = Tools.parseNames(textureNames, true);
-            mapList = Tools.parseNames(mapNames, true);
-            textureDisplayList = Tools.parseNames(textureDisplayNames);
-            fuelTankSetupList = Tools.parseIntegers(fuelTankSetups);            
-
-            debug.debugMessage("FStextureSwitch2 found " + texList.Count + " textures, using number " + selectedTexture + ", found " + objectList.Count + " objects, " + mapList.Count + " maps");
-
-            foreach (String targetObjectName in objectList)
-            {
-                Transform[] targetObjectTransformArray = part.FindModelTransforms(targetObjectName);
-                List<Material> matList = new List<Material>();
-                foreach (Transform t in targetObjectTransformArray)
-                {
-                    if (t != null && t.gameObject.renderer != null) // check for if the object even has a mesh. otherwise part list loading crashes
-                    {
-                        Material targetMat = t.gameObject.renderer.material;
-                        if (targetMat != null)
-                        {
-                            if (!matList.Contains(targetMat))
-                            {
-                                matList.Add(targetMat);                                
-                            }
-                        }                        
-                    }                    
-                }
-                targetMats.Add(matList);
-            }            
-
-            if (useFuelSwitchModule)
-            {
-                fuelSwitch = part.GetComponent<FSfuelSwitch>(); // only looking for first, not supporting multiple fuel switchers
-                if (fuelSwitch == null)
-                {
-                    useFuelSwitchModule = false;
-                    Debug.Log("FStextureSwitch2: no FSfuelSwitch module found, despite useFuelSwitchModule being true");
-                }
-            }            
+            initializeData();           
 
             useTextureAll();            
 
@@ -306,6 +270,52 @@ namespace Firespitter.customization
             Events["previousTextureEvent"].guiName = prevButtonText;
             Fields["currentTextureName"].guiName = statusText;
 
+        }
+
+        private void initializeData()
+        {
+            if (!initialized)
+            {
+                objectList = Tools.parseNames(objectNames, true);
+                texList = Tools.parseNames(textureNames, true);
+                mapList = Tools.parseNames(mapNames, true);
+                textureDisplayList = Tools.parseNames(textureDisplayNames);
+                fuelTankSetupList = Tools.parseIntegers(fuelTankSetups);
+
+                debug.debugMessage("FStextureSwitch2 found " + texList.Count + " textures, using number " + selectedTexture + ", found " + objectList.Count + " objects, " + mapList.Count + " maps");
+
+                foreach (String targetObjectName in objectList)
+                {
+                    Transform[] targetObjectTransformArray = part.FindModelTransforms(targetObjectName);
+                    List<Material> matList = new List<Material>();
+                    foreach (Transform t in targetObjectTransformArray)
+                    {
+                        if (t != null && t.gameObject.renderer != null) // check for if the object even has a mesh. otherwise part list loading crashes
+                        {
+                            Material targetMat = t.gameObject.renderer.material;
+                            if (targetMat != null)
+                            {
+                                if (!matList.Contains(targetMat))
+                                {
+                                    matList.Add(targetMat);
+                                }
+                            }
+                        }
+                    }
+                    targetMats.Add(matList);
+                }
+
+                if (useFuelSwitchModule)
+                {
+                    fuelSwitch = part.GetComponent<FSfuelSwitch>(); // only looking for first, not supporting multiple fuel switchers
+                    if (fuelSwitch == null)
+                    {
+                        useFuelSwitchModule = false;
+                        Debug.Log("FStextureSwitch2: no FSfuelSwitch module found, despite useFuelSwitchModule being true");
+                    }
+                }
+                initialized = true;
+            }
         }
     }
 }
