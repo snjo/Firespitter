@@ -443,6 +443,11 @@ namespace Firespitter.engine
                 engine.maxThrust = Mathf.Lerp(minThrust, maxThrust, engineLengthSlider);            
         }
 
+        public void OnDestroy()
+        {
+            destroyBladeObjects();
+        }
+
         //private Rect sliderRect(int current)
         //{
         //    return new Rect(sliderRectBase.x, sliderRectBase.y + lineHeight * currentGUILine, sliderRectBase.width, sliderRectBase.height);

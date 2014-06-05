@@ -86,19 +86,22 @@ namespace Firespitter
 
         public static List<string> parseNames(string names)
         {
-            //string[] source = names.Split(';');
-            //return source.ToList<string>();
-            return parseNames(names, false);
+            return parseNames(names, false, string.Empty);
         }
 
         public static List<string> parseNames(string names, bool replaceBackslashErrors)
+        {
+            return parseNames(names, replaceBackslashErrors, string.Empty);
+        }
+
+        public static List<string> parseNames(string names, bool replaceBackslashErrors, string prefix)
         {
             string[] source = names.Split(';');
             if (replaceBackslashErrors)
             {
                 for (int i = 0; i < source.Length; i++)
                 {
-                    source[i] = source[i].Replace('\\', '/');
+                    source[i] = (prefix + source[i]).Replace('\\', '/');
                 }
             }
             return source.ToList<string>();

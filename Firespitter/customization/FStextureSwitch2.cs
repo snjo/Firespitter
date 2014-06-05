@@ -11,8 +11,8 @@ namespace Firespitter.customization
     {
         [KSPField]
         public int moduleID = 0;
-        //[KSPField]
-        //public string displayName = "Texture switcher";
+        [KSPField]
+        public string textureRootFolder = string.Empty;
         [KSPField]
         public string objectNames = string.Empty;
         [KSPField]
@@ -286,8 +286,8 @@ namespace Firespitter.customization
                 if (useFuelSwitchModule) updateSymmetry = true;
 
                 objectList = Tools.parseNames(objectNames, true);
-                texList = Tools.parseNames(textureNames, true);
-                mapList = Tools.parseNames(mapNames, true);
+                texList = Tools.parseNames(textureNames, true, textureRootFolder);
+                mapList = Tools.parseNames(mapNames, true, textureRootFolder);
                 textureDisplayList = Tools.parseNames(textureDisplayNames);
                 fuelTankSetupList = Tools.parseIntegers(fuelTankSetups);
 

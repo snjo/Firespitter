@@ -224,9 +224,8 @@ namespace Firespitter.engine
 
             RPM = Mathf.Clamp(RPM, 0f, maxRPM);
 
-            Vector3 vel = GetVelocity(part.rigidbody, thrustTransforms[0].position);
-            float thrustTransformRelativeSpeed = Vector3.Dot(vel, thrustTransforms[0].forward) * vel.magnitude;
-            thrustTransformRelativeSpeed = Mathf.Max(0f, thrustTransformRelativeSpeed);
+            float thrustTransformRelativeSpeed = getForwardSpeed();
+
             float applyThrust = thrustPerTransform * RPMnormalized * atmosphericThrustCurve.Evaluate((float)vessel.atmDensity) * velocityCurve.Evaluate(thrustTransformRelativeSpeed);
             thrustInfo = applyThrust * thrustTransforms.Length;
 
@@ -237,6 +236,14 @@ namespace Firespitter.engine
             smoothFxThrust = Mathf.Lerp(smoothFxThrust, finalThrustNormalized, smoothFXSpeed);
 
             updateStatus();
+        }
+
+        private float getForwardSpeed()
+        {
+            Vector3 vel = GetVelocity(part.rigidbody, thrustTransforms[0].position);
+            float thrustTransformRelativeSpeed = Vector3.Dot(-vel.normalized, thrustTransforms[0].forward) * vel.magnitude;
+            thrustTransformRelativeSpeed = Mathf.Max(0f, thrustTransformRelativeSpeed);            
+            return thrustTransformRelativeSpeed;
         }
 
         public Vector3 GetVelocity(Rigidbody rigidbody, Vector3 refPoint) // from Ferram
