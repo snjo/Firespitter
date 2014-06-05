@@ -45,8 +45,11 @@ namespace Firespitter.info
 
         Vector3 centerPoint;
         Vector3 guidePointForward;
-        Transform guidePointArrowLineLeft;
-        Transform guidePointArrowLineRight;
+
+        Vector3 guidePointArrowLineLeft = Vector3.zero;
+        Vector3 guidePointArrowLineRight = Vector3.zero;
+        //GameObject guidePointArrowLineLeft;
+        //GameObject guidePointArrowLineRight;
 
         private GameObject worldDirection;
 
@@ -61,20 +64,30 @@ namespace Firespitter.info
             guideLineTexWrong = createTexture(wrongColor);
             createLineRenderer();
 
-            guidePointArrowLineLeft = new GameObject().transform;
-            guidePointArrowLineRight = new GameObject().transform;
+            //guidePointArrowLineLeft = new GameObject();
+            //guidePointArrowLineRight = new GameObject();
+            //guidePointArrowLineLeft.transform.parent = part.transform;
+            //guidePointArrowLineRight.transform.parent = part.transform;
         }
 
         private void createLineRenderer()
         {
             guideLine = part.gameObject.GetComponent<LineRenderer>();
-            if (guideLine == null)
-                guideLine = part.gameObject.AddComponent<LineRenderer>();
+            if (guideLine != null)
+            {
+                Debug.Log("destroying existing linerenderer " + part.GetInstanceID());
+                DestroyImmediate(guideLine);
+            }
+            Debug.Log("creating linerenderer" + part.GetInstanceID());
+            guideLine = part.gameObject.AddComponent<LineRenderer>();
+
+            Debug.Log("setting line properties" + part.GetInstanceID());
             guideLine.SetWidth(0.02f, 0.02f);
             guideLine.material = new Material(Shader.Find("Unlit/Texture"));
             guideLine.material.SetTexture("_MainTex", guideLineTexCorrect);
             guideLine.SetVertexCount(5);
             guideLine.useWorldSpace = true;
+            Debug.Log("create line done" + part.GetInstanceID());
         }
 
         private void Update()
@@ -111,18 +124,18 @@ namespace Firespitter.info
             
             guideLine.SetPosition(0, centerPoint);
             guideLine.SetPosition(1, guidePointForward);
-            guideLine.SetPosition(2, guidePointArrowLineLeft.position);
+            guideLine.SetPosition(2, guidePointArrowLineLeft);
             guideLine.SetPosition(3, guidePointForward);
-            guideLine.SetPosition(4, guidePointArrowLineRight.position);
+            guideLine.SetPosition(4, guidePointArrowLineRight);
         }
 
         private void setupArrowLines(Vector3 arrowHeadRear, Vector3 direction)
         {
-            guidePointArrowLineLeft.position = arrowHeadRear;
-            guidePointArrowLineLeft.Translate(-direction * lineLength * 0.2f);
+            guidePointArrowLineLeft = arrowHeadRear;
+            guidePointArrowLineLeft += -direction * lineLength * 0.2f;
 
-            guidePointArrowLineRight.position = arrowHeadRear;
-            guidePointArrowLineRight.Translate(direction * lineLength * 0.2f);            
+            guidePointArrowLineRight = arrowHeadRear;
+            guidePointArrowLineRight += direction * lineLength * 0.2f;
         }
 
         private void updateVisibility()
@@ -130,13 +143,15 @@ namespace Firespitter.info
             if (part.parent != null)
             {
                 visible = visibleWhenAttached;
-                guideLine.enabled = visible;
+                //if (guideLine != null)
+                //    guideLine.enabled = visible;
             }
             else
             {
                 visible = visibleWhenNotAttached;
             }
-            guideLine.enabled = visible;
+            if (guideLine != null)
+                guideLine.enabled = visible;
         }
 
         private void drawText(Vector3 worldPosition, string value)

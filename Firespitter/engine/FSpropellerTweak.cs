@@ -180,7 +180,7 @@ namespace Firespitter.engine
 
         private Firespitter.engine.FSengineWrapper engine;
 
-        public bool initialized = false;
+        private bool initialized = false;
         private bool maxThrustSet = false;
         private bool previewObjectsDestroyed = false;
 
@@ -200,19 +200,19 @@ namespace Firespitter.engine
             if (bladeNumber != blades.Count)
             {
                 while (blades.Count < bladeNumber) // should convert that to not a while loop
-                {
+                {                    
                     GameObject newBlade = (GameObject)GameObject.Instantiate(blades[0]);
-                    blades.Add(newBlade);
+                    blades.Add(newBlade);                    
                     newBlade.transform.parent = propellerRoot;
                     newBlade.transform.position = blades[0].transform.position;
                     newBlade.transform.localScale = Vector3.one;
                 }
                 if (blades.Count > bladeNumber)
-                {
-                    //Debug.Log("too many blades");
-                    for (int i = bladeNumber; i < blades.Count; i++)
+                {                    
+                    //for (int i = bladeNumber; i < blades.Count; i++)
+                    for (int i = blades.Count - 1; i >= bladeNumber-1 && i > 0; i--)
                     {
-                        //Debug.Log("destroying blade " + i);
+                        //Debug.Log("too many blades, destroying blade " + i);
                         GameObject.Destroy(blades[i]);
                         blades.RemoveAt(i);
                     }
@@ -326,9 +326,15 @@ namespace Firespitter.engine
         {
             if (!HighLogic.LoadedSceneIsFlight && !HighLogic.LoadedSceneIsEditor) return;
 
+            //Debug.Log("FSpropellerTweak Onstart running on " + part.GetInstanceID());
+
+            blades = new List<GameObject>();
+
             destroyPreviewObjects();
 
+            initialized = false;
             initialize();
+            
         }
 
         public void initialize()
@@ -398,7 +404,9 @@ namespace Firespitter.engine
         private void destroyBladeObjects()
         {
             for (int i = blades.Count - 1; i > 0; i--)
-            {                
+            {
+                //Debug.Log("destroying blade " + i);
+                Destroy(blades[i]);
                 blades.RemoveAt(i);
             }
             foreach (Transform t in gameObject.GetComponentsInChildren<Transform>())
@@ -408,6 +416,7 @@ namespace Firespitter.engine
                     Destroy(t.gameObject);
                 }
             }
+
             //GameObject targetBlade = blades[target];            
             //GameObject.Destroy(targetBlade);
         }
@@ -415,8 +424,10 @@ namespace Firespitter.engine
         // In hangar
         public void Update()
         {
-            if (HighLogic.LoadedSceneIsEditor && initialized)
+            if (HighLogic.LoadedSceneIsEditor && initialized && part.parent != null)
             {
+                //Debug.Log("FSpropellerTweak Update running on " + part.GetInstanceID());
+
                 bladeNumber = Mathf.FloorToInt(bladeNumberRaw);
                 exhaustNumber = Mathf.FloorToInt(engineLengthSliderRaw);
                 engineLengthSlider = (float)Math.Round(engineLengthSliderRaw, 2);

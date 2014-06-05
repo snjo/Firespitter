@@ -187,6 +187,9 @@ namespace Firespitter.customization
                     Debug.Log("map exists in db");
                     targetMat.SetTexture(additionalMapType, GameDatabase.Instance.GetTexture(mapList[selectedTexture], mapIsNormal));
                     selectedMapURL = mapList[selectedTexture];
+
+                    if (selectedTexture < textureDisplayList.Count && texList.Count == 0)
+                        currentTextureName = textureDisplayList[selectedTexture];
                 }
             }
             else

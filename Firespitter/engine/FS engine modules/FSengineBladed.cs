@@ -83,7 +83,7 @@ namespace Firespitter.engine
         private Transform rotorHubTransform;
         private Transform baseTransform;
 
-        private LineRenderer debugLine;        
+        //private LineRenderer debugLine;        
 
         [KSPEvent(guiName = "Hover", guiActive = true)]
         public void toggleHover()
@@ -136,11 +136,11 @@ namespace Firespitter.engine
                 circumeference = span * propTweak.bladeLengthSlider * Mathf.PI * 2f;
             }
 
-            if (debugMode)
-            {
-                debugLine = part.gameObject.AddComponent<LineRenderer>();
-                debugLine.SetWidth(0.02f, 0.02f);
-            }
+            //if (debugMode)
+            //{
+            //    debugLine = part.gameObject.AddComponent<LineRenderer>();
+            //    debugLine.SetWidth(0.02f, 0.02f);
+            //}
 
             if (HighLogic.LoadedSceneIsFlight)
                 flightStarted = true;
@@ -151,7 +151,7 @@ namespace Firespitter.engine
             propTweak = part.GetComponent<engine.FSpropellerTweak>();
             if (propTweak != null)
             {
-                if (!propTweak.initialized)
+                //if (!propTweak.initialized)
                     propTweak.initialize();
 
                 bladeLifts.Clear();
@@ -193,7 +193,7 @@ namespace Firespitter.engine
 
             updateStatus();
 
-            drawDebugLine();
+            //drawDebugLine();
         }
 
         private float getAirSpeed()
@@ -259,20 +259,20 @@ namespace Firespitter.engine
             getSteeringInput();            
         }
 
-        private void drawDebugLine()
-        {
-            if (debugMode)
-            {
-                debugLine.SetVertexCount(bladeLifts.Count + 1);
-                for (int i = 0; i < bladeLifts.Count; i++)
-                {
-                    Vector3 pos = bladeLifts[i].liftTransform.position + -bladeLifts[i].liftTransform.up * (bladeLifts[i].bladePitch / 6f);
-                    debugLine.SetPosition(i, pos);
-                    if (i == 0)
-                        debugLine.SetPosition(bladeLifts.Count, pos);
-                }
-            }
-        }
+        //private void drawDebugLine()
+        //{
+        //    if (debugMode)
+        //    {
+        //        debugLine.SetVertexCount(bladeLifts.Count + 1);
+        //        for (int i = 0; i < bladeLifts.Count; i++)
+        //        {
+        //            Vector3 pos = bladeLifts[i].liftTransform.position + -bladeLifts[i].liftTransform.up * (bladeLifts[i].bladePitch / 6f);
+        //            debugLine.SetPosition(i, pos);
+        //            if (i == 0)
+        //                debugLine.SetPosition(bladeLifts.Count, pos);
+        //        }
+        //    }
+        //}
 
         public override void OnActive()
         {

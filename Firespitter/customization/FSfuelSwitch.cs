@@ -30,15 +30,13 @@ namespace Firespitter.customization
         [KSPField(isPersistant = true)]
         public bool hasLaunched = false;
 
-        // this is toggled on and off in order to update the editor GUI. no other purpose
-        [KSPField(guiActive = false, guiActiveEditor = false, guiName = "Structural")]
-        public string structuralInfo = "";
-
         [KSPField(guiActive = false, guiActiveEditor = true, guiName = "Dry mass")]
         public float dryMassInfo = 0f;
         private List<FSmodularTank> tankList = new List<FSmodularTank>();
         private List<float> weightList = new List<float>();
         private bool initialized = false;
+
+        UIPartActionWindow tweakableUI;
 
         public override void OnStart(PartModule.StartState state)
         {            
@@ -105,6 +103,21 @@ namespace Firespitter.customization
                     }
                 }
             }
+
+            Debug.Log("refreshing UI");
+
+            if (tweakableUI == null)
+            {
+                tweakableUI = Tools.FindActionWindow(part);
+            }
+            if (tweakableUI != null)
+            {
+                tweakableUI.displayDirty = true;
+            }
+            else
+            {
+                Debug.Log("no UI");
+            }
         }
 
         private void setupTankInPart(Part currentPart)
@@ -124,27 +137,26 @@ namespace Firespitter.customization
                     {
                         if (tankList[i].resources[j].name != "Structural")
                         {
-                            Debug.Log("new node: " + tankList[i].resources[j].name);
+                            //Debug.Log("new node: " + tankList[i].resources[j].name);
                             ConfigNode newResourceNode = new ConfigNode("RESOURCE");
                             newResourceNode.AddValue("name", tankList[i].resources[j].name);
                             newResourceNode.AddValue("amount", tankList[i].resources[j].amount);
                             newResourceNode.AddValue("maxAmount", tankList[i].resources[j].maxAmount);
 
-                            Debug.Log("add node to part");
-                            currentPart.AddResource(newResourceNode);
-                            //part.Resources[tankList[i].resources[j].name].enabled = true;
-                            Fields["structuralInfo"].guiActiveEditor = false;
+                            //Debug.Log("add node to part");
+                            currentPart.AddResource(newResourceNode);                          
                         }
                         else
                         {
-                            Fields["structuralInfo"].guiActiveEditor = true;
-                            Debug.Log("Skipping structural fuel type");
+                            //Debug.Log("Skipping structural fuel type");
                         }
                     }
                 }
             }
             currentPart.Resources.UpdateList();
             updateWeight(currentPart, selectedTankSetup);
+
+            
         }
 
         private void updateWeight(Part currentPart, int newTankSetup)
@@ -157,28 +169,25 @@ namespace Firespitter.customization
 
         public override void OnUpdate()
         {
-            //Debug.Log("sts:" + selectedTankSetup + ", tL" + tankList[selectedTankSetup]);
             if (selectedTankSetup < tankList.Count)
             {
-                //Debug.Log("count high enough");
                 if (tankList[selectedTankSetup] != null)
                 {
-                    //Debug.Log("tL stp not null");
                     for (int i = 0; i < tankList[selectedTankSetup].resources.Count; i++)
                     {
-                        //Debug.Log("tL " + i + ": res count " + tankList[selectedTankSetup].resources.Count);
                         if (tankList[selectedTankSetup].resources[i].name == "Structural")
                         {
-                            //Fields["info"].guiActiveEditor = true;
+                            
                         }
                         else
                         {
                             setResource(i, (float)part.Resources[tankList[selectedTankSetup].resources[i].name].amount);
-                            //Fields["info"].guiActiveEditor = false;
                         }
                     }
                 }
             }
+
+            
         }
 
         public void Update()

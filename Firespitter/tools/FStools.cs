@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using System.Reflection;
 
 namespace Firespitter
 {
-    class Tools
+    public static class Tools
     {
         public static Vector3 WorldUp(Vessel vessel)
         {
@@ -106,6 +107,50 @@ namespace Firespitter
             }
             return source.ToList<string>();
         }
+
+        #region refresh tweakable GUI
+        // Code from https://github.com/Swamp-Ig/KSPAPIExtensions/blob/master/Source/Utils/KSPUtils.cs#L62
+
+        private static FieldInfo windowListField;
+
+        /// <summary>
+        /// Find the UIPartActionWindow for a part. Usually this is useful just to mark it as dirty.
+        /// </summary>
+        public static UIPartActionWindow FindActionWindow(this Part part)
+        {
+            if (part == null)
+                return null;
+
+            // We need to do quite a bit of piss-farting about with reflection to 
+            // dig the thing out. We could just use Object.Find, but that requires hitting a heap more objects.
+            UIPartActionController controller = UIPartActionController.Instance;
+            if (controller == null)
+                return null;
+
+            if (windowListField == null)
+            {
+                Type cntrType = typeof(UIPartActionController);
+                foreach (FieldInfo info in cntrType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
+                {
+                    if (info.FieldType == typeof(List<UIPartActionWindow>))
+                    {
+                        windowListField = info;
+                        goto foundField;
+                    }
+                }
+                Debug.LogWarning("*PartUtils* Unable to find UIPartActionWindow list");
+                return null;
+            }
+        foundField:
+
+            List<UIPartActionWindow> uiPartActionWindows = (List<UIPartActionWindow>)windowListField.GetValue(controller);
+            if (uiPartActionWindows == null)
+                return null;
+
+            return uiPartActionWindows.FirstOrDefault(window => window != null && window.part == part);
+        }
+
+        #endregion
     }
 
     public class MouseEventHandler : MonoBehaviour
