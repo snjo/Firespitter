@@ -54,12 +54,12 @@ namespace Firespitter.engine
         /// The engine's maxThrust at the lowest engine size setting
         /// </summary>
         [KSPField]
-        public float minThrust = 0f;
+        public float minThrust = 50f;
         /// <summary>
         /// The engine's maxThrust at the highest engine size setting
         /// </summary>
         [KSPField]
-        public float maxThrust = 0f;
+        public float maxThrust = 150f;
         /// <summary>
         /// The weight of the part with 0 engine size (blades still get added to this)
         /// </summary>
@@ -164,7 +164,7 @@ namespace Firespitter.engine
         private GUIStyle sliderStyle = new GUIStyle();
         [KSPField(guiName = "Blades"), UI_FloatRange(minValue = 2f, maxValue = 12.1f, stepIncrement = 1f)]
         private float bladeNumberRaw = 2f;
-        private List<GameObject> blades = new List<GameObject>();
+        public List<GameObject> blades = new List<GameObject>();
 
         private int exhaustNumber = 0;
         
@@ -180,7 +180,7 @@ namespace Firespitter.engine
 
         private Firespitter.engine.FSengineWrapper engine;
 
-        private bool initialized = false;
+        public bool initialized = false;
         private bool maxThrustSet = false;
         private bool previewObjectsDestroyed = false;
 
@@ -328,53 +328,61 @@ namespace Firespitter.engine
 
             destroyPreviewObjects();
 
-            engine = new FSengineWrapper(part);
+            initialize();
+        }
 
-            bladeNumberRaw = bladeNumber;
-            engineLengthSliderRaw = engineLengthSlider;
-            BladeLengthSliderRaw = bladeLengthSlider;
-
-            //Debug.Log("FSpropellerTweak: find blade root");
-
-            Transform originalBlade = part.FindModelTransform(bladeRootName);
-            if (originalBlade != null)
+        public void initialize()
+        {
+            if (!initialized)
             {
-                blades.Add(originalBlade.gameObject);
+                engine = new FSengineWrapper(part);
+
+                bladeNumberRaw = bladeNumber;
+                engineLengthSliderRaw = engineLengthSlider;
+                BladeLengthSliderRaw = bladeLengthSlider;
+
+                //Debug.Log("FSpropellerTweak: find blade root");
+
+                Transform originalBlade = part.FindModelTransform(bladeRootName);
+                if (originalBlade != null)
+                {
+                    blades.Add(originalBlade.gameObject);
+                }
+
+                //Debug.Log("FSpropellerTweak: find exhaust");
+
+                //GameObject originalExhaust = GameObject.Find(exhaustName);
+                Transform originalExhaust = part.FindModelTransform(exhaustName);
+                if (originalExhaust != null)
+                {
+                    exhausts.Add(originalExhaust.gameObject);
+                }
+
+                //Debug.Log("FSpropellerTweak: find engine extension");
+
+                Transform engineExtensionTransform = part.FindModelTransform(engineExtenderName);
+                if (engineExtensionTransform != null)
+                    engineExtension = engineExtensionTransform.gameObject;
+
+                //Debug.Log("FSpropellerTweak: find propeller root");
+
+                propellerRoot = part.FindModelTransform(propellerRootName);
+                if (propellerRoot == null) Debug.Log("FSpropellerTweak: Nasty error, no propeller root found named " + propellerRootName);
+
+                movableSection = part.FindModelTransform(movableSectionName);
+                engineEndPoint = part.FindModelTransform(engineEndPointName);
+                //centerOfMass = part.FindModelTransform(centerOfMassName);
+
+                //Debug.Log("FSpropellerTweak: Blades: " + blades.Count);
+
+                updateBladeList();
+                updateEngineLength();
+                updateBladeLength();
+
+                part.mass = finalWeight;
+
+                initialized = true;
             }
-
-            //Debug.Log("FSpropellerTweak: find exhaust");
-
-            //GameObject originalExhaust = GameObject.Find(exhaustName);
-            Transform originalExhaust = part.FindModelTransform(exhaustName);
-            if (originalExhaust != null)
-            {
-                exhausts.Add(originalExhaust.gameObject);
-            }
-
-            //Debug.Log("FSpropellerTweak: find engine extension");
-
-            Transform engineExtensionTransform = part.FindModelTransform(engineExtenderName);
-            if (engineExtensionTransform != null)
-                engineExtension = engineExtensionTransform.gameObject;
-
-            //Debug.Log("FSpropellerTweak: find propeller root");
-
-            propellerRoot = part.FindModelTransform(propellerRootName);
-            if (propellerRoot == null) Debug.Log("FSpropellerTweak: Nasty error, no propeller root found named " + propellerRootName);
-
-            movableSection = part.FindModelTransform(movableSectionName);
-            engineEndPoint = part.FindModelTransform(engineEndPointName);
-            //centerOfMass = part.FindModelTransform(centerOfMassName);
-
-            //Debug.Log("FSpropellerTweak: Blades: " + blades.Count);
-
-            updateBladeList();
-            updateEngineLength();
-            updateBladeLength();
-            
-            part.mass = finalWeight;            
-
-            initialized = true;
         }
 
         private void destroyPreviewObjects()

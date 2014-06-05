@@ -185,24 +185,29 @@ namespace Firespitter.engine
                 if (engine.type == Firespitter.engine.FSengineWrapper.EngineType.FSengine)
                 {
                     currentRPM = engine.fsengine.RPM / engine.fsengine.maxRPM;
+                    //Debug.Log("Fsengine found");
                 }
                 else
                 {
                     //check if the engine is running, or the airplane is moving through the air
                     if (!engine.getIgnitionState || engine.getFlameoutState)
-                    {
+                    {                        
                         if (FlightGlobals.ship_srfSpeed > windmillMinAirspeed && vessel.atmDensity > 0.1f)
                             targetRPM = windmillRPM + (windmillRPM * FlightInputHandler.state.mainThrottle); //spins depending on the blade angle
                         else
                             targetRPM = 0f;
                     }
                     else
+                    {
                         targetRPM = 1f;
+                    }
                     currentRPM = Mathf.Lerp(currentRPM, targetRPM, engine.engineAccelerationSpeed / spinUpTime * TimeWarp.deltaTime);
                 }
 
                 if (currentRPM != 0f)
                 {
+                    //Debug.Log("RPM not 0, prop null: " + (propeller == null) + ", disc null: " + (rotorDisc == null));
+
                     float finalRotationSpeed = rotationSpeed;
                     if (thrustRPM != 0f)
                     {

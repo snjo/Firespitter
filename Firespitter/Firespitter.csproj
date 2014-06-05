@@ -75,7 +75,7 @@
     <Compile Include="engine\Stock based modules\FSengineHover.cs" />
     <Compile Include="engine\FSengineWrapper.cs" />
     <Compile Include="engine\FSgroundParticles.cs" />
-    <Compile Include="engine\FSheliLiftEngine.cs" />
+    <Compile Include="unused\FSheliLiftEngine.cs" />
     <Compile Include="engine\FS engine modules\FSengine.cs" />
     <Compile Include="engine\FSpropellerTweak.cs" />
     <Compile Include="customization\FSmeshSwitch.cs" />
@@ -83,7 +83,7 @@
     <Compile Include="tools\MeshCreator.cs" />
     <Compile Include="tools\CompatabilityChecker.cs" />
     <Compile Include="tools\FSversionCheck.cs" />
-    <Compile Include="unused\FShelicopterEngine.cs" />
+    <None Include="unused\FShelicopterEngine.cs" />
     <Compile Include="engine\FSparticleFX.cs" />
     <Compile Include="engine\FSvelocityController.cs" />
     <Compile Include="info\FSinputVisualizer.cs" />
@@ -114,7 +114,7 @@
     <Compile Include="info\FSinfoPopup.cs" />
     <Compile Include="cockpit\FSmonitorScript.cs" />
     <Compile Include="tools\FSnodeLoader.cs" />
-    <Compile Include="unused\FSplaceStaticMesh.cs" />
+    <None Include="unused\FSplaceStaticMesh.cs" />
     <Compile Include="engine\FSplanePropellerSpinner.cs" />
     <Compile Include="info\FSradarAltitude.cs" />
     <None Include="unused\FSremoteControl.cs" />

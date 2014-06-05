@@ -35,7 +35,7 @@ namespace Firespitter.engine
         /// Fed to a floatCurve in the format "key,value;key,value" or "key,value,inTangent,outTangent;key,value,inTangent,outTangent"
         /// </summary>
         [KSPField]
-        public string fuelConsumption = "0,0001;1,0.01";
+        public string fuelConsumption = "0,0.0001;1,0.01";
         /// <summary>
         /// Sets the thrust at various throttle settings. This means built in afterburner support. In tandem with fuelConsumption, you could have a steep thrust and fuel use ramp up at 70%-100%.
         /// Fed to a floatCurve in the format "key,value;key,value" or "key,value,inTangent,outTangent;key,value,inTangent,outTangent"
@@ -98,11 +98,14 @@ namespace Firespitter.engine
         [KSPField(guiName = "Cause", guiActive = false)]
         public string cause = "";
 
-        private FloatCurve atmosphericThrustCurve = new FloatCurve();
-        private FloatCurve velocityCurve = new FloatCurve();
-        private FloatCurve fuelConsumptionCurve = new FloatCurve();
-        private FloatCurve throttleThrustCurve = new FloatCurve();
-        private List<FSresource> resourceList = new List<FSresource>();
+        [KSPField]
+        public bool debugMode = false;
+
+        protected FloatCurve atmosphericThrustCurve = new FloatCurve();
+        protected FloatCurve velocityCurve = new FloatCurve();
+        protected FloatCurve fuelConsumptionCurve = new FloatCurve();
+        protected FloatCurve throttleThrustCurve = new FloatCurve();
+        protected List<FSresource> resourceList = new List<FSresource>();
 
         [KSPEvent(guiName = "Activate Engine", guiActive = true, guiActiveUnfocused = true, unfocusedRange = 5f)]
         public void Activate()
@@ -117,14 +120,14 @@ namespace Firespitter.engine
             EngineIgnited = false;
         }
 
-        private void updateStatus()
+        protected void updateStatus()
         {
             if (EngineIgnited)
             {
                 if (flameout)
                 {
                     status = "Flameout!";                    
-                    Fields["cause"].guiActive = true;
+                    Fields["cause"].guiActive = true;                    
                                         
                     //toadicus: UIPartActionWindow::displayDirty = true /does/ make the tweakable window redraw next frame                    
                 }
@@ -167,7 +170,7 @@ namespace Firespitter.engine
             }
         }
 
-        private void fillResourceList(string resourceString)
+        protected void fillResourceList(string resourceString)
         {
             string[] keyString = resourceString.Split(';');
             for (int i = 0; i < keyString.Length; i++)
@@ -178,11 +181,11 @@ namespace Firespitter.engine
                     try
                     {
                         resourceList.Add(new FSresource(valueString[0], float.Parse(valueString[1])));
-                        Debug.Log("FSengine: Added resource " + valueString[0] + ", ratio " + valueString[1]);
+                        //Debug.Log("FSengine: Added resource " + valueString[0] + ", ratio " + valueString[1]);
                     }
                     catch
                     {
-                        Debug.Log("FSengine: could not add resource to list: " + valueString[0]);
+                        //Debug.Log("FSengine: could not add resource to list: " + valueString[0]);
                     }
                 }
             }
@@ -201,8 +204,10 @@ namespace Firespitter.engine
             fillResourceList(resources);
         }
 
-        public override void OnFixedUpdate()
+        public virtual void FixedUpdate()
         {
+            if (!HighLogic.LoadedSceneIsFlight) return;
+
             calculateFinalThrust();
 
             //burn fuel        
@@ -219,7 +224,10 @@ namespace Firespitter.engine
 
             RPM = Mathf.Clamp(RPM, 0f, maxRPM);
 
-            float applyThrust = thrustPerTransform * RPMnormalized * atmosphericThrustCurve.Evaluate((float)vessel.atmDensity) * velocityCurve.Evaluate(part.rigidbody.velocity.magnitude);
+            Vector3 vel = GetVelocity(part.rigidbody, thrustTransforms[0].position);
+            float thrustTransformRelativeSpeed = Vector3.Dot(vel, thrustTransforms[0].forward) * vel.magnitude;
+            thrustTransformRelativeSpeed = Mathf.Max(0f, thrustTransformRelativeSpeed);
+            float applyThrust = thrustPerTransform * RPMnormalized * atmosphericThrustCurve.Evaluate((float)vessel.atmDensity) * velocityCurve.Evaluate(thrustTransformRelativeSpeed);
             thrustInfo = applyThrust * thrustTransforms.Length;
 
             for (int i = 0; i < thrustTransforms.Length; i++)
@@ -231,35 +239,65 @@ namespace Firespitter.engine
             updateStatus();
         }
 
-        private void calculateFinalThrust()
+        public Vector3 GetVelocity(Rigidbody rigidbody, Vector3 refPoint) // from Ferram
+        {
+            Vector3 newVelocity = Vector3.zero;
+            try
+            {
+                newVelocity += rigidbody.GetPointVelocity(refPoint);
+                newVelocity += Krakensbane.GetFrameVelocityV3f() - Krakensbane.GetLastCorrection() * TimeWarp.fixedDeltaTime;
+            }
+            catch (Exception e)
+            {
+                if (debugMode)
+                    Debug.Log("FSengineBladed GetVelocity Exception " + e.GetType().ToString());
+            }
+            return newVelocity;
+        }
+
+        protected void calculateFinalThrust()
         {
             finalThrust = maxThrust * Mathf.Clamp(requestedThrottle, -maxThrottleNormalized, maxThrottleNormalized) * throttleThrustCurve.Evaluate(requestedThrottle);
             thrustPerTransform = finalThrust / thrustTransforms.Length;
             finalThrustNormalized = finalThrust / maxThrust;
         }
 
-        private float consumeResources()
+        protected float consumeResources()
         {
             float fuelReceivedNormalized = 0f;
             float lowestResourceSupply = 1f;
             if (EngineIgnited)
             {
                 for (int i = 0; i < resourceList.Count; i++)
-                {
+                {                    
                     float requestFuelAmount = fuelConsumptionCurve.Evaluate(finalThrustNormalized) * maxThrust * resourceList[i].ratio * TimeWarp.deltaTime;
+
+                    //Debug.Log("reqf: fcc " + fuelConsumptionCurve.Evaluate(finalThrustNormalized) + " maxTh " + maxThrust + " resLr " + resourceList[i].ratio);
+
                     if (requestFuelAmount > 0f)
                     {
                         float fuelReceived = part.RequestResource(resourceList[i].name, requestFuelAmount);
                         resourceList[i].currentSupply = Mathf.Clamp(fuelReceived / requestFuelAmount, 0f, 1f);
                         if (resourceList[i].currentSupply < 0.1f) cause = resourceList[i].name + " deprived";
                     }
+                    //Debug.Log("resource " + i + " : " + requestFuelAmount + ", " + resourceList[i].name);
 
                     lowestResourceSupply = Mathf.Min(lowestResourceSupply, resourceList[i].currentSupply);
                 }
 
                 fuelReceivedNormalized = lowestResourceSupply;
-                if (fuelReceivedNormalized < flameoutThreshold && fuelConsumptionCurve.Evaluate(finalThrustNormalized) > 0f) flameout = true;
-                else flameout = false;
+
+                if (fuelReceivedNormalized < flameoutThreshold
+                    && fuelConsumptionCurve.Evaluate(finalThrustNormalized) > 0f
+                    && throttleThrustCurve.Evaluate(requestedThrottle) > 0f)
+                {
+                    flameout = true;
+                    //Debug.Log("flameout: " + fuelReceivedNormalized.ToString() + " / fcc " + fuelConsumptionCurve.Evaluate(finalThrustNormalized));
+                }
+                else
+                {
+                    flameout = false;
+                }
             }
             return fuelReceivedNormalized;
         }
@@ -275,6 +313,7 @@ namespace Firespitter.engine
 
         public override void OnUpdate()
         {
+
             maxThrottle = Mathf.Round(maxThrottle);
 
             if (HighLogic.LoadedSceneIsFlight)

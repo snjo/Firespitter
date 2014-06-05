@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace Firespitter.aero
 {
-    class FSbladeLiftSurface : PartModule
+    class FSbladeLiftSurface : MonoBehaviour
     {
         [KSPField]
         public string liftTransformName = "bladePoint";
         [KSPField]
         public string referenceTransformName = "bladeRef";
-        [KSPField]
-        public string debugCubeName = "Cube";
+        //[KSPField]
+        //public string debugCubeName = "Cube";
         [KSPField]
         public float power = 0.0008f;
         [KSPField]
@@ -37,7 +37,9 @@ namespace Firespitter.aero
         [KSPField]
         public int moduleID = 0;
 
-        public bool FARActive = false;
+        public Part part;
+        public GameObject thisGameObject;
+        //public bool FARActive = false;
 
         public Transform liftTransform;
         public Transform referenceTransform;
@@ -49,19 +51,25 @@ namespace Firespitter.aero
         public float lift = 0f;
         public float discDrag = 0f;
         public float bladeDrag = 0f;
-        public bool fullSimulation = true;
+        public bool fullSimulation = false;
 
         public float pointVelocityMagnitude = 0f;
 
         [KSPField]
         public bool debugMode = true;
-        private bool initialized = false;
+        private bool flightStarted = false;
         private Vector2 liftAndDrag = new Vector2(0f, 0f);
         private float speed = 0f;
         public float realSpeed = 0f;
         public Vector3 bladeVelocity = Vector3.zero;
         public Vector3 partVelocity = Vector3.zero;
-        private List<FSliftSurface> liftSurfaces = new List<FSliftSurface>();
+
+        // info field used for debugging
+        public float bladePitch = 0f;
+
+        //private List<FSbladeLiftSurface> liftSurfaces = new List<FSbladeLiftSurface>();
+
+        private bool initialized = false;
 
         public Vector3 GetVelocity(Rigidbody rigidbody, Vector3 refPoint) // from Ferram
         {
@@ -89,10 +97,19 @@ namespace Firespitter.aero
 
         private Vector2 getLiftAndDrag()
         {
+            
             Vector3 pointVelocity = -referenceTransform.forward.normalized * pointVelocityMagnitude;
+            
+            if (part == null)
+            {
+                Debug.Log("FSbladeLiftSurface: part is null");
+                return Vector2.zero;
+            }
+            
             commonRigidBody = part.Rigidbody;
             if (commonRigidBody != null)
             {
+                
                 partVelocity = GetVelocity(commonRigidBody, liftTransform.position);
                 //bladeVelocity = partVelocity + pointVelocity;
                 bladeVelocity = pointVelocity; // test
@@ -100,6 +117,7 @@ namespace Firespitter.aero
                 if (fullSimulation) bladeVelocity += partVelocity;
                 //velocity = pointVelocity; //+ (GetVelocity(commonRigidBody, liftTransform.position).magnitude * -liftTransform.up);
 
+                
                 speed = bladeVelocity.magnitude;
                 float angleOfAttackRad = CalculateAoA(liftTransform, bladeVelocity);
                 float liftCoeff = 2f * Mathf.PI * angleOfAttackRad;
@@ -110,6 +128,7 @@ namespace Firespitter.aero
 
                 discDrag = 0.5f * dragCoeff * airDensity * (partVelocity.magnitude * partVelocity.magnitude) * wingArea;
 
+                
                 lift *= power; // modified by too low blade speed //;
                 discDrag *= power;
                 bladeDrag *= power;
@@ -127,84 +146,111 @@ namespace Firespitter.aero
             return liftVector;
         }
 
-        public override string GetInfo()
-        {
-            string info = string.Empty;
-            info = String.Concat("Aerodynamic surface\nName: ",
-                displayName, "\n",
-                "Area: ", wingArea);
+        //public override string GetInfo()
+        //{
+        //    string info = string.Empty;
+        //    info = String.Concat("Aerodynamic surface\nName: ",
+        //        displayName, "\n",
+        //        "Area: ", wingArea);
 
-            return info;
+        //    return info;
+        //}
+
+        //public override void OnStart(PartModule.StartState state)
+        //{
+        //    if (!initialized)
+        //    {
+        //        initialize();      
+        //    }
+        //}
+
+        private Transform findTransform(string transformName)
+        {
+            Transform result = null;
+
+            foreach (Transform t in thisGameObject.GetComponentsInChildren<Transform>())
+            {
+                if (t.gameObject.name == transformName)
+                {
+                    result = t;
+                }
+            }
+            return result;
         }
 
-        public override void OnStart(PartModule.StartState state)
-        {
-            FARActive = AssemblyLoader.loadedAssemblies.Any(a => a.assembly.GetName().Name.Equals("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));
-            // This line breaks the plugin :(
-            if (FARActive)
-            {
-                this.enabled = false;
-            }
+        public void initialize()
+        {            
 
-            liftTransform = part.FindModelTransform(liftTransformName);
-            referenceTransform = part.FindModelTransform(referenceTransformName);
-            debugCubeTransform = part.FindModelTransform(debugCubeName);
+            //liftTransform = part.FindModelTransform(liftTransformName);            
+            //referenceTransform = part.FindModelTransform(referenceTransformName);
+            //debugCubeTransform = part.FindModelTransform(debugCubeName);
 
-            originalRotation = liftTransform.localRotation;
+            liftTransform = findTransform(liftTransformName);
+            referenceTransform = findTransform(referenceTransformName);            
 
             if (liftTransform == null)
             {
                 Debug.Log("FSliftSurface: Can't find lift transform " + liftTransformName);
             }
-            //if (moduleID == 0)
-            //{
-            liftSurfaces = part.GetComponents<FSliftSurface>().ToList();
-            //liftSurfaces.Add(this); // uhm, what?
-            //}        
+            else
+            {
+                originalRotation = liftTransform.localRotation;
+            }
+
+            //liftSurfaces = part.GetComponents<FSbladeLiftSurface>().ToList();
+
+            initialized = true;
         }
 
         public void FixedUpdate()
         {
             if (!HighLogic.LoadedSceneIsFlight || !initialized) return;
 
-            airDensity = (float)vessel.atmDensity;
-            liftAndDrag = getLiftAndDrag();
-
-            Vector3 liftVector = getLiftVector();
-
-            commonRigidBody.AddForceAtPosition(liftVector, liftTransform.position);
-
-            commonRigidBody.AddForceAtPosition(liftAndDrag.y * dragMultiplier * -commonRigidBody.GetPointVelocity(liftTransform.position).normalized, liftTransform.position);
-        }
-
-        public override void OnUpdate()
-        {
-            base.OnUpdate();
-            initialized = true;
-        }
-
-        public void OnCenterOfLiftQuery(CenterOfLiftQuery qry)
-        {
-            if (moduleID == 0)
+            try
             {
-                CoLqueryData queryData = new CoLqueryData();
-                queryData.refVector = qry.refVector;
-                for (int i = 0; i < liftSurfaces.Count; i++)
-                {
-                    CoLqueryData newQuery = liftSurfaces[i].liftQuery(queryData.refVector);
-                    float influence = new Vector2(queryData.dir.magnitude, newQuery.dir.magnitude).normalized.y;
-                    queryData.pos = Vector3.Lerp(queryData.pos, newQuery.pos, influence);
-                    queryData.lift += newQuery.lift;
-                    queryData.dir = Vector3.Lerp(queryData.dir, newQuery.dir, influence);
-                }
+                airDensity = (float)part.vessel.atmDensity;
+                liftAndDrag = getLiftAndDrag();
 
-                queryData.dir.Normalize();
+                Vector3 liftVector = getLiftVector();
 
-                qry.dir = queryData.dir;
-                qry.lift = queryData.lift;
-                qry.pos = queryData.pos;
+                commonRigidBody.AddForceAtPosition(liftVector, liftTransform.position);
+
+                commonRigidBody.AddForceAtPosition(liftAndDrag.y * dragMultiplier * -commonRigidBody.GetPointVelocity(liftTransform.position).normalized, liftTransform.position);
+            }
+            catch (Exception e)
+            {
+                if (debugMode)
+                    Debug.Log("FSbladeLiftSurface FixedUpdate Exception " + e.GetType().ToString());
             }
         }
+
+        //public override void OnUpdate()
+        //{            
+        //    flightStarted = true;
+        //}
+
+        //public void OnCenterOfLiftQuery(CenterOfLiftQuery qry)
+        //{
+        //    if (moduleID == 0)
+        //    {
+        //        CoLqueryData queryData = new CoLqueryData();
+        //        queryData.refVector = qry.refVector;
+        //        for (int i = 0; i < liftSurfaces.Count; i++)
+        //        {
+        //            CoLqueryData newQuery = liftSurfaces[i].liftQuery(queryData.refVector);
+        //            float influence = new Vector2(queryData.dir.magnitude, newQuery.dir.magnitude).normalized.y;
+        //            queryData.pos = Vector3.Lerp(queryData.pos, newQuery.pos, influence);
+        //            queryData.lift += newQuery.lift;
+        //            queryData.dir = Vector3.Lerp(queryData.dir, newQuery.dir, influence);
+        //        }
+
+        //        queryData.dir.Normalize();
+
+        //        qry.dir = queryData.dir;
+        //        qry.lift = queryData.lift;
+        //        qry.pos = queryData.pos;
+        //    }
+        //}
 
         public CoLqueryData liftQuery(Vector3 refVector)
         {
