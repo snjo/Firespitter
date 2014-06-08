@@ -24,6 +24,8 @@ class FSwheel : PartModule
     public string suspensionParentName = "suspensionParent";
     [KSPField]
     public int numberOfWheels = 1;
+    [KSPField]
+    public Vector3 wheelRotationAxis = Vector3.forward;
 
     [KSPField]
     public bool disableColliderWhenRetracted = false;
@@ -827,7 +829,7 @@ class FSwheel : PartModule
             {                
                 float rotation = wheelList.wheels[i].wheelCollider.rpm * TimeWarp.deltaTime * rotationAdjustment;
 
-                wheelList.wheels[i].wheelMesh.Rotate(new Vector3(0f, 0f, rotation));
+                wheelList.wheels[i].wheelMesh.Rotate(wheelRotationAxis * rotation);
 
                 float deltaRPM = Mathf.Max(0f, Mathf.Abs(wheelList.wheels[i].getDeltaRPM()) - screechMindeltaRPM);
                 if (deltaRPM > 0f && wheelList.wheels[i].wheelCollider.isGrounded)
