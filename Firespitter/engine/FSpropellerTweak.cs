@@ -332,7 +332,7 @@ namespace Firespitter.engine
 
             destroyPreviewObjects();
 
-            initialized = false;
+            //initialized = false;
             initialize();
             
         }

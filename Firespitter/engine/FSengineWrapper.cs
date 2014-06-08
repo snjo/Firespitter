@@ -313,6 +313,14 @@ namespace Firespitter.engine
             }
         }
 
+        public float finalThrustNormalized
+        {
+            get
+            {
+                return finalThrust / maxThrust;
+            }
+        }
+
         public bool throttleLocked
         {
             get

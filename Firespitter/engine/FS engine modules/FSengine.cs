@@ -262,14 +262,14 @@ namespace Firespitter.engine
             return newVelocity;
         }
 
-        protected void calculateFinalThrust()
+        protected virtual void calculateFinalThrust()
         {
             finalThrust = maxThrust * Mathf.Clamp(requestedThrottle, -maxThrottleNormalized, maxThrottleNormalized) * throttleThrustCurve.Evaluate(requestedThrottle);
             thrustPerTransform = finalThrust / thrustTransforms.Length;
             finalThrustNormalized = finalThrust / maxThrust;
         }
 
-        protected float consumeResources()
+        protected virtual float consumeResources()
         {
             float fuelReceivedNormalized = 0f;
             float lowestResourceSupply = 1f;

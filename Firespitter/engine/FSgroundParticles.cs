@@ -21,6 +21,8 @@ namespace Firespitter.engine
         private Transform thrustTransform;
         private RaycastHit[] hit;
 
+        private FSengineWrapper engine;
+
         // a disc mesh will be created at runtime. Particles spawn inside this mesh on the ground
         private GameObject washDisc = new GameObject();        
 
@@ -48,6 +50,7 @@ namespace Firespitter.engine
         {
             if (!HighLogic.LoadedSceneIsFlight) return;
 
+            engine = new FSengineWrapper(part);
 
             // Create the mesh disc. Particles spawn inside this mesh on the ground
             washDisc.transform.parent = transform;
@@ -134,6 +137,10 @@ namespace Firespitter.engine
             currentDistance = Mathf.Clamp(distanceFromGround, 1f, maxDistance);
 
             currentEmission = ((maxDistance / currentDistance) * emission) - emission;
+            if (engine != null)
+            {
+                currentEmission *= engine.finalThrustNormalized;
+            }
             currentEmission = Mathf.Clamp(currentEmission, 0f, emission);
 
             particleFX.pEmitter.minEmission = currentEmission;

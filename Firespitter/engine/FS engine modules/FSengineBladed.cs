@@ -75,8 +75,11 @@ namespace Firespitter.engine
         private float partFacingUp = 1f;
         private float circumeference = 25.13f;
         private float rotationDirection = 1f;
-        public bool hoverMode = true;
+        public bool hoverMode = false;
         private bool resetHoverHeight = false;
+
+        private float RPMtoRadperSec = 0.104719755f;
+        private float bladeMidPoint = 0f;
 
         private bool flightStarted = false;
 
@@ -134,6 +137,7 @@ namespace Firespitter.engine
             if (propTweak != null)
             {
                 circumeference = span * propTweak.bladeLengthSlider * Mathf.PI * 2f;
+                bladeMidPoint = span * propTweak.bladeLengthSlider;
             }
 
             //if (debugMode)
@@ -184,6 +188,9 @@ namespace Firespitter.engine
             if (!HighLogic.LoadedSceneIsFlight || !flightStarted || vessel != FlightGlobals.ActiveVessel) return;
 
             float airDirection = getAirSpeed();
+
+            finalThrustNormalized = RPM / maxRPM;
+            finalThrust = finalThrustNormalized * maxThrust;
       
             float fuelReceivedNormalized = consumeResources();
 
@@ -243,7 +250,13 @@ namespace Firespitter.engine
                 bladeLifts[i].bladePitch = bladeRotation;
 
                 bladeLifts[i].liftTransform.localRotation = Quaternion.Euler((Vector3.right * -bladeRotation * rotationDirection));
-                bladeLifts[i].pointVelocityMagnitude = (RPM * circumeference) / 60f * rotationDirection;
+                //bladeLifts[i].pointVelocityMagnitude = Mathf.Clamp((RPM * circumeference) / 60f, 0, 340f) * rotationDirection; // clamping to supersonic 340 m/s
+
+                float tangentialSpeed = RPM * RPMtoRadperSec * bladeMidPoint;
+                bladeLifts[i].pointVelocityMagnitude = Mathf.Clamp(tangentialSpeed, 0f, 340f) * rotationDirection;
+
+                if (i == 0)
+                    FSdebugMessages.Post("pVel: " + tangentialSpeed, false, 0.1f);
 
             }
         }
@@ -383,7 +396,7 @@ namespace Firespitter.engine
                         longTermHoverCollective = Mathf.Lerp(longTermHoverCollective, 0f, 0.01f);
                     }
 
-                    FSdebugMessages.Post("lthc: " + longTermHoverCollective.ToString(), false, 0.1f);
+                    //FSdebugMessages.Post("lthc: " + longTermHoverCollective.ToString(), false, 0.1f);
 
                     //hoverCollective = Mathf.Lerp(hoverCollective, Mathf.Sign(-airSpeedThroughRotor) * collectivePitch, 0.1f);
                     //collective = Mathf.Sign(-airSpeedThroughRotor) * collectivePitch;                
@@ -394,7 +407,7 @@ namespace Firespitter.engine
                 {
                     //regular flight
 
-                    FSdebugMessages.Post("lthc: " + longTermHoverCollective.ToString(), false, 0.1f);
+                    //FSdebugMessages.Post("lthc: " + longTermHoverCollective.ToString(), false, 0.1f);
 
                     if (hoverMode && !resetHoverHeight) // will be triggered when a control override starts while in hover mode
                     {
