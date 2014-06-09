@@ -16,7 +16,7 @@ namespace Firespitter.engine
         /// <summary>
         /// Current Thrust is scaled by the (current RPM / maxRPM) value. RPM is built up by the powerProduction value, and taken away by powerDrain and engineBrake
         /// </summary>
-        [KSPField]
+        [KSPField(guiName = "Max RPM", guiActive = false, guiActiveEditor = false), UI_FloatRange(minValue = 100, maxValue = 1000, stepIncrement = 1)]
         public float maxRPM = 600f;
         /// <summary>
         /// Sets how much thrust you get at different atmospheric densities. Fuel consumption remains constant.
@@ -105,7 +105,7 @@ namespace Firespitter.engine
         protected FloatCurve velocityCurve = new FloatCurve();
         protected FloatCurve fuelConsumptionCurve = new FloatCurve();
         protected FloatCurve throttleThrustCurve = new FloatCurve();
-        protected List<FSresource> resourceList = new List<FSresource>();
+        protected List<FSresource> resourceList = new List<FSresource>();        
 
         [KSPEvent(guiName = "Activate Engine", guiActive = true, guiActiveUnfocused = true, unfocusedRange = 5f)]
         public void Activate()
@@ -269,6 +269,14 @@ namespace Firespitter.engine
             finalThrustNormalized = finalThrust / maxThrust;
         }
 
+        /// <summary>
+        /// In regaler engines, returns finalThrustNormalized, in bladed engines etc, can return a normalized float representing the amount of work the engine had to do to keep RPM up
+        /// </summary>        
+        protected virtual float getWorkDone()
+        {
+            return finalThrustNormalized;
+        }
+
         protected virtual float consumeResources()
         {
             float fuelReceivedNormalized = 0f;
@@ -276,8 +284,8 @@ namespace Firespitter.engine
             if (EngineIgnited)
             {
                 for (int i = 0; i < resourceList.Count; i++)
-                {                    
-                    float requestFuelAmount = fuelConsumptionCurve.Evaluate(finalThrustNormalized) * maxThrust * resourceList[i].ratio * TimeWarp.deltaTime;
+                {                                       
+                    float requestFuelAmount = fuelConsumptionCurve.Evaluate(getWorkDone()) * maxThrust * resourceList[i].ratio * TimeWarp.deltaTime;
 
                     //Debug.Log("reqf: fcc " + fuelConsumptionCurve.Evaluate(finalThrustNormalized) + " maxTh " + maxThrust + " resLr " + resourceList[i].ratio);
 

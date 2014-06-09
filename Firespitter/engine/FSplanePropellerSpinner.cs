@@ -12,7 +12,7 @@ namespace Firespitter.engine
         [KSPField]
         public string propellerName = "propeller";
         [KSPField]
-        public float rotationSpeed = -300f; // in RPM
+        public float rotationSpeed = -320f; // in RPM
         [KSPField]
         public int useRotorDiscSwap = 0;
         [KSPField]
@@ -184,6 +184,7 @@ namespace Firespitter.engine
 
                 if (engine.type == Firespitter.engine.FSengineWrapper.EngineType.FSengine)
                 {
+                    rotationSpeed = engine.fsengine.maxRPM;
                     currentRPM = engine.fsengine.RPM / engine.fsengine.maxRPM;
                     //Debug.Log("Fsengine found");
                 }

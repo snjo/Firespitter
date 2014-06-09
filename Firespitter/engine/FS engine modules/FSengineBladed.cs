@@ -57,7 +57,7 @@ namespace Firespitter.engine
         [KSPField(guiActive = true, guiName = "Vel thr. rotor")]
         public float airVelocity = 0f;
         [KSPField]
-        public float collectivePitch = 15f;
+        public float maxCollectivePitch = 15f;
         [KSPField]
         public float rollMultiplier = 0.5f;
 
@@ -77,9 +77,12 @@ namespace Firespitter.engine
         private float rotationDirection = 1f;
         public bool hoverMode = false;
         private bool resetHoverHeight = false;
-
         private float RPMtoRadperSec = 0.104719755f;
         private float bladeMidPoint = 0f;
+        /// <summary>
+        /// the amount of work done by the engine to keep the RPM up. Used by bladed engines for consuming fuel. Static in regular engines.
+        /// </summary>
+        protected float workDone = 1f;
 
         private bool flightStarted = false;
 
@@ -148,6 +151,12 @@ namespace Firespitter.engine
 
             if (HighLogic.LoadedSceneIsFlight)
                 flightStarted = true;
+
+            Fields["maxRPM"].guiActive = true;
+            Fields["maxRPM"].guiActiveEditor = true;
+            Fields["maxThrust"].guiActiveEditor = false;
+            Fields["maxThrottle"].guiActive = false;
+            Fields["maxThrottle"].guiActiveEditor = false;
         }
 
         private void setupBlades()
@@ -189,7 +198,7 @@ namespace Firespitter.engine
 
             float airDirection = getAirSpeed();
 
-            finalThrustNormalized = RPM / maxRPM;
+            finalThrustNormalized = Mathf.Abs(collective) / maxCollectivePitch;
             finalThrust = finalThrustNormalized * maxThrust;
       
             float fuelReceivedNormalized = consumeResources();
@@ -213,30 +222,36 @@ namespace Firespitter.engine
         }
 
         private void updateRPM(float airDirection, float fuelReceivedNormalized)
-        {
-            if (EngineIgnited && !flameout)
-            {
-                RPM += powerProduction * TimeWarp.deltaTime * fuelReceivedNormalized;
-            }
-            else
-            {
-                RPM -= (engineBrake + (Mathf.Abs(requestedThrottle) * powerDrain)) * TimeWarp.deltaTime; // for reducing engine power when it's no longer ignited                
-            }
-
-            RPM = Mathf.Clamp(RPM, 0f, maxRPM);
-
+        {               
             if (airDirection < 0f) // && collective <= 0f)
             {
                 RPM -= airSpeedThroughRotor * autoRotationGain * (TimeWarp.deltaTime * 50f);
             }
 
-            //if (airDirection > 0f)
-            //{
-                for (int i = 0; i < bladeLifts.Count; i++)
-                {
-                    RPM -= bladeLifts[i].bladeDrag * 0.1f;
-                }
-            //}
+            for (int i = 0; i < bladeLifts.Count; i++)
+            {
+                RPM -= bladeLifts[i].bladeDrag * 0.1f;
+            }
+
+            if (EngineIgnited && !flameout)
+            {
+                float RPMgain = powerProduction * TimeWarp.deltaTime * fuelReceivedNormalized;
+                workDone = Mathf.Min(maxRPM - RPM, RPMgain) / (powerProduction * TimeWarp.deltaTime); // normalized
+                Debug.Log("workDone" + workDone);
+                RPM += RPMgain;
+            }
+            else
+            {
+                RPM -= (engineBrake + (Mathf.Abs(requestedThrottle) * powerDrain)) * TimeWarp.deltaTime; // for reducing engine power when it's no longer ignited
+                workDone = 0f;
+            }                       
+            
+            RPM = Mathf.Clamp(RPM, 0f, maxRPM);
+        }
+
+        protected override float getWorkDone()
+        {
+            return workDone;
         }
 
         private void setBladePitch()
@@ -253,10 +268,7 @@ namespace Firespitter.engine
                 //bladeLifts[i].pointVelocityMagnitude = Mathf.Clamp((RPM * circumeference) / 60f, 0, 340f) * rotationDirection; // clamping to supersonic 340 m/s
 
                 float tangentialSpeed = RPM * RPMtoRadperSec * bladeMidPoint;
-                bladeLifts[i].pointVelocityMagnitude = Mathf.Clamp(tangentialSpeed, 0f, 340f) * rotationDirection;
-
-                if (i == 0)
-                    FSdebugMessages.Post("pVel: " + tangentialSpeed, false, 0.1f);
+                bladeLifts[i].pointVelocityMagnitude = Mathf.Clamp(tangentialSpeed, 0f, 340f) * rotationDirection;                
 
             }
         }
@@ -380,14 +392,14 @@ namespace Firespitter.engine
                     if (vessel.verticalSpeed * partFacingUp < maxClimb)
                     {
                         //Debug.Log("go up");
-                        hoverCollective = collectivePitch;
-                        longTermHoverCollective = Mathf.Lerp(longTermHoverCollective, collectivePitch, 0.01f);
+                        hoverCollective = maxCollectivePitch;
+                        longTermHoverCollective = Mathf.Lerp(longTermHoverCollective, maxCollectivePitch, 0.01f);
                     }
                     else if (vessel.verticalSpeed * partFacingUp > maxClimb)
                     {
                         //Debug.Log("go down");
-                        hoverCollective = -collectivePitch;
-                        longTermHoverCollective = Mathf.Lerp(longTermHoverCollective, -collectivePitch, 0.01f);
+                        hoverCollective = -maxCollectivePitch;
+                        longTermHoverCollective = Mathf.Lerp(longTermHoverCollective, -maxCollectivePitch, 0.01f);
                     }
                     else
                     {
@@ -422,16 +434,16 @@ namespace Firespitter.engine
                     if (decreaseCollective)
                         collective -= 0.3f;
                     if (maxCollective)
-                        collective = collectivePitch;
+                        collective = maxCollectivePitch;
                     if (minCollective)
-                        collective = -collectivePitch;
+                        collective = -maxCollectivePitch;
                     if (noCollective)
                         collective = 0f;
 
                     if (useThrottleState && !hoverMode)
                     {
                         //collective = (vessel.ctrlState.mainThrottle - 0.5f) * 2f * collectivePitch;
-                        collective = vessel.ctrlState.mainThrottle * collectivePitch;
+                        collective = vessel.ctrlState.mainThrottle * maxCollectivePitch;
                     }
 
                     resetHoverHeight = true;
@@ -443,7 +455,7 @@ namespace Firespitter.engine
             }
 
             collective += hoverCollective;
-            collective = Mathf.Clamp(collective, -collectivePitch, collectivePitch);
+            collective = Mathf.Clamp(collective, -maxCollectivePitch, maxCollectivePitch);
         }
     }
 }
