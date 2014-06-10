@@ -16,11 +16,13 @@ public class FSinternalPropRotator : InternalModule
     [KSPField]
     public Vector3 axisMultiplier = new Vector3(1, 1, 1);
     [KSPField]
-    public Vector3 pitchDefaultRotation = new Vector3(0, 0, 0);
+    public Vector3 pitchDefaultRotation = Vector3.zero;
     [KSPField]
-    public Vector3 rollDefaultRotation = new Vector3(0, 0, 0);
+    public Vector3 rollDefaultRotation = Vector3.zero;
     [KSPField]
-    public Vector3 yawDefaultRotation = new Vector3(0, 0, 0);
+    public Vector3 yawDefaultRotation = Vector3.zero;
+    [KSPField]
+    public Vector3 brakeMultiplier = Vector3.zero;
     private bool usePitch;
     private bool useRoll;
     private bool useYaw;
@@ -29,6 +31,8 @@ public class FSinternalPropRotator : InternalModule
     private Transform yawTransform;
     private Vector3 currentRotation;
     private Vector3 oldRotation;
+    private float smoothBrake = 0f;
+    private int brakeActionInt = 0;
     private bool firstRun = true;
          
 
@@ -68,6 +72,8 @@ public class FSinternalPropRotator : InternalModule
             useYaw = true;
             this.yawTransform = base.internalProp.FindModelTransform(this.yawObject);  
         }
+
+        brakeActionInt = BaseAction.GetGroupIndex(KSPActionGroup.Brakes);
     }
 
     public override void OnUpdate()
@@ -75,13 +81,16 @@ public class FSinternalPropRotator : InternalModule
         base.OnUpdate();
 
         if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+
+        smoothBrake = Mathf.Lerp(smoothBrake, (FlightGlobals.ActiveVessel.ActionGroups.groups[brakeActionInt] ? 1 : 0), 0.1f);
+
         if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA
             || CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Internal)
         {
             FlightCtrlState ctrl = vessel.ctrlState;
             Vector3 steeringInput = new Vector3(0, 0, 0);
 
-            steeringInput = new Vector3(ctrl.pitch * axisMultiplier.x, ctrl.roll * axisMultiplier.y, ctrl.yaw * axisMultiplier.z);
+            steeringInput = new Vector3(ctrl.pitch * axisMultiplier.x, ctrl.roll * axisMultiplier.y, ctrl.yaw * axisMultiplier.z) + brakeMultiplier * smoothBrake;
             if (firstRun)
             {
                 oldRotation = steeringInput;
