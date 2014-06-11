@@ -155,11 +155,11 @@ namespace Firespitter.customization
             }
             if (useFuelSwitchModule)
             {
-                Debug.Log("FStextureSwitch2 calling on FSfuelSwitch tank setup " + selectedTexture);
+                debug.debugMessage("FStextureSwitch2 calling on FSfuelSwitch tank setup " + selectedTexture);
                 if (selectedTexture < fuelTankSetupList.Count)
                     fuelSwitch.selectTankSetup(fuelTankSetupList[selectedTexture]);
                 else
-                    Debug.Log("FStextureSwitch2: no such fuel tank setup");
+                    debug.debugMessage("FStextureSwitch2: no such fuel tank setup");
             }
         }
 
@@ -179,22 +179,29 @@ namespace Firespitter.customization
 
         private void useMap(Material targetMat)
         {
-            Debug.Log("maplist count: " + mapList.Count + ", selectedTexture: " + selectedTexture);
+            debug.debugMessage("maplist count: " + mapList.Count + ", selectedTexture: " + selectedTexture + ", texlist Count: " + texList.Count);
             if (mapList.Count > selectedTexture)
             {
                 if (GameDatabase.Instance.ExistsTexture(mapList[selectedTexture]))
                 {
-                    Debug.Log("map exists in db");
+                    debug.debugMessage("map exists in db");
                     targetMat.SetTexture(additionalMapType, GameDatabase.Instance.GetTexture(mapList[selectedTexture], mapIsNormal));
                     selectedMapURL = mapList[selectedTexture];
 
                     if (selectedTexture < textureDisplayList.Count && texList.Count == 0)
+                    {
                         currentTextureName = textureDisplayList[selectedTexture];
+                        debug.debugMessage("setting currentTextureName to " + textureDisplayList[selectedTexture]);
+                    }
+                    else
+                    {
+                        debug.debugMessage("not setting currentTextureName. selectedTexture is " + selectedTexture + ", texDispList count is" + textureDisplayList.Count + ", texList count is " + texList.Count);
+                    }
                 }
             }
             else
             {
-                if (mapList.Count > selectedTexture)
+                if (mapList.Count > selectedTexture) // why is this check here? will never happen.
                     debug.debugMessage("no such map: " + mapList[selectedTexture]);
                 else
                 {
@@ -323,7 +330,7 @@ namespace Firespitter.customization
                     if (fuelSwitch == null)
                     {
                         useFuelSwitchModule = false;
-                        Debug.Log("FStextureSwitch2: no FSfuelSwitch module found, despite useFuelSwitchModule being true");
+                        debug.debugMessage("FStextureSwitch2: no FSfuelSwitch module found, despite useFuelSwitchModule being true");
                     }
                 }
                 initialized = true;
