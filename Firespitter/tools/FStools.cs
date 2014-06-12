@@ -29,7 +29,7 @@ namespace Firespitter
             {
                 string[] valueString = keyString[i].Split(',');
                 if (valueString.Length >= 2)
-                {
+                {                   
                     Vector4 key = Vector4.zero;
                     float.TryParse(valueString[0], out key.x);
                     float.TryParse(valueString[1], out key.y);
@@ -39,8 +39,7 @@ namespace Firespitter
                         float.TryParse(valueString[3], out key.w);
                     }
 
-                    resultCurve.Add(key.x, key.y, key.z, key.w);
-                    //Debug.Log("FStools: Added key to FloatCurve: " + key.ToString());
+                    resultCurve.Add(key.x, key.y, key.z, key.w);                    
                 }
             }
             return resultCurve;
@@ -87,15 +86,15 @@ namespace Firespitter
 
         public static List<string> parseNames(string names)
         {
-            return parseNames(names, false, string.Empty);
+            return parseNames(names, false, true, string.Empty);
         }
 
         public static List<string> parseNames(string names, bool replaceBackslashErrors)
         {
-            return parseNames(names, replaceBackslashErrors, string.Empty);
+            return parseNames(names, replaceBackslashErrors, true, string.Empty);
         }
 
-        public static List<string> parseNames(string names, bool replaceBackslashErrors, string prefix)
+        public static List<string> parseNames(string names, bool replaceBackslashErrors, bool trimWhiteSpace, string prefix)
         {
             List<string> source = names.Split(';').ToList<string>();
             for (int i = source.Count - 1; i >= 0; i--)
@@ -105,13 +104,27 @@ namespace Firespitter
                     source.RemoveAt(i);
                 }
             }
+            if (trimWhiteSpace)
+            {
+                for (int i = 0; i < source.Count; i++)
+                {                    
+                    source[i] = source[i].Trim(' ');                    
+                }
+            }
+            if (prefix != string.Empty)
+            {
+                for (int i = 0; i < source.Count; i++)
+                {
+                    source[i] = prefix + source[i];
+                }
+            }
             if (replaceBackslashErrors)
             {
                 for (int i = 0; i < source.Count; i++)
                 {
-                    source[i] = (prefix + source[i]).Replace('\\', '/');                    
+                    source[i] = source[i].Replace('\\', '/');
                 }
-            }
+            }            
             return source.ToList<string>();
         }
 

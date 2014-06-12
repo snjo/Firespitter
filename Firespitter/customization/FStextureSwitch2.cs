@@ -296,8 +296,8 @@ namespace Firespitter.customization
                 if (useFuelSwitchModule) updateSymmetry = true;
 
                 objectList = Tools.parseNames(objectNames, true);
-                texList = Tools.parseNames(textureNames, true, textureRootFolder);
-                mapList = Tools.parseNames(mapNames, true, textureRootFolder);
+                texList = Tools.parseNames(textureNames, true, true, textureRootFolder);
+                mapList = Tools.parseNames(mapNames, true, true, textureRootFolder);
                 textureDisplayList = Tools.parseNames(textureDisplayNames);
                 fuelTankSetupList = Tools.parseIntegers(fuelTankSetups);
 

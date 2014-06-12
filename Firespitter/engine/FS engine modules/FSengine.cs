@@ -180,7 +180,7 @@ namespace Firespitter.engine
                 {
                     try
                     {
-                        resourceList.Add(new FSresource(valueString[0], float.Parse(valueString[1])));
+                        resourceList.Add(new FSresource(valueString[0].Trim(' '), float.Parse(valueString[1])));
                         //Debug.Log("FSengine: Added resource " + valueString[0] + ", ratio " + valueString[1]);
                     }
                     catch

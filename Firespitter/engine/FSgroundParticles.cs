@@ -55,7 +55,7 @@ namespace Firespitter.engine
             // Create the mesh disc. Particles spawn inside this mesh on the ground
             washDisc.transform.parent = transform;
             meshFilter = washDisc.AddComponent<MeshFilter>();            
-            meshFilter.mesh = tools.MeshCreator.createDisc(emissionDiscSize, 100);
+            meshFilter.mesh = MeshCreator.createDisc(emissionDiscSize, 100);
 
             // fetch the particle texture from KSP's Game Database
             particleTexture = GameDatabase.Instance.GetTexture(particleTextureName, false);            

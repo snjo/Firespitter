@@ -122,22 +122,19 @@ namespace Firespitter.customization
         private void setObject(int objectNumber)
         {
             //if (objectNumber >= objectTransforms.Count) return;
-            Debug.Log("setObject Start");
+            //Debug.Log("setObject Start");
             initializeData();
 
             for (int i = 0; i < objectTransforms.Count; i++)
-            {
-                Debug.Log("- setObject renderer disable " + i);
+            {               
                 objectTransforms[i].gameObject.renderer.enabled = false;
             }
-
-            Debug.Log("+ setObject renderer enable " + objectNumber);
+            
             // enable the selected one last because there might be several entries with the same object, and we don't want to disable it after it's been enabled.
             objectTransforms[objectNumber].gameObject.renderer.enabled = true;
 
             if (useFuelSwitchModule)
-            {
-                Debug.Log("setObject fuel switch");
+            {                
                 //Debug.Log("FStextureSwitch2 calling on FSfuelSwitch tank setup " + objectNumber);
                 if (objectNumber < fuelTankSetupList.Count)
                     fuelSwitch.selectTankSetup(fuelTankSetupList[objectNumber]);
