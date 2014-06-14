@@ -103,7 +103,7 @@ namespace Firespitter.customization
             selectedTexture++;
             if (selectedTexture >= texList.Count && selectedTexture >= mapList.Count)
                 selectedTexture = 0;
-            useTextureAll();
+            useTextureAll(true);
         }
 
         [KSPEvent(guiActive = false, guiActiveEditor = true, guiName = "Previous Texture")]
@@ -112,7 +112,7 @@ namespace Firespitter.customization
             selectedTexture--;
             if (selectedTexture < 0)
                 selectedTexture = Mathf.Max(texList.Count - 1, mapList.Count-1);
-            useTextureAll();
+            useTextureAll(true);
         }
 
         [KSPEvent(guiActiveUnfocused = true, unfocusedRange = 5f, guiActive = false, guiActiveEditor = false, guiName = "Repaint")]
@@ -121,9 +121,9 @@ namespace Firespitter.customization
             nextTextureEvent();
         }
 
-        public void useTextureAll()
+        public void useTextureAll(bool calledByPlayer)
         {
-            applyTexToPart();
+            applyTexToPart(calledByPlayer);
 
             if (updateSymmetry)
             {
@@ -136,14 +136,14 @@ namespace Firespitter.customization
                         if (symSwitch[j].moduleID == moduleID)
                         {
                             symSwitch[j].selectedTexture = selectedTexture;
-                            symSwitch[j].applyTexToPart();
+                            symSwitch[j].applyTexToPart(calledByPlayer);
                         }
                     }
                 }
             }
         }
 
-        private void applyTexToPart()
+        private void applyTexToPart(bool calledByPlayer)
         {
             initializeData();
             foreach (List<Material> matList in targetMats)
@@ -157,7 +157,7 @@ namespace Firespitter.customization
             {
                 debug.debugMessage("FStextureSwitch2 calling on FSfuelSwitch tank setup " + selectedTexture);
                 if (selectedTexture < fuelTankSetupList.Count)
-                    fuelSwitch.selectTankSetup(fuelTankSetupList[selectedTexture]);
+                    fuelSwitch.selectTankSetup(fuelTankSetupList[selectedTexture], calledByPlayer);
                 else
                     debug.debugMessage("FStextureSwitch2: no such fuel tank setup");
             }
@@ -270,7 +270,7 @@ namespace Firespitter.customization
 
             initializeData();
 
-            useTextureAll();
+            useTextureAll(false);
 
             if (switchableInFlight) Events["nextTextureEvent"].guiActive = true;
             if (switchableInFlight && showPreviousButton) Events["previousTextureEvent"].guiActive = true;

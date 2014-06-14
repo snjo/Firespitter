@@ -70,6 +70,7 @@
     <Compile Include="customization\FSfuelSwitch.cs" />
     <Compile Include="customization\FSmodularTank.cs" />
     <Compile Include="engine\FS engine modules\FSengineBladed.cs" />
+    <Compile Include="engine\FSalternator.cs" />
     <Compile Include="engine\FSresource.cs" />
     <Compile Include="info\FSpartDirectionGuide.cs" />
     <Compile Include="engine\Stock based modules\FSengineHover.cs" />

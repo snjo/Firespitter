@@ -13,7 +13,7 @@ namespace Firespitter.engine
             NONE,
             ModuleEngine,
             ModuleEngineFX,
-            FSengine
+            FSengine,
         }
         public EngineType type = EngineType.NONE;
         public ModuleEngines engine;
@@ -43,7 +43,7 @@ namespace Firespitter.engine
                     }
                 }
             }
-            Debug.Log("FSengineWrapper: engine type is " + type.ToString());
+            //Debug.Log("FSengineWrapper: engine type is " + type.ToString());
         }
 
         public float maxThrust

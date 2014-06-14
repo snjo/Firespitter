@@ -67,6 +67,7 @@ namespace Firespitter.engine
         [KSPField(guiActive=true, guiName="cyclic")]
         private Vector2 cyclic = Vector2.zero;
 
+        public new FSengineType type = FSengineType.bladed; // overrides the normal value
         private Vector3 partVelocity = Vector3.zero;
         private float airSpeedThroughRotor = 0f;
         private float hoverCollective = 0f;

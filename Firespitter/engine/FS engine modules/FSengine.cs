@@ -101,6 +101,14 @@ namespace Firespitter.engine
         [KSPField]
         public bool debugMode = false;
 
+        public enum FSengineType
+        {
+            normal,
+            bladed
+        }
+
+        public FSengineType type = FSengineType.normal;
+
         protected FloatCurve atmosphericThrustCurve = new FloatCurve();
         protected FloatCurve velocityCurve = new FloatCurve();
         protected FloatCurve fuelConsumptionCurve = new FloatCurve();

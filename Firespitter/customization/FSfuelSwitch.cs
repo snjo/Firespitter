@@ -29,26 +29,32 @@ namespace Firespitter.customization
         public int selectedTankSetup = 0;
         [KSPField(isPersistant = true)]
         public bool hasLaunched = false;
+        //[KSPField(isPersistant = true)]
+        //public bool refillTanks = true;
 
         [KSPField(guiActive = false, guiActiveEditor = true, guiName = "Dry mass")]
         public float dryMassInfo = 0f;
         private List<FSmodularTank> tankList = new List<FSmodularTank>();
         private List<float> weightList = new List<float>();
         private bool initialized = false;
+        [KSPField (isPersistant = true)]
+        private bool brandNewPart = true;
+        
 
         UIPartActionWindow tweakableUI;
 
         public override void OnStart(PartModule.StartState state)
         {            
             initializeData();
-            assignResourcesToPart();
+            assignResourcesToPart(false);
+            brandNewPart = false;
         }
 
         private void initializeData()
         {
             if (!initialized)
             {
-                setupTankList();
+                setupTankList(false);
                 this.weightList = Tools.parseFloats(this.tankMass);
                 if (HighLogic.LoadedSceneIsFlight) hasLaunched = true;
                 if (hasGUI)
@@ -77,25 +83,25 @@ namespace Firespitter.customization
             {
                 currentAmounts = Vector4.zero;
             }
-            assignResourcesToPart();            
+            assignResourcesToPart(true);            
         }
 
-        public void selectTankSetup(int i)
-        {
+        public void selectTankSetup(int i, bool calledByPlayer)
+        {            
             initializeData();
             selectedTankSetup = i;
-            assignResourcesToPart();
+            assignResourcesToPart(calledByPlayer);            
         }
 
-        private void assignResourcesToPart()
+        private void assignResourcesToPart(bool calledByPlayer)
         {            
             // destroying a resource messes up the gui in editor, but not in flight.
-            setupTankInPart(part);
+            setupTankInPart(part, calledByPlayer);
             if (HighLogic.LoadedSceneIsEditor)
             {
                 for (int s = 0; s < part.symmetryCounterparts.Count; s++)
                 {
-                    setupTankInPart(part.symmetryCounterparts[s]);
+                    setupTankInPart(part.symmetryCounterparts[s], calledByPlayer);
                     FSfuelSwitch symSwitch = part.symmetryCounterparts[s].GetComponent<FSfuelSwitch>();
                     if (symSwitch != null)
                     {
@@ -120,7 +126,7 @@ namespace Firespitter.customization
             }
         }
 
-        private void setupTankInPart(Part currentPart)
+        private void setupTankInPart(Part currentPart, bool calledByPlayer)
         {
             currentPart.Resources.list.Clear();
             PartResource[] partResources = currentPart.GetComponents<PartResource>();
@@ -140,7 +146,15 @@ namespace Firespitter.customization
                             //Debug.Log("new node: " + tankList[i].resources[j].name);
                             ConfigNode newResourceNode = new ConfigNode("RESOURCE");
                             newResourceNode.AddValue("name", tankList[i].resources[j].name);
-                            newResourceNode.AddValue("amount", tankList[i].resources[j].amount);
+                            if (calledByPlayer || brandNewPart)
+                            {
+                                newResourceNode.AddValue("amount", tankList[i].resources[j].maxAmount);
+                                setResource(j, tankList[i].resources[j].amount);
+                            }
+                            else
+                            {
+                                newResourceNode.AddValue("amount", getResource(j));
+                            }
                             newResourceNode.AddValue("maxAmount", tankList[i].resources[j].maxAmount);
 
                             //Debug.Log("add node to part");
@@ -169,6 +183,13 @@ namespace Firespitter.customization
 
         public override void OnUpdate()
         {
+            updateResourcePersistence();
+
+            
+        }
+
+        private void updateResourcePersistence()
+        {
             if (selectedTankSetup < tankList.Count)
             {
                 if (tankList[selectedTankSetup] != null)
@@ -177,7 +198,7 @@ namespace Firespitter.customization
                     {
                         if (tankList[selectedTankSetup].resources[i].name == "Structural")
                         {
-                            
+
                         }
                         else
                         {
@@ -186,8 +207,6 @@ namespace Firespitter.customization
                     }
                 }
             }
-
-            
         }
 
         public void Update()
@@ -195,6 +214,7 @@ namespace Firespitter.customization
             if (HighLogic.LoadedSceneIsEditor)
             {
                 dryMassInfo = part.mass;
+                updateResourcePersistence();
             }
         }
 
@@ -234,7 +254,7 @@ namespace Firespitter.customization
             }
         }
 
-        private void setupTankList()
+        private void setupTankList(bool calledByPlayer)
         {
             tankList.Clear();
 
@@ -271,19 +291,19 @@ namespace Firespitter.customization
                         if (j < resourceList[i].Count)
                         {
                             newResource.maxAmount = resourceList[i][j];
-                            if (hasLaunched)
+                            if (calledByPlayer)
                             {
-                                newResource.amount = getResource(j);
+                                newResource.amount = resourceList[i][j];
                             }
                             else
-                            {
-                                newResource.amount = resourceList[i][j]; 
+                            {                                
+                                newResource.amount = getResource(j);
                             }
                         }
                     }
                     newTank.resources.Add(newResource);
                 }
-            }
+            }            
         }        
     }    
 }

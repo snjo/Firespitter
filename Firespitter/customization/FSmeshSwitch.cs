@@ -60,7 +60,7 @@ namespace Firespitter.customization
             {
                 selectedObject = 0;
             }
-            switchToObject(selectedObject);
+            switchToObject(selectedObject, true);
         }
 
         [KSPEvent(guiActive = false, guiActiveEditor = true, guiActiveUnfocused = false, guiName = "Prev part variant")]
@@ -71,7 +71,7 @@ namespace Firespitter.customization
             {
                 selectedObject = objectTransforms.Count - 1;
             }
-            switchToObject(selectedObject);
+            switchToObject(selectedObject, true);
         }
 
         private void parseObjectNames()
@@ -98,9 +98,9 @@ namespace Firespitter.customization
             }
         }
 
-        private void switchToObject(int objectNumber)
+        private void switchToObject(int objectNumber, bool calledByPlayer)
         {
-            setObject(objectNumber);
+            setObject(objectNumber, calledByPlayer);
 
             if (updateSymmetry)
             {
@@ -112,14 +112,14 @@ namespace Firespitter.customization
                         if (symSwitch[j].moduleID == moduleID)
                         {
                             symSwitch[j].selectedObject = selectedObject;
-                            symSwitch[j].setObject(objectNumber);
+                            symSwitch[j].setObject(objectNumber, calledByPlayer);
                         }
                     }
                 }
             }
         }
 
-        private void setObject(int objectNumber)
+        private void setObject(int objectNumber, bool calledByPlayer)
         {
             //if (objectNumber >= objectTransforms.Count) return;
             //Debug.Log("setObject Start");
@@ -137,7 +137,7 @@ namespace Firespitter.customization
             {                
                 //Debug.Log("FStextureSwitch2 calling on FSfuelSwitch tank setup " + objectNumber);
                 if (objectNumber < fuelTankSetupList.Count)
-                    fuelSwitch.selectTankSetup(fuelTankSetupList[objectNumber]);
+                    fuelSwitch.selectTankSetup(fuelTankSetupList[objectNumber], calledByPlayer);
                 else
                     Debug.Log("FStextureSwitch2: no such fuel tank setup");
             }
@@ -161,7 +161,7 @@ namespace Firespitter.customization
         {
             initializeData();
 
-            switchToObject(selectedObject);
+            switchToObject(selectedObject, false);
             Events["nextObjectEvent"].guiName = buttonName;
             if (!showPreviousButton) Events["previousObjectEvent"].guiActiveEditor = false;
         }

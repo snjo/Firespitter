@@ -179,7 +179,7 @@ namespace Firespitter.engine
         private Transform centerOfMass;
 
         private Firespitter.engine.FSengineWrapper engine;
-
+        
         private bool initialized = false;
         private bool maxThrustSet = false;
         private bool previewObjectsDestroyed = false;
@@ -324,11 +324,12 @@ namespace Firespitter.engine
         // Use this for initialization
         public override void OnStart(PartModule.StartState state)
         {
-            if (!HighLogic.LoadedSceneIsFlight && !HighLogic.LoadedSceneIsEditor) return;
+            if (!HighLogic.LoadedSceneIsFlight && !HighLogic.LoadedSceneIsEditor) return;            
 
             //Debug.Log("FSpropellerTweak Onstart running on " + part.GetInstanceID());
 
             blades = new List<GameObject>();
+            exhausts = new List<GameObject>();
 
             destroyPreviewObjects();
 
@@ -416,9 +417,23 @@ namespace Firespitter.engine
                     Destroy(t.gameObject);
                 }
             }
+        }
 
-            //GameObject targetBlade = blades[target];            
-            //GameObject.Destroy(targetBlade);
+        private void destroyExhaustObjects()
+        {
+            for (int i = exhausts.Count - 1; i > 0; i--)
+            {
+                //Debug.Log("destroying blade " + i);
+                Destroy(exhausts[i]);
+                exhausts.RemoveAt(i);
+            }
+            foreach (Transform t in gameObject.GetComponentsInChildren<Transform>())
+            {
+                if (t.gameObject.name == exhaustName + "(Clone)")
+                {
+                    Destroy(t.gameObject);
+                }
+            }
         }
 
         // In hangar
@@ -435,6 +450,7 @@ namespace Firespitter.engine
 
                 
                 destroyBladeObjects();
+                destroyExhaustObjects();
                 
                 updateBladeList();
                 updateEngineLength();
@@ -457,6 +473,7 @@ namespace Firespitter.engine
         public void OnDestroy()
         {
             destroyBladeObjects();
+            destroyExhaustObjects();
         }
 
         //private Rect sliderRect(int current)
