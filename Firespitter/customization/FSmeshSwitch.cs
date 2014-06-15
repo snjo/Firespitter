@@ -15,19 +15,19 @@ namespace Firespitter.customization
         [KSPField]
         public string previousButtonName = "Prev part variant";
         [KSPField]
-        public string objectDisplayNames = "Default";
+        public string objectDisplayNames = string.Empty;
         [KSPField]
         public bool showPreviousButton = true;
         [KSPField]
         public bool useFuelSwitchModule = false;
         [KSPField]
         public string fuelTankSetups = "0";
-
         [KSPField]
         public string objects = string.Empty;
-
         [KSPField]
         public bool updateSymmetry = true;
+        [KSPField]
+        public bool showInfo = true;
 
         //// in case of multiple instances of this module, on will be the master, the rest slaves.
         //[KSPField]
@@ -188,6 +188,31 @@ namespace Firespitter.customization
                 }
                 initialized = true;
             }
+        }
+
+        public override string GetInfo()
+        {
+            if (showInfo)
+            {
+                List<string> variantList;
+                if (objectDisplayNames.Length > 0)
+                {
+                    variantList = Tools.parseNames(objectDisplayNames);
+                }
+                else
+                {
+                    variantList = Tools.parseNames(objects);
+                }
+                StringBuilder info = new StringBuilder();
+                info.AppendLine("Part variants available:");
+                for (int i = 0; i < variantList.Count; i++)
+                {
+                    info.AppendLine(variantList[i]);
+                }
+                return info.ToString();
+            }
+            else
+                return string.Empty;
         }
     }
 }

@@ -55,6 +55,8 @@ namespace Firespitter.customization
         public bool useFuelSwitchModule = false;
         [KSPField]
         public string fuelTankSetups = "0";
+        [KSPField]
+        public bool showInfo = true;
 
         [KSPField]
         public bool updateSymmetry = true;
@@ -238,24 +240,37 @@ namespace Firespitter.customization
 
         public override string GetInfo()
         {
-            texList = Tools.parseNames(textureNames);
-            textureDisplayList = Tools.parseNames(textureDisplayNames);
-            StringBuilder info = new StringBuilder();
-            info.AppendLine("Alternate textures available:");
-            if (texList.Count == 0)
+            if (showInfo)
             {
-                if (texList.Count == 0)
-                    info.AppendLine("None");
-            }
-            for (int i = 0; i < texList.Count; i++)
-            {
-                if (i > textureDisplayList.Count - 1)
-                    info.AppendLine(getTextureDisplayName(texList[i]));
+                List<string> variantList;
+                if (textureNames.Length > 0)
+                {
+                    variantList = Tools.parseNames(textureNames);
+                }
                 else
-                   info.AppendLine(textureDisplayList[i]);                
+                {
+                    variantList = Tools.parseNames(mapNames);
+                }
+                textureDisplayList = Tools.parseNames(textureDisplayNames);
+                StringBuilder info = new StringBuilder();
+                info.AppendLine("Alternate textures available:");
+                if (variantList.Count == 0)
+                {
+                    if (variantList.Count == 0)
+                        info.AppendLine("None");
+                }
+                for (int i = 0; i < variantList.Count; i++)
+                {
+                    if (i > textureDisplayList.Count - 1)
+                        info.AppendLine(getTextureDisplayName(variantList[i]));
+                    else
+                        info.AppendLine(textureDisplayList[i]);
+                }
+                info.AppendLine("\nUse the Next Texture button on the right click menu.");
+                return info.ToString();
             }
-            info.AppendLine("\nUse the Next Texture button on the right click menu.");
-            return info.ToString();
+            else
+                return string.Empty;
         }
 
         private string getTextureDisplayName(string longName)

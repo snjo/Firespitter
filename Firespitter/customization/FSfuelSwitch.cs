@@ -29,8 +29,8 @@ namespace Firespitter.customization
         public int selectedTankSetup = 0;
         [KSPField(isPersistant = true)]
         public bool hasLaunched = false;
-        //[KSPField(isPersistant = true)]
-        //public bool refillTanks = true;
+        [KSPField]
+        public bool showInfo = true; // if false, does not feed info to the part list pop up info menu
 
         [KSPField(guiActive = false, guiActiveEditor = true, guiName = "Dry mass")]
         public float dryMassInfo = 0f;
@@ -304,6 +304,23 @@ namespace Firespitter.customization
                     newTank.resources.Add(newResource);
                 }
             }            
-        }        
+        }
+
+        public override string GetInfo()
+        {
+            if (showInfo)
+            {
+                List<string> resourceList = Tools.parseNames(resourceNames);
+                StringBuilder info = new StringBuilder();
+                info.AppendLine("Fuel tank setups available:");
+                for (int i = 0; i < resourceList.Count; i++)
+                {
+                    info.AppendLine(resourceList[i].Replace(",", ", "));
+                }
+                return info.ToString();
+            }
+            else
+                return string.Empty;
+        }
     }    
 }

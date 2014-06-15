@@ -158,6 +158,14 @@ namespace Firespitter.engine
             Fields["maxThrust"].guiActiveEditor = false;
             Fields["maxThrottle"].guiActive = false;
             Fields["maxThrottle"].guiActiveEditor = false;
+
+            if (tailRotor)
+            {
+                Fields["useThrottleKeys"].guiActive = false;
+                Fields["useThrottleKeys"].guiActiveEditor = false;
+                Fields["useThrottleState"].guiActive = false;
+                Fields["useThrottleState"].guiActiveEditor = false;
+            }
         }
 
         private void setupBlades()
@@ -237,8 +245,7 @@ namespace Firespitter.engine
             if (EngineIgnited && !flameout)
             {
                 float RPMgain = powerProduction * TimeWarp.deltaTime * fuelReceivedNormalized;
-                workDone = Mathf.Min(maxRPM - RPM, RPMgain) / (powerProduction * TimeWarp.deltaTime); // normalized
-                Debug.Log("workDone" + workDone);
+                workDone = Mathf.Min(maxRPM - RPM, RPMgain) / (powerProduction * TimeWarp.deltaTime); // normalized                
                 RPM += RPMgain;
             }
             else
