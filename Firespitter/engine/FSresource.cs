@@ -10,7 +10,7 @@ namespace Firespitter.engine
         //public PartResource resource;
         public string name;
         public float ratio;
-        public float currentSupply = 0f;
+        public double currentSupply = 0f;
         public float amount = 0f;
         public float maxAmount = 0f;
 

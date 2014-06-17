@@ -15,6 +15,7 @@ namespace Firespitter.info
         //private float nextPostDuration = 5f;
         public Rect screenPosition = new Rect(500f, 500f, 300f, 100f);
         public float lineSpacing = 25f;
+        public string moduleName = string.Empty;
         //public string debugMessageOutput = "both";
         public enum OutputMode
         {
@@ -28,6 +29,13 @@ namespace Firespitter.info
 
         public FSdebugMessages()
         {
+        }
+
+        public FSdebugMessages(bool _debugMode, string _moduleName)
+        {
+            debugMode = _debugMode;
+            outputMode = OutputMode.log;
+            moduleName = _moduleName + ": ";
         }
 
         public FSdebugMessages(bool _debugMode, OutputMode _outputMode, float _postToScreenDuration)
@@ -87,7 +95,7 @@ namespace Firespitter.info
         {
             if (postToLog)
             {
-                Debug.Log(input);
+                Debug.Log(moduleName + input);
             }
             if (postToScreenDuration > 0f) // will only work in the flight scene, gives an error in other places.
             {

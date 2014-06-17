@@ -70,6 +70,7 @@ namespace Firespitter.aero
         //private List<FSbladeLiftSurface> liftSurfaces = new List<FSbladeLiftSurface>();
 
         private bool initialized = false;
+        private info.FSdebugMessages debug;
 
         public Vector3 GetVelocity(Rigidbody rigidbody, Vector3 refPoint) // from Ferram
         {
@@ -102,7 +103,7 @@ namespace Firespitter.aero
             
             if (part == null)
             {
-                Debug.Log("FSbladeLiftSurface: part is null");
+                debug.debugMessage("FSbladeLiftSurface: part is null");
                 return Vector2.zero;
             }
             
@@ -173,14 +174,16 @@ namespace Firespitter.aero
                 if (t.gameObject.name == transformName)
                 {
                     result = t;
+                    debug.debugMessage("Found transform " + transformName);
+                    break;
                 }
             }
             return result;
         }
 
         public void initialize()
-        {            
-
+        {
+            debug = new info.FSdebugMessages(debugMode, "FSbladeLiftSurface");
             //liftTransform = part.FindModelTransform(liftTransformName);            
             //referenceTransform = part.FindModelTransform(referenceTransformName);
             //debugCubeTransform = part.FindModelTransform(debugCubeName);
@@ -190,12 +193,17 @@ namespace Firespitter.aero
 
             if (liftTransform == null)
             {
-                Debug.Log("FSliftSurface: Can't find lift transform " + liftTransformName);
+                debug.debugMessage("FSliftSurface: Can't find lift transform " + liftTransformName);
             }
             else
             {
                 originalRotation = liftTransform.localRotation;
             }
+
+            if (referenceTransform == null)
+            {
+                debug.debugMessage("FSliftSurface: Can't find lift transform " + liftTransformName);
+            }            
 
             //liftSurfaces = part.GetComponents<FSbladeLiftSurface>().ToList();
 
@@ -220,7 +228,7 @@ namespace Firespitter.aero
             catch (Exception e)
             {
                 if (debugMode)
-                    Debug.Log("FSbladeLiftSurface FixedUpdate Exception " + e.GetType().ToString());
+                    debug.debugMessage("FSbladeLiftSurface FixedUpdate Exception " + e.GetType().ToString());
             }
         }
 

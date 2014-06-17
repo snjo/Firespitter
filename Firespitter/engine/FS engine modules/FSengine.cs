@@ -83,7 +83,7 @@ namespace Firespitter.engine
         public float smoothFXSpeed = 0.1f;
 
         [KSPField(guiActive = false, guiName = "Power Production")]
-        public float powerProduction = 20f; // RPM gain when ignited and fuelled
+        public float powerProduction = 20f; // RPM gain when ignited and fuelled        
         [KSPField]
         public float engineBrake = 15f; // engine RPM slowdown when not ignited
         [KSPField(guiActive = true, guiName = "Current RPM")]
@@ -113,7 +113,9 @@ namespace Firespitter.engine
         protected FloatCurve velocityCurve = new FloatCurve();
         protected FloatCurve fuelConsumptionCurve = new FloatCurve();
         protected FloatCurve throttleThrustCurve = new FloatCurve();
-        protected List<FSresource> resourceList = new List<FSresource>();        
+        protected List<FSresource> resourceList = new List<FSresource>();
+        
+        private info.FSdebugMessages debug;
 
         [KSPEvent(guiName = "Activate Engine", guiActive = true, guiActiveUnfocused = true, unfocusedRange = 5f)]
         public void Activate()
@@ -189,11 +191,11 @@ namespace Firespitter.engine
                     try
                     {
                         resourceList.Add(new FSresource(valueString[0].Trim(' '), float.Parse(valueString[1])));
-                        //Debug.Log("FSengine: Added resource " + valueString[0] + ", ratio " + valueString[1]);
+                        debug.debugMessage("Added resource " + valueString[0] + ", ratio " + valueString[1]);
                     }
                     catch
                     {
-                        //Debug.Log("FSengine: could not add resource to list: " + valueString[0]);
+                        debug.debugMessage("could not add resource to list: " + valueString[0]);
                     }
                 }
             }
@@ -201,6 +203,7 @@ namespace Firespitter.engine
 
         public override void OnStart(PartModule.StartState state)
         {
+            debug = new info.FSdebugMessages(debugMode, "FSengine");
             //part.stackIcon.SetIcon(DefaultIcons.LIQUID_ENGINE);
             part.stagingIcon = "LIQUID_ENGINE";
             thrustTransforms = part.FindModelTransforms(thrustTransformName);
@@ -219,11 +222,11 @@ namespace Firespitter.engine
             calculateFinalThrust();
 
             //burn fuel        
-            float fuelReceivedNormalized = consumeResources();
+            double fuelReceivedNormalized = consumeResources();
 
             if (EngineIgnited && !flameout)
             {
-                RPM += powerProduction * TimeWarp.deltaTime * fuelReceivedNormalized;
+                RPM += powerProduction * TimeWarp.deltaTime * (float)fuelReceivedNormalized;
             }
             else
             {
@@ -285,27 +288,28 @@ namespace Firespitter.engine
             return finalThrustNormalized;
         }
 
-        protected virtual float consumeResources()
+        protected virtual double consumeResources()
         {
-            float fuelReceivedNormalized = 0f;
-            float lowestResourceSupply = 1f;
+            double fuelReceivedNormalized = 0f;
+            double lowestResourceSupply = 1f;
             if (EngineIgnited)
             {
                 for (int i = 0; i < resourceList.Count; i++)
                 {                                       
-                    float requestFuelAmount = fuelConsumptionCurve.Evaluate(getWorkDone()) * maxThrust * resourceList[i].ratio * TimeWarp.deltaTime;
+                    double requestFuelAmount = fuelConsumptionCurve.Evaluate(getWorkDone()) * maxThrust * resourceList[i].ratio * TimeWarp.deltaTime;
 
-                    //Debug.Log("reqf: fcc " + fuelConsumptionCurve.Evaluate(finalThrustNormalized) + " maxTh " + maxThrust + " resLr " + resourceList[i].ratio);
+                    debug.debugMessage("reqf: fcc " + fuelConsumptionCurve.Evaluate(finalThrustNormalized) + " maxTh " + maxThrust + " resLr " + resourceList[i].ratio);
 
                     if (requestFuelAmount > 0f)
                     {
-                        float fuelReceived = part.RequestResource(resourceList[i].name, requestFuelAmount);
-                        resourceList[i].currentSupply = Mathf.Clamp(fuelReceived / requestFuelAmount, 0f, 1f);
+                        double fuelReceived = part.RequestResource(resourceList[i].name, requestFuelAmount);
+                        debug.debugMessage("fuel received: " + fuelReceived + " of " + requestFuelAmount);
+                        resourceList[i].currentSupply = Tools.Clamp<double>(fuelReceived / requestFuelAmount, 0d, 1d);
                         if (resourceList[i].currentSupply < 0.1f) cause = resourceList[i].name + " deprived";
                     }
-                    //Debug.Log("resource " + i + " : " + requestFuelAmount + ", " + resourceList[i].name);
+                    debug.debugMessage("resource " + i + " : " + requestFuelAmount + ", " + resourceList[i].name);
 
-                    lowestResourceSupply = Mathf.Min(lowestResourceSupply, resourceList[i].currentSupply);
+                    lowestResourceSupply = Math.Min(lowestResourceSupply, resourceList[i].currentSupply);
                 }
 
                 fuelReceivedNormalized = lowestResourceSupply;
@@ -315,7 +319,7 @@ namespace Firespitter.engine
                     && throttleThrustCurve.Evaluate(requestedThrottle) > 0f)
                 {
                     flameout = true;
-                    //Debug.Log("flameout: " + fuelReceivedNormalized.ToString() + " / fcc " + fuelConsumptionCurve.Evaluate(finalThrustNormalized));
+                    debug.debugMessage("flameout: " + fuelReceivedNormalized.ToString() + " / fcc " + fuelConsumptionCurve.Evaluate(finalThrustNormalized));
                 }
                 else
                 {
@@ -351,7 +355,7 @@ namespace Firespitter.engine
             Activate();
         }
 
-        public void OnCenterOfThrustQuery(CenterOfThrustQuery CoTquery)
+        public virtual void OnCenterOfThrustQuery(CenterOfThrustQuery CoTquery)
         {
             Vector3 newPos = Vector3.zero;
             Vector3 newDir = Vector3.zero;

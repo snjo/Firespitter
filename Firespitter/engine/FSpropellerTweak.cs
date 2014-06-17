@@ -60,6 +60,10 @@ namespace Firespitter.engine
         /// </summary>
         [KSPField]
         public float maxThrust = 150f;
+        [KSPField]
+        public float minPowerProduction = 20f;
+        [KSPField]
+        public float maxPowerProduction = 20f;
         /// <summary>
         /// The weight of the part with 0 engine size (blades still get added to this)
         /// </summary>
@@ -467,7 +471,14 @@ namespace Firespitter.engine
         {
             // make sure max thrust is set
             if (!maxThrustSet && affectEngineModule && engine != null)
-                engine.maxThrust = Mathf.Lerp(minThrust, maxThrust, engineLengthSlider);            
+            {
+                engine.maxThrust = Mathf.Lerp(minThrust, maxThrust, engineLengthSlider);
+                if (engine.type == FSengineWrapper.EngineType.FSengine)
+                {
+                    engine.fsengine.powerProduction = Mathf.Lerp(minPowerProduction, maxPowerProduction, engineLengthSlider);
+                }
+                maxThrustSet = true;
+            }
         }
 
         public void OnDestroy()

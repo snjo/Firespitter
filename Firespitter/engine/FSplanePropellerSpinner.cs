@@ -219,7 +219,8 @@ namespace Firespitter.engine
 
                     if (useRotorDiscSwap == 1)
                     {
-                        if (!duplicatedBlades && rotorDisc != null)
+                        // if you are using duplicated blades, you don't use a rotor disc, but blur sections for each blade, and need to slow down the rotor itself.
+                        if (!duplicatedBlades && rotorDisc != null) 
                         {
                             if (currentRPM > rotorDiscFadeInStart)
                             {

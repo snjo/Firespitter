@@ -90,6 +90,8 @@ namespace Firespitter.engine
         private Transform rotorHubTransform;
         private Transform baseTransform;
 
+        private info.FSdebugMessages debugB;
+
         //private LineRenderer debugLine;        
 
         [KSPEvent(guiName = "Hover", guiActive = true)]
@@ -129,26 +131,25 @@ namespace Firespitter.engine
         {
             base.OnStart(state);
 
+            debugB = new FSdebugMessages(debugMode, "FSengineBladed");
+
             rotorHubTransform = part.FindModelTransform(rotorHubName);
+            if (rotorHubTransform == null) debugB.debugMessage("rotorHubTransform is null");
             baseTransform = part.FindModelTransform(baseTransformName);
-            //heliLiftSrf = part.GetComponents<aero.FSbladeLiftSurface>();            
+            if (baseTransform == null) debugB.debugMessage("baseTransform is null");
 
             if (HighLogic.LoadedSceneIsFlight)
             {
                 setupBlades();
             }
 
+            circumeference = span * Mathf.PI * 2f;
+            bladeMidPoint = span;
             if (propTweak != null)
             {
-                circumeference = span * propTweak.bladeLengthSlider * Mathf.PI * 2f;
-                bladeMidPoint = span * propTweak.bladeLengthSlider;
+                circumeference *= propTweak.bladeLengthSlider;
+                bladeMidPoint *= propTweak.bladeLengthSlider;
             }
-
-            //if (debugMode)
-            //{
-            //    debugLine = part.gameObject.AddComponent<LineRenderer>();
-            //    debugLine.SetWidth(0.02f, 0.02f);
-            //}
 
             if (HighLogic.LoadedSceneIsFlight)
                 flightStarted = true;
@@ -170,35 +171,54 @@ namespace Firespitter.engine
 
         private void setupBlades()
         {
+            List<GameObject> newBlades = new List<GameObject>();
             propTweak = part.GetComponent<engine.FSpropellerTweak>();
             if (propTweak != null)
+            {                
+                propTweak.initialize();
+                
+                newBlades = propTweak.blades;
+            }
+            else
             {
-                //if (!propTweak.initialized)
-                    propTweak.initialize();
-
-                bladeLifts.Clear();
-                foreach (GameObject blade in propTweak.blades)
+                Transform[] newBladeTransforms = part.FindModelTransforms(bladeHubName);
+                for (int i = 0; i < newBladeTransforms.Length; i++)
                 {
-                    FSbladeLiftSurface bladeLift = blade.AddComponent<FSbladeLiftSurface>();
-                    if (bladeLift != null)
-                    {
-                        bladeLift.thisGameObject = blade;
-                        bladeLift.liftTransformName = liftTransformName;
-                        bladeLift.referenceTransformName = referenceTransformName;
-                        bladeLift.power = power;                        
-                        bladeLift.span = span * propTweak.bladeLengthSlider;
-                        bladeLift.wingArea = wingArea * propTweak.bladeLengthSlider;
-                        bladeLift.efficiency = efficiency;
-                        bladeLift.dragMultiplier = dragMultiplier;
-                        bladeLift.zeroLiftDrag = zeroLiftDrag;
-                        bladeLift.part = part;
-                        bladeLift.debugMode = debugMode;
-
-                        bladeLift.initialize();
-                        bladeLifts.Add(bladeLift);
-                    }
+                    newBlades.Add(newBladeTransforms[i].gameObject);
                 }
             }
+            bladeLifts.Clear();
+
+            foreach (GameObject blade in newBlades)
+            {
+                FSbladeLiftSurface bladeLift = blade.AddComponent<FSbladeLiftSurface>();
+                if (bladeLift != null)
+                {
+                    bladeLift.thisGameObject = blade;
+                    bladeLift.liftTransformName = liftTransformName;
+                    bladeLift.referenceTransformName = referenceTransformName;
+                    bladeLift.power = power;
+                    if (propTweak == null)
+                    {
+                        bladeLift.span = span;
+                        bladeLift.wingArea = wingArea;
+                    }
+                    else
+                    {
+                        bladeLift.span = span * propTweak.bladeLengthSlider;
+                        bladeLift.wingArea = wingArea * propTweak.bladeLengthSlider;
+                    }
+                    bladeLift.efficiency = efficiency;
+                    bladeLift.dragMultiplier = dragMultiplier;
+                    bladeLift.zeroLiftDrag = zeroLiftDrag;
+                    bladeLift.part = part;
+                    bladeLift.debugMode = debugMode;
+
+                    bladeLift.initialize();
+                    bladeLifts.Add(bladeLift);
+                }
+                debugB.debugMessage(bladeLifts.Count.ToString() + " blades added to bladeLifts");
+            }            
         }
 
         public override void FixedUpdate()
@@ -209,16 +229,14 @@ namespace Firespitter.engine
 
             finalThrustNormalized = Mathf.Abs(collective) / maxCollectivePitch;
             finalThrust = finalThrustNormalized * maxThrust;
-      
-            float fuelReceivedNormalized = consumeResources();
+
+            double fuelReceivedNormalized = consumeResources();
 
             updateRPM(airDirection, fuelReceivedNormalized);
 
             setBladePitch();
 
             updateStatus();
-
-            //drawDebugLine();
         }
 
         private float getAirSpeed()
@@ -230,7 +248,7 @@ namespace Firespitter.engine
             return airDirection;
         }
 
-        private void updateRPM(float airDirection, float fuelReceivedNormalized)
+        private void updateRPM(float airDirection, double fuelReceivedNormalized)
         {               
             if (airDirection < 0f) // && collective <= 0f)
             {
@@ -244,7 +262,8 @@ namespace Firespitter.engine
 
             if (EngineIgnited && !flameout)
             {
-                float RPMgain = powerProduction * TimeWarp.deltaTime * fuelReceivedNormalized;
+                //float RPMgain = Mathf.Lerp(powerProduction, maxPowerProduction, propTweak.engineLengthSlider) * TimeWarp.deltaTime * fuelReceivedNormalized;
+                float RPMgain = powerProduction * TimeWarp.deltaTime * (float)fuelReceivedNormalized;
                 workDone = Mathf.Min(maxRPM - RPM, RPMgain) / (powerProduction * TimeWarp.deltaTime); // normalized                
                 RPM += RPMgain;
             }
@@ -260,6 +279,18 @@ namespace Firespitter.engine
         protected override float getWorkDone()
         {
             return workDone;
+        }
+
+        public override float getThrottle()
+        {
+            if (tailRotor)
+            {
+                return 1f;
+            }
+            else
+            {
+                return base.getThrottle();
+            }
         }
 
         private void setBladePitch()
@@ -465,5 +496,18 @@ namespace Firespitter.engine
             collective += hoverCollective;
             collective = Mathf.Clamp(collective, -maxCollectivePitch, maxCollectivePitch);
         }
+
+        public virtual void OnCenterOfThrustQuery(CenterOfThrustQuery CoTquery)
+        {
+            if (tailRotor)
+            {
+                // do nothing
+            }
+            else
+            {
+                base.OnCenterOfThrustQuery(CoTquery);
+            }
+        }
+
     }
 }
