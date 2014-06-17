@@ -27,6 +27,8 @@ namespace Firespitter.customization
         [KSPField]
         public bool updateSymmetry = true;
         [KSPField]
+        public bool affectColliders = true;
+        [KSPField]
         public bool showInfo = true;
 
         //// in case of multiple instances of this module, on will be the master, the rest slaves.
@@ -40,8 +42,8 @@ namespace Firespitter.customization
         [KSPField(isPersistant = true)]
         public int selectedObject = 0;
 
-        private string[] objectNames;
-        private List<Transform> objectTransforms = new List<Transform>();
+        //private string[] objectBatchNames;
+        private List<List<Transform>> objectTransforms = new List<List<Transform>>();
         private List<int> fuelTankSetupList = new List<int>();
         private List<string> objectDisplayList = new List<string>();
         private FSfuelSwitch fuelSwitch;
@@ -76,24 +78,30 @@ namespace Firespitter.customization
 
         private void parseObjectNames()
         {
-            objectNames = objects.Split(';');
-            if (objectNames.Length < 1)
+            string[] objectBatchNames = objects.Split(';');
+            if (objectBatchNames.Length < 1)
                 Debug.Log("FSmeshSwitch: Found no object names in the object list");
             else
             {
                 objectTransforms.Clear();
-                for (int i = 0; i < objectNames.Length; i++)
+                for (int i = 0; i < objectBatchNames.Length; i++)
                 {
-                    Transform newTransform = part.FindModelTransform(objectNames[i]);
-                    if (newTransform != null)
+                    List <Transform> newObjects = new List<Transform>();                        
+                    string[] objectNames = objectBatchNames[i].Split(',');
+                    for (int j = 0; j < objectNames.Length; j++)
                     {
-                        objectTransforms.Add(newTransform);
-                        //Debug.Log("FSmeshSwitch: added object to list: " + objectNames[i]);
+                        Transform newTransform = part.FindModelTransform(objectNames[j].Trim(' '));
+                        if (newTransform != null)
+                        {
+                            newObjects.Add(newTransform);
+                            //Debug.Log("FSmeshSwitch: added object to list: " + objectNames[i]);
+                        }
+                        else
+                        {
+                            Debug.Log("FSmeshSwitch: could not find object " + objectBatchNames[i]);
+                        }
                     }
-                    else
-                    {
-                        Debug.Log("FSmeshSwitch: could not find object " + objectNames[i]);
-                    }
+                    if (newObjects.Count > 0) objectTransforms.Add(newObjects);
                 }
             }
         }
@@ -126,12 +134,28 @@ namespace Firespitter.customization
             initializeData();
 
             for (int i = 0; i < objectTransforms.Count; i++)
-            {               
-                objectTransforms[i].gameObject.renderer.enabled = false;
+            {
+                for (int j = 0; j < objectTransforms[i].Count; j++)
+                {
+                    objectTransforms[i][j].gameObject.renderer.enabled = false;
+                    if (affectColliders)
+                    {
+                        if (objectTransforms[i][j].gameObject.collider != null)
+                            objectTransforms[i][j].gameObject.collider.enabled = false;
+                    }
+                }
             }
             
             // enable the selected one last because there might be several entries with the same object, and we don't want to disable it after it's been enabled.
-            objectTransforms[objectNumber].gameObject.renderer.enabled = true;
+            for (int i = 0; i < objectTransforms[objectNumber].Count; i++)
+            {
+                objectTransforms[objectNumber][i].gameObject.renderer.enabled = true;
+                if (affectColliders)
+                {
+                    if (objectTransforms[objectNumber][i].gameObject.collider != null)
+                    objectTransforms[objectNumber][i].gameObject.collider.enabled = true;
+                }
+            }            
 
             if (useFuelSwitchModule)
             {                
@@ -149,7 +173,7 @@ namespace Firespitter.customization
         {
             if (selectedObject > objectDisplayList.Count - 1)
             {
-                currentObjectName = objectNames[selectedObject];
+                currentObjectName = "Unnamed"; //objectBatchNames[selectedObject];
             }
             else
             {
