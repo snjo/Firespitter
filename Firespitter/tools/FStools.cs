@@ -16,16 +16,27 @@ namespace Firespitter
             else
                 return Vector3.zero;
         }
-        
-        public static T Clamp<T>(T value, T max, T min) where T : System.IComparable<T>
-        {     
+
+        public static T Clamp<T>(T value, T min, T max)
+         where T : System.IComparable<T>
+        {
             T result = value;
             if (value.CompareTo(max) > 0)
                 result = max;
             if (value.CompareTo(min) < 0)
                 result = min;
             return result;
-        } 
+        }
+
+        public static double Clamp(double value, double min, double max)
+        {     
+            double result = value;
+            if (value > max)
+                result = max;
+            if (value < min)
+                result = min;
+            return result;
+        }
 
         public static String AppPath = KSPUtil.ApplicationRootPath.Replace("\\", "/");
         public static String PlugInDataPath = AppPath + "GameData/Firespitter/PluginData/";

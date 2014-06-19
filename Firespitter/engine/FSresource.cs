@@ -9,6 +9,7 @@ namespace Firespitter.engine
     {
         //public PartResource resource;
         public string name;
+        public int ID;
         public float ratio;
         public double currentSupply = 0f;
         public float amount = 0f;
@@ -17,12 +18,14 @@ namespace Firespitter.engine
         public FSresource(string _name, float _ratio)
         {
             name = _name;
+            ID = _name.GetHashCode();
             ratio = _ratio;
         }
 
         public FSresource(string _name)
         {
             name = _name;
+            ID = _name.GetHashCode();
             ratio = 1f;
         }
     }

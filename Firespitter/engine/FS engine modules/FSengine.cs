@@ -47,10 +47,14 @@ namespace Firespitter.engine
         /// </summary>
         [KSPField]
         public string resources = "LiquidFuel,1;IntakeAir,15";
+
+        /// <summary>
+        /// The transform(s) in the model where the force is applied
+        /// </summary>
         [KSPField]
         public string thrustTransformName = "thrustTransform";
         /// <summary>
-        /// The teakable slider value for max throttle value seen in flight and in the hangar.
+        /// The tweakable slider value for max throttle value seen in flight and in the hangar.
         /// </summary>
         [KSPField(guiActive = true, guiActiveEditor = true, guiName = "Max throttle", isPersistant = true), UI_FloatRange(minValue = 0f, maxValue = 100f, stepIncrement = 0.01f)]
         public float maxThrottle = 100f;
@@ -89,7 +93,7 @@ namespace Firespitter.engine
         [KSPField(guiActive = true, guiName = "Current RPM")]
         public float RPM = 0f;
         [KSPField(guiActive = false, guiName = "Power Drain")]
-        public float powerDrain = 10f; // blade drag for instance. scales with throttle setting
+        public float powerDrain = 10f; // RPM loss when running and throttled up, to simulate blade drag for instance. scales with throttle setting
 
         [KSPField(guiName = "Current Thrust", guiActive = true)]
         public float thrustInfo = 0f;
@@ -108,6 +112,12 @@ namespace Firespitter.engine
         }
 
         public FSengineType type = FSengineType.normal;
+
+        public delegate float floatDelegate();
+        /// <summary>
+        /// This delegate function can be replaced by other modules to control the throttle in another way
+        /// </summary>
+        public floatDelegate getThrottleDelegate;
 
         protected FloatCurve atmosphericThrustCurve = new FloatCurve();
         protected FloatCurve velocityCurve = new FloatCurve();
@@ -203,6 +213,7 @@ namespace Firespitter.engine
 
         public override void OnStart(PartModule.StartState state)
         {
+            getThrottleDelegate = getThrottle;
             debug = new info.FSdebugMessages(debugMode, "FSengine");
             //part.stackIcon.SetIcon(DefaultIcons.LIQUID_ENGINE);
             part.stagingIcon = "LIQUID_ENGINE";
@@ -226,11 +237,11 @@ namespace Firespitter.engine
 
             if (EngineIgnited && !flameout)
             {
-                RPM += powerProduction * TimeWarp.deltaTime * (float)fuelReceivedNormalized;
+                RPM += powerProduction * TimeWarp.deltaTime * (float)fuelReceivedNormalized;                
             }
             else
             {
-                RPM -= (engineBrake + (Mathf.Abs(requestedThrottle) * powerDrain)) * TimeWarp.deltaTime; // for reducing engine power when it's no longer ignited                
+                RPM -= (engineBrake + (Mathf.Abs(requestedThrottle) * powerDrain)) * TimeWarp.deltaTime; // for reducing engine power when it's no longer ignited                                
             }
 
             RPM = Mathf.Clamp(RPM, 0f, maxRPM);
@@ -281,7 +292,7 @@ namespace Firespitter.engine
         }
 
         /// <summary>
-        /// In regaler engines, returns finalThrustNormalized, in bladed engines etc, can return a normalized float representing the amount of work the engine had to do to keep RPM up
+        /// In regular engines, returns finalThrustNormalized, in bladed engines etc, can return a normalized float representing the amount of work the engine had to do to keep RPM up
         /// </summary>        
         protected virtual float getWorkDone()
         {
@@ -290,6 +301,7 @@ namespace Firespitter.engine
 
         protected virtual double consumeResources()
         {
+            double lowestRequestableAmount = 0.0002d; // test show that anything below 1E-05 returns 0
             double fuelReceivedNormalized = 0f;
             double lowestResourceSupply = 1f;
             if (EngineIgnited)
@@ -297,29 +309,47 @@ namespace Firespitter.engine
                 for (int i = 0; i < resourceList.Count; i++)
                 {                                       
                     double requestFuelAmount = fuelConsumptionCurve.Evaluate(getWorkDone()) * maxThrust * resourceList[i].ratio * TimeWarp.deltaTime;
-
-                    debug.debugMessage("reqf: fcc " + fuelConsumptionCurve.Evaluate(finalThrustNormalized) + " maxTh " + maxThrust + " resLr " + resourceList[i].ratio);
-
-                    if (requestFuelAmount > 0f)
+                    if (requestFuelAmount < lowestRequestableAmount)
                     {
-                        double fuelReceived = part.RequestResource(resourceList[i].name, requestFuelAmount);
-                        debug.debugMessage("fuel received: " + fuelReceived + " of " + requestFuelAmount);
-                        resourceList[i].currentSupply = Tools.Clamp<double>(fuelReceived / requestFuelAmount, 0d, 1d);
-                        if (resourceList[i].currentSupply < 0.1f) cause = resourceList[i].name + " deprived";
+                        requestFuelAmount = lowestRequestableAmount;
+                        //debug.debugMessage("request too low for " + resourceList[i].name);
                     }
-                    debug.debugMessage("resource " + i + " : " + requestFuelAmount + ", " + resourceList[i].name);
+
+                    // due to a stock bug, very small values get 0 resource in return, seems to happen with values below 0.00001
+                    // if the amount is too small to register with the fuel tanks, it makes no difference if we say it's runnig for free anyway                                                       
+
+                    //if (requestFuelAmount > lowestRequestableAmount)
+                    //{
+                        double fuelReceived = part.RequestResource(resourceList[i].ID, requestFuelAmount);
+                        //debug.debugMessage("fuel received: " + fuelReceived + " of " + requestFuelAmount);
+                        Debug.Log("fR/rFA: " + fuelReceived / requestFuelAmount + " - clamped: " + Tools.Clamp(fuelReceived / requestFuelAmount, 0d, 1d));
+                        resourceList[i].currentSupply = Tools.Clamp(fuelReceived / requestFuelAmount, 0d, 1d);
+                        if (resourceList[i].currentSupply < flameoutThreshold)
+                        {
+                            cause = resourceList[i].name + " deprived";
+                            debug.debugMessage("FO " + resourceList[i].name + " == " + resourceList[i].currentSupply + ", requested" + requestFuelAmount + " received " + fuelReceived);
+                        }
+                        else
+                        {
+                            debug.debugMessage("not FO: " + resourceList[i].name + " : " + resourceList[i].currentSupply + ", requested" + requestFuelAmount + " received " + fuelReceived);
+                        }
+                    //}
+                    //else                        
+                    //{
+                    //    resourceList[i].currentSupply = 1f;
+                    //}
+                    //debug.debugMessage("resource " + i + " : " + requestFuelAmount + ", " + resourceList[i].name);
 
                     lowestResourceSupply = Math.Min(lowestResourceSupply, resourceList[i].currentSupply);
                 }
 
                 fuelReceivedNormalized = lowestResourceSupply;
 
-                if (fuelReceivedNormalized < flameoutThreshold
-                    && fuelConsumptionCurve.Evaluate(finalThrustNormalized) > 0f
-                    && throttleThrustCurve.Evaluate(requestedThrottle) > 0f)
+                if (fuelReceivedNormalized < flameoutThreshold)
+                    //&& fuelConsumptionCurve.Evaluate(finalThrustNormalized) > 0f
+                    //&& throttleThrustCurve.Evaluate(requestedThrottle) > 0f)
                 {
-                    flameout = true;
-                    debug.debugMessage("flameout: " + fuelReceivedNormalized.ToString() + " / fcc " + fuelConsumptionCurve.Evaluate(finalThrustNormalized));
+                    flameout = true;                    
                 }
                 else
                 {
@@ -328,12 +358,8 @@ namespace Firespitter.engine
             }
             return fuelReceivedNormalized;
         }
-
-        /// <summary>
-        /// this can be overriden to make other modules control the throttle instead of reading the game's central throttle.
-        /// </summary>
-        /// <returns>Returns a normalized float</returns>
-        public virtual float getThrottle()
+               
+        private float getThrottle()
         {
             return vessel.ctrlState.mainThrottle;
         }
@@ -345,7 +371,7 @@ namespace Firespitter.engine
 
             if (HighLogic.LoadedSceneIsFlight)
             {
-                requestedThrottle = getThrottle();
+                requestedThrottle = getThrottleDelegate();
                 updateFX();
             }
         }

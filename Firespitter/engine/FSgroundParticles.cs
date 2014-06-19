@@ -38,7 +38,14 @@ namespace Firespitter.engine
 
         // the radius of the disc in which particles spawn on the ground
         [KSPField]
-        public float emissionDiscSize = 3f;        
+        public float emissionDiscSize = 3f;
+
+        [KSPField]
+        public Vector2 particleEnergy = new Vector2(1f, 2f);
+        [KSPField]
+        public Vector2 particleSize = new Vector2(0.5f, 0.5f);
+        [KSPField]
+        public float particleSizeGrow = 5f;
 
         private MeshFilter meshFilter;
 
@@ -77,13 +84,13 @@ namespace Firespitter.engine
                 particleFX.AnimatorColor3 = new Color(1.0f, 1.0f, 1.0f, 0.2f);
                 particleFX.AnimatorColor4 = new Color(1.0f, 1.0f, 1.0f, 0.05f);
 
-                particleFX.EmitterMinSize = 0.5f;
-                particleFX.EmitterMaxSize = 0.5f;
-                particleFX.EmitterMinEnergy = 3f;
-                particleFX.EmitterMaxEnergy = 3f;
+                particleFX.EmitterMinSize = particleSize.x;
+                particleFX.EmitterMaxSize = particleSize.y;
+                particleFX.EmitterMinEnergy = particleEnergy.x;
+                particleFX.EmitterMaxEnergy = particleEnergy.y;
                 particleFX.EmitterMinEmission = 0f;
                 particleFX.EmitterMaxEmission = 0f;
-                particleFX.AnimatorSizeGrow = 1f;
+                particleFX.AnimatorSizeGrow = particleSizeGrow;
 
                 particleFX.EmitterLocalVelocity = new Vector3(0f, 0f, 0f);
                 particleFX.EmitterRndVelocity = new Vector3(0f, 0f, 0f);                
@@ -139,7 +146,14 @@ namespace Firespitter.engine
             currentEmission = ((maxDistance / currentDistance) * emission) - emission;
             if (engine != null)
             {
-                currentEmission *= engine.finalThrustNormalized;
+                if (engine.type == FSengineWrapper.EngineType.FSengine)
+                {                    
+                    currentEmission *= engine.finalThrustNormalized * engine.fsengine.RPMnormalized;                    
+                }
+                else
+                {
+                    currentEmission *= engine.finalThrustNormalized;
+                }
             }
             currentEmission = Mathf.Clamp(currentEmission, 0f, emission);
 

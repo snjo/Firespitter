@@ -130,6 +130,7 @@ namespace Firespitter.engine
         public override void OnStart(PartModule.StartState state)
         {
             base.OnStart(state);
+            getThrottleDelegate = getThrottle;
 
             debugB = new FSdebugMessages(debugMode, "FSengineBladed");
 
@@ -281,7 +282,7 @@ namespace Firespitter.engine
             return workDone;
         }
 
-        public override float getThrottle()
+        private float getThrottle()
         {
             if (tailRotor)
             {
@@ -289,7 +290,7 @@ namespace Firespitter.engine
             }
             else
             {
-                return base.getThrottle();
+                return vessel.ctrlState.mainThrottle;
             }
         }
 

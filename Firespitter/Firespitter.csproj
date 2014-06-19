@@ -56,6 +56,7 @@
     <Compile Include="aero\FSbladeLiftSurface.cs" />
     <Compile Include="aero\FSliftSurface.cs" />
     <Compile Include="aero\FSwingBase.cs" />
+    <Compile Include="animation\FSmimickRotation.cs" />
     <Compile Include="animation\FSslowtato.cs" />
     <Compile Include="cockpit\AnalogCounter.cs" />
     <Compile Include="cockpit\FSairSpeedIndicator.cs" />
