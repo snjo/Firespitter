@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Firespitter.info
 {
-    class FSinputVisualizer
+    class FSinputVisualizer : PartModule
     {
         public Rect windowRect = new Rect(500f, 200f, 150f, 30f);
         public int windowID;
@@ -66,7 +66,18 @@ namespace Firespitter.info
 
         public FSinputVisualizer()
         {
-            windowID = FSGUIwindowID.getNextID();
+            getWindowID();
+        }
+
+        public override void OnStart(PartModule.StartState state)
+        {
+            getWindowID();
+        }
+
+        private void getWindowID()
+        {
+            if (windowID == 0)
+                windowID = FSGUIwindowID.getNextID();
         }
 
         private void nextButtonPos()
@@ -87,42 +98,45 @@ namespace Firespitter.info
 
         public void OnGUI()
         {
-            if (!stylesCreated)
-                createStyles();
-            windowRect = GUI.Window(windowID, windowRect, drawWindow, "Input Visualizer", buttonActive);
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                if (!stylesCreated)
+                    createStyles();
+                windowRect = GUI.Window(windowID, windowRect, drawWindow, "Input Visualizer", buttonActive);
 
-            float letterKeysXpos = windowRect.x + buttonSize.x * 2 + padding * 2;
-            drawPosition.x = letterKeysXpos;
-            drawPosition.y = windowRect.y + windowRect.height + padding;
+                float letterKeysXpos = windowRect.x + buttonSize.x * 2 + padding * 2;
+                drawPosition.x = letterKeysXpos;
+                drawPosition.y = windowRect.y + windowRect.height + padding;
 
-            GUI.Button(drawPosition, "Q", getButtonStyle(KeyCode.Q));
-            nextButtonPos();
-            GUI.Button(drawPosition, "W", getButtonStyle(KeyCode.W));
-            nextButtonPos();
-            GUI.Button(drawPosition, "E", getButtonStyle(KeyCode.E));
-            newLine(letterKeysXpos);
+                GUI.Button(drawPosition, "Q", getButtonStyle(KeyCode.Q));
+                nextButtonPos();
+                GUI.Button(drawPosition, "W", getButtonStyle(KeyCode.W));
+                nextButtonPos();
+                GUI.Button(drawPosition, "E", getButtonStyle(KeyCode.E));
+                newLine(letterKeysXpos);
 
-            GUI.Button(drawPosition, "A", getButtonStyle(KeyCode.A));
-            nextButtonPos();
-            GUI.Button(drawPosition, "S", getButtonStyle(KeyCode.S));
-            nextButtonPos();
-            GUI.Button(drawPosition, "D", getButtonStyle(KeyCode.D));
-            newLine(letterKeysXpos);
+                GUI.Button(drawPosition, "A", getButtonStyle(KeyCode.A));
+                nextButtonPos();
+                GUI.Button(drawPosition, "S", getButtonStyle(KeyCode.S));
+                nextButtonPos();
+                GUI.Button(drawPosition, "D", getButtonStyle(KeyCode.D));
+                newLine(letterKeysXpos);
 
-            GUI.Button(drawPosition, "Z", getButtonStyle(KeyCode.Z));
-            nextButtonPos();
-            GUI.Button(drawPosition, "X", getButtonStyle(KeyCode.X));
-            nextButtonPos();
-            GUI.Button(drawPosition, "C", getButtonStyle(KeyCode.C));
-            newLine(letterKeysXpos);
+                GUI.Button(drawPosition, "Z", getButtonStyle(KeyCode.Z));
+                nextButtonPos();
+                GUI.Button(drawPosition, "X", getButtonStyle(KeyCode.X));
+                nextButtonPos();
+                GUI.Button(drawPosition, "C", getButtonStyle(KeyCode.C));
+                newLine(letterKeysXpos);
 
-            drawPosition.x = windowRect.x;
-            drawPosition.y = windowRect.y + windowRect.height + padding * 2 + buttonSize.y;
-            GUI.Button(longButtonRect(2), "Caps", getButtonStyle(KeyCode.CapsLock));
-            drawPosition.y += buttonSize.y + padding;
-            GUI.Button(longButtonRect(2), "Shift", getButtonStyle(KeyCode.LeftShift));
-            drawPosition.y += buttonSize.y + padding;
-            GUI.Button(longButtonRect(2), "Ctrl", getButtonStyle(KeyCode.LeftControl));
+                drawPosition.x = windowRect.x;
+                drawPosition.y = windowRect.y + windowRect.height + padding * 2 + buttonSize.y;
+                GUI.Button(longButtonRect(2), "Caps", getButtonStyle(KeyCode.CapsLock));
+                drawPosition.y += buttonSize.y + padding;
+                GUI.Button(longButtonRect(2), "Shift", getButtonStyle(KeyCode.LeftShift));
+                drawPosition.y += buttonSize.y + padding;
+                GUI.Button(longButtonRect(2), "Ctrl", getButtonStyle(KeyCode.LeftControl));
+            }
         }
     }
 }
