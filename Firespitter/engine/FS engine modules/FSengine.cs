@@ -311,18 +311,19 @@ namespace Firespitter.engine
                     double requestFuelAmount = fuelConsumptionCurve.Evaluate(getWorkDone()) * maxThrust * resourceList[i].ratio * TimeWarp.deltaTime;
                     if (requestFuelAmount < lowestRequestableAmount)
                     {
-                        requestFuelAmount = lowestRequestableAmount;
-                        //debug.debugMessage("request too low for " + resourceList[i].name);
+                        if (requestFuelAmount <= 0f)
+                        {
+                            requestFuelAmount = 0f;
+                        }
+                        else
+                        {
+                            requestFuelAmount = lowestRequestableAmount;
+                        }
                     }
-
-                    // due to a stock bug, very small values get 0 resource in return, seems to happen with values below 0.00001
-                    // if the amount is too small to register with the fuel tanks, it makes no difference if we say it's runnig for free anyway                                                       
-
-                    //if (requestFuelAmount > lowestRequestableAmount)
-                    //{
+                    
                         double fuelReceived = part.RequestResource(resourceList[i].ID, requestFuelAmount);
                         //debug.debugMessage("fuel received: " + fuelReceived + " of " + requestFuelAmount);
-                        Debug.Log("fR/rFA: " + fuelReceived / requestFuelAmount + " - clamped: " + Tools.Clamp(fuelReceived / requestFuelAmount, 0d, 1d));
+                        //Debug.Log("fR/rFA: " + fuelReceived / requestFuelAmount + " - clamped: " + Tools.Clamp(fuelReceived / requestFuelAmount, 0d, 1d));
                         resourceList[i].currentSupply = Tools.Clamp(fuelReceived / requestFuelAmount, 0d, 1d);
                         if (resourceList[i].currentSupply < flameoutThreshold)
                         {
@@ -332,13 +333,7 @@ namespace Firespitter.engine
                         else
                         {
                             debug.debugMessage("not FO: " + resourceList[i].name + " : " + resourceList[i].currentSupply + ", requested" + requestFuelAmount + " received " + fuelReceived);
-                        }
-                    //}
-                    //else                        
-                    //{
-                    //    resourceList[i].currentSupply = 1f;
-                    //}
-                    //debug.debugMessage("resource " + i + " : " + requestFuelAmount + ", " + resourceList[i].name);
+                        }                    
 
                     lowestResourceSupply = Math.Min(lowestResourceSupply, resourceList[i].currentSupply);
                 }

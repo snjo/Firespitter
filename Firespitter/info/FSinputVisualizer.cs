@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Firespitter.info
 {
-    class FSinputVisualizer : PartModule
+    public class FSinputVisualizer : PartModule
     {
         public Rect windowRect = new Rect(500f, 200f, 150f, 30f);
         public int windowID;

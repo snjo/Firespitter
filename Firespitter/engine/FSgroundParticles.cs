@@ -45,7 +45,18 @@ namespace Firespitter.engine
         [KSPField]
         public Vector2 particleSize = new Vector2(0.5f, 0.5f);
         [KSPField]
-        public float particleSizeGrow = 5f;
+        public float particleSizeGrow = 3f;
+
+        [KSPField]
+        public Vector4 particleColor0 = new Vector4(1.0f, 1.0f, 1.0f, 0.0f);
+        [KSPField]
+        public Vector4 particleColor1 = new Vector4(1.0f, 1.0f, 1.0f, 0.1f);
+        [KSPField]
+        public Vector4 particleColor2 = new Vector4(1.0f, 1.0f, 1.0f, 0.15f);
+        [KSPField]        
+        public Vector4 particleColor3 = new Vector4(1.0f, 1.0f, 1.0f, 0.2f);
+        [KSPField]
+        public Vector4 particleColor4 = new Vector4(1.0f, 1.0f, 1.0f, 0.05f);
 
         private MeshFilter meshFilter;
 
@@ -78,11 +89,11 @@ namespace Firespitter.engine
                 particleFX = new FSparticleFX(washDisc, particleTexture);  
            
                 // particles change color and alpha over time.
-                particleFX.AnimatorColor0 = new Color(1.0f, 1.0f, 1.0f, 0.0f);
-                particleFX.AnimatorColor1 = new Color(1.0f, 1.0f, 1.0f, 0.1f);
-                particleFX.AnimatorColor2 = new Color(1.0f, 1.0f, 1.0f, 0.15f);
-                particleFX.AnimatorColor3 = new Color(1.0f, 1.0f, 1.0f, 0.2f);
-                particleFX.AnimatorColor4 = new Color(1.0f, 1.0f, 1.0f, 0.05f);
+                particleFX.AnimatorColor0 = getColorFromV4(particleColor0);
+                particleFX.AnimatorColor1 = getColorFromV4(particleColor1);
+                particleFX.AnimatorColor2 = getColorFromV4(particleColor2);
+                particleFX.AnimatorColor3 = getColorFromV4(particleColor3);
+                particleFX.AnimatorColor4 = getColorFromV4(particleColor4);                
 
                 particleFX.EmitterMinSize = particleSize.x;
                 particleFX.EmitterMaxSize = particleSize.y;
@@ -103,6 +114,11 @@ namespace Firespitter.engine
             }
 
             thrustTransform = part.FindModelTransform(thrustTransformName);
+        }
+
+        private Color getColorFromV4(Vector4 vector)
+        {
+            return new Color(vector.x, vector.y, vector.z, vector.w);
         }
 
         void Update()
