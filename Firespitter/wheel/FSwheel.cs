@@ -46,7 +46,28 @@ class FSwheel : PartModule
     [KSPField]
     public float deploymentCooldown = 0.5f;
 
-    [KSPField(isPersistant = true)]
+    public enum DeploymentStates
+    {
+        Deployed, Deploying, Retracted, Retracting, Stopped, unknown
+    }
+    private DeploymentStates _deploymentStateEnum = DeploymentStates.Deployed;
+    public DeploymentStates deploymentStateEnum
+    {
+        get
+        {
+            return _deploymentStateEnum;
+        }
+        set
+        {
+            deploymentState = value.ToString();
+            _deploymentStateEnum = value;
+        }
+    }
+
+    /// <summary>
+    /// This field is just used for persistent storage. Use then DeploymentStates enum deploymentStateEnum instead. Writing to this field has no effect.
+    /// </summary>
+    [KSPField(isPersistant = true)]    
     public string deploymentState = "Deployed"; // Deployed, Deploying, Retracted, Retracting, Stopped
 
     [KSPField]
@@ -298,15 +319,15 @@ class FSwheel : PartModule
         {            
             animTime = anim[animationName].normalizedTime;
 
-            if (deploymentState == "Retracted") //fixes stupid unity animation timing (0 to 0.99 to 0)
+            if (deploymentStateEnum == DeploymentStates.Retracted) //fixes stupid unity animation timing (0 to 0.99 to 0)
                 animTime = 1f;
 
             if (mode == "Deploy")
             {
-                if (deploymentState == "Retracted")
+                if (deploymentStateEnum == DeploymentStates.Retracted)
                     animTime = 1f;
                 animSpeed = -1f * customAnimationSpeed;
-                deploymentState = "Deploying";
+                deploymentStateEnum = DeploymentStates.Deploying;
                 if (startDeployEffect != string.Empty)
                 {
                     part.Effect(startDeployEffect);
@@ -314,10 +335,10 @@ class FSwheel : PartModule
             }
             else if (mode == "Retract")
             {
-                if (deploymentState == "Deployed")
+                if (deploymentStateEnum == DeploymentStates.Deployed)
                     animTime = 0f;
                 animSpeed = 1f * customAnimationSpeed;
-                deploymentState = "Retracting";
+                deploymentStateEnum = DeploymentStates.Retracting;
                 if (startRetractEffect != string.Empty)
                 {
                     part.Effect(startRetractEffect);
@@ -326,7 +347,7 @@ class FSwheel : PartModule
             else if (mode == "Stop")
             {
                 animSpeed = 0f;
-                deploymentState = "Stopped";
+                deploymentStateEnum = DeploymentStates.Stopped;
             }
 
             anim[animationName].normalizedTime = animTime;
@@ -449,7 +470,7 @@ class FSwheel : PartModule
 
     public void setBrakeLight(bool _brakesEngaged)
     {
-        if (disableColliderWhenRetracted && deploymentState == "Retracted")
+        if (disableColliderWhenRetracted && deploymentStateEnum == DeploymentStates.Retracted)
         {
             setBrakeLight(BrakeStatus.disabled);
         }
@@ -497,7 +518,14 @@ class FSwheel : PartModule
 
     public override void OnStart(PartModule.StartState state)
     {
-        base.OnStart(state);
+        try
+        {
+            deploymentStateEnum = (DeploymentStates)Enum.Parse(typeof(DeploymentStates), deploymentState);
+        }
+        catch
+        {
+            Debug.Log("FSwheel: Could not set deployment state " + deploymentState);
+        }
 
         #region animation
 
@@ -507,7 +535,7 @@ class FSwheel : PartModule
             hasAnimation = true;
             anim[animationName].layer = animationLayer;
             float startAnimTime = 0f;
-            if (deploymentState == "Retracted")
+            if (deploymentStateEnum == DeploymentStates.Retracted)
             {
                 startAnimTime = 1f;
                 animSpeed = 1f * customAnimationSpeed;
@@ -605,7 +633,7 @@ class FSwheel : PartModule
 
             if (disableColliderWhenRetracted)
             {
-                if (deploymentState == "Retracted")
+                if (deploymentStateEnum == DeploymentStates.Retracted)
                 {
                     wheelList.enabled = false;
                 }
@@ -881,14 +909,14 @@ class FSwheel : PartModule
 
             if (!anim.isPlaying)
             {
-                if (deploymentState == "Deploying")
+                if (deploymentStateEnum == DeploymentStates.Deploying)
                 {
-                    deploymentState = "Deployed";
+                    deploymentStateEnum = DeploymentStates.Deployed;
                     setBrakeLight(brakesEngaged);
                 }
-                else if (deploymentState == "Retracting")
+                else if (deploymentStateEnum == DeploymentStates.Retracting)
                 {
-                    deploymentState = "Retracted";
+                    deploymentStateEnum = DeploymentStates.Retracted;
                     setBrakeLight(brakesEngaged);
                 }
             }
@@ -903,15 +931,15 @@ class FSwheel : PartModule
 
             if (disableColliderWhenRetracted || disableColliderWhenRetracting) // runs OnStart too, so no need to run it in fixed update on non active vessels
             {
-                switch (deploymentState)
+                switch (deploymentStateEnum)
                 {
-                    case "Retracted":
+                    case DeploymentStates.Retracted:
                         if (disableColliderWhenRetracted)
                             wheelList.enabled = false;
                         else
                             wheelList.enabled = true;
                         break;
-                    case "Retracting":
+                    case DeploymentStates.Retracting:
                         if (disableColliderWhenRetracting)
                         {
                             if (animNormalizedTime > disableColliderAtAnimTime)
@@ -919,7 +947,7 @@ class FSwheel : PartModule
                             else wheelList.enabled = true;
                         }
                         break;
-                    case "Deploying":
+                    case DeploymentStates.Deploying:
                         if (disableColliderWhenRetracting)
                         {
                             if (animNormalizedTime > disableColliderAtAnimTime)
@@ -941,7 +969,7 @@ class FSwheel : PartModule
 
     private void updateMotors()
     {
-        if (hasMotor && motorEnabled && deploymentState == "Deployed")
+        if (hasMotor && motorEnabled && deploymentStateEnum == DeploymentStates.Deployed)
         {
             float speedModifier = Mathf.Max(0f, -(((float)vessel.horizontalSrfSpeed - maxSpeed) / maxSpeed));
             float throttleInput = vessel.ctrlState.wheelThrottle * speedModifier;
@@ -971,7 +999,7 @@ class FSwheel : PartModule
     {
         if (useDragUpdate)
         {
-            if (deploymentState == "Deployed")
+            if (deploymentStateEnum == DeploymentStates.Deployed)
             {
                 part.minimum_drag = deployedDrag;
                 part.maximum_drag = deployedDrag;
