@@ -92,6 +92,26 @@ class FSartificialHorizon :InternalModule
         refTransform.rotation = Quaternion.LookRotation(vessel.ReferenceTransform.up, -vessel.ReferenceTransform.forward);
         shipHeading = new Firespitter.ShipHeading(refTransform);
 
+        try // overdoing the error protection a bit just because I can't be sure the renderer will be valid
+        {
+            Transform innerDiscTransform = base.internalProp.FindModelTransform(innerDiscName);
+            if (innerDiscTransform != null)
+            {
+                innerDisc = innerDiscTransform.gameObject;
+                discMat = innerDisc.renderer.material;
+            }
+        }
+        catch
+        {
+            Debug.Log("FSartificialHorizon: Can't find object, or its material: " + innerDiscName);
+        }
+
+        if (discMat == null)
+        {
+            useOffset = false;
+            Debug.Log("FSartificialHorizon: Couldn't find disc material");
+        }
+
         if (useOffset)
         {
             testButton = base.internalProp.FindModelTransform(testButtonName).gameObject;
@@ -102,19 +122,10 @@ class FSartificialHorizon :InternalModule
             plusButtonHandler = plusButton.AddComponent<FSgenericButtonHandler>();
             testButtonHandler.mouseDownFunction = testCageToggle;
             minusButtonHandler.mouseDownFunction = cageMinus;
-            plusButtonHandler.mouseDownFunction = cagePlus;
-
-            discMat = innerDisc.renderer.material;
+            plusButtonHandler.mouseDownFunction = cagePlus;            
         }
 
-        needle = base.internalProp.FindModelTransform(outerRingName);        
-
-        innerDisc = base.internalProp.FindModelTransform(innerDiscName).gameObject;
-        if (discMat == null)
-        {
-            useOffset = false;
-            //Debug.Log("FSartificialHorizon: Couldn't find disc material");
-        }
+        needle = base.internalProp.FindModelTransform(outerRingName);                        
     }
 
     // Update is called once per frame
