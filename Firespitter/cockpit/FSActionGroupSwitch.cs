@@ -118,6 +118,15 @@ namespace Firespitter.cockpit
                                     ScreenMessages.PostScreenMessage(new ScreenMessage("hover height set to " + Math.Round(copterEngine.hoverHeight, 1), 2f, ScreenMessageStyle.UPPER_CENTER));
                                 Debug.Log("FS: hover height set to " + copterEngine.hoverHeight);
                             }
+
+                            IEnumerable<engine.FSengineBladed> bladedEngines = part.Modules.OfType<engine.FSengineBladed>();
+                            using (var bladedEngineEnum = bladedEngines.GetEnumerator())
+                            {
+                                while (bladedEngineEnum.MoveNext())
+                                {
+                                    bladedEngineEnum.Current.toggleHover();
+                                }
+                            }
                         }
                         break;
                     case "Stage":
