@@ -487,9 +487,9 @@ namespace Firespitter.cockpit
         {
             if (useInfoPopup)
             {
-                for (int j = 0; j < infoPopupStrings.Length; j++)
+                for (int i = 0; i < infoPopupStrings.Length; i++)
                 {
-                    textArray[j] = infoPopupStrings[j];
+                    textArray[i] = infoPopupStrings[i];
                 }
                 textArray[linesPerPage - 1] = "root/settings/info";
                 if (buttonArray[(int)ButtonNames.confirm]) getInfoPopupText();
