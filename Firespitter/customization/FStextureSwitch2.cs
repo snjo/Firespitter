@@ -303,6 +303,7 @@ namespace Firespitter.customization
 
         }
 
+        // runs the kind of commands that would normally be in OnStart, if they have not already been run. In case a method is called upon externally, but values have not been set up yet
         private void initializeData()
         {
             if (!initialized)
