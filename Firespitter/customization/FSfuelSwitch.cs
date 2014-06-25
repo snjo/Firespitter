@@ -135,27 +135,27 @@ namespace Firespitter.customization
                 DestroyImmediate(partResources[i]);
             }            
 
-            for (int i = 0; i < tankList.Count; i++)
+            for (int tankCount = 0; tankCount < tankList.Count; tankCount++)
             {
-                if (selectedTankSetup == i)
+                if (selectedTankSetup == tankCount)
                 {
-                    for (int j = 0; j < tankList[i].resources.Count; j++)
+                    for (int resourceCount = 0; resourceCount < tankList[tankCount].resources.Count; resourceCount++)
                     {
-                        if (tankList[i].resources[j].name != "Structural")
+                        if (tankList[tankCount].resources[resourceCount].name != "Structural")
                         {
                             //Debug.Log("new node: " + tankList[i].resources[j].name);
                             ConfigNode newResourceNode = new ConfigNode("RESOURCE");
-                            newResourceNode.AddValue("name", tankList[i].resources[j].name);
+                            newResourceNode.AddValue("name", tankList[tankCount].resources[resourceCount].name);
                             if (calledByPlayer || brandNewPart)
                             {
-                                newResourceNode.AddValue("amount", tankList[i].resources[j].maxAmount);
-                                setResource(j, tankList[i].resources[j].amount);
+                                newResourceNode.AddValue("amount", tankList[tankCount].resources[resourceCount].maxAmount);
+                                setResource(resourceCount, tankList[tankCount].resources[resourceCount].amount);
                             }
                             else
                             {
-                                newResourceNode.AddValue("amount", getResource(j));
+                                newResourceNode.AddValue("amount", getResource(resourceCount));
                             }
-                            newResourceNode.AddValue("maxAmount", tankList[i].resources[j].maxAmount);
+                            newResourceNode.AddValue("maxAmount", tankList[tankCount].resources[resourceCount].maxAmount);
 
                             //Debug.Log("add node to part");
                             currentPart.AddResource(newResourceNode);                          
@@ -258,46 +258,50 @@ namespace Firespitter.customization
         {
             tankList.Clear();
 
+            // First find the amounts each tank type is filled with
+
             List<List<float>> resourceList = new List<List<float>>();
             string[] resourceTankArray = resourceAmounts.Split(';');
-            for (int i = 0; i < resourceTankArray.Length; i++)
+            for (int tankCount = 0; tankCount < resourceTankArray.Length; tankCount++)
             {
                 resourceList.Add(new List<float>());
-                string[] resourceAmountArray = resourceTankArray[i].Split(',');
-                for (int j = 0; j < resourceAmountArray.Length; j++)
+                string[] resourceAmountArray = resourceTankArray[tankCount].Split(',');
+                for (int amountCount = 0; amountCount < resourceAmountArray.Length; amountCount++)
                 {
                     try
                     {
-                        resourceList[i].Add(float.Parse(resourceAmountArray[j]));
+                        resourceList[tankCount].Add(float.Parse(resourceAmountArray[amountCount]));
                     }
                     catch
                     {
-                        Debug.Log("FSfuelSwitch: error parsing resource amount " + i + "/" +j + ": " + resourceTankArray[j]);
+                        Debug.Log("FSfuelSwitch: error parsing resource amount " + tankCount + "/" +amountCount + ": " + resourceTankArray[amountCount]);
                     }
                 }
             }
 
+            // Then find the kinds of resources each tank holds, and fill them with the amounts found previously, or the amount hey held last (values kept in save persistence/craft)
+
             string[] tankArray = resourceNames.Split(';');
-            for (int i = 0; i < tankArray.Length; i++)
+            for (int tankCount = 0; tankCount < tankArray.Length; tankCount++)
             {
                 FSmodularTank newTank = new FSmodularTank();
                 tankList.Add(newTank);
-                string[] resourceNameArray = tankArray[i].Split(',');
-                for (int j = 0; j < resourceNameArray.Length; j++)
+                string[] resourceNameArray = tankArray[tankCount].Split(',');
+                for (int nameCount = 0; nameCount < resourceNameArray.Length; nameCount++)
                 {
-                    engine.FSresource newResource = new engine.FSresource(resourceNameArray[j]);
-                    if (resourceList[i] != null)
+                    engine.FSresource newResource = new engine.FSresource(resourceNameArray[nameCount]);
+                    if (resourceList[tankCount] != null)
                     {
-                        if (j < resourceList[i].Count)
+                        if (nameCount < resourceList[tankCount].Count)
                         {
-                            newResource.maxAmount = resourceList[i][j];
+                            newResource.maxAmount = resourceList[tankCount][nameCount];
                             if (calledByPlayer)
                             {
-                                newResource.amount = resourceList[i][j];
+                                newResource.amount = resourceList[tankCount][nameCount];
                             }
                             else
                             {                                
-                                newResource.amount = getResource(j);
+                                newResource.amount = getResource(nameCount);
                             }
                         }
                     }

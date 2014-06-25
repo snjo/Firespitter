@@ -84,13 +84,13 @@ namespace Firespitter.customization
             else
             {
                 objectTransforms.Clear();
-                for (int i = 0; i < objectBatchNames.Length; i++)
+                for (int batchCount = 0; batchCount < objectBatchNames.Length; batchCount++)
                 {
                     List <Transform> newObjects = new List<Transform>();                        
-                    string[] objectNames = objectBatchNames[i].Split(',');
-                    for (int j = 0; j < objectNames.Length; j++)
+                    string[] objectNames = objectBatchNames[batchCount].Split(',');
+                    for (int objectCount = 0; objectCount < objectNames.Length; objectCount++)
                     {
-                        Transform newTransform = part.FindModelTransform(objectNames[j].Trim(' '));
+                        Transform newTransform = part.FindModelTransform(objectNames[objectCount].Trim(' '));
                         if (newTransform != null)
                         {
                             newObjects.Add(newTransform);
@@ -98,7 +98,7 @@ namespace Firespitter.customization
                         }
                         else
                         {
-                            Debug.Log("FSmeshSwitch: could not find object " + objectBatchNames[i]);
+                            Debug.Log("FSmeshSwitch: could not find object " + objectBatchNames[batchCount]);
                         }
                     }
                     if (newObjects.Count > 0) objectTransforms.Add(newObjects);
@@ -129,8 +129,6 @@ namespace Firespitter.customization
 
         private void setObject(int objectNumber, bool calledByPlayer)
         {
-            //if (objectNumber >= objectTransforms.Count) return;
-            //Debug.Log("setObject Start");
             initializeData();
 
             for (int i = 0; i < objectTransforms.Count; i++)

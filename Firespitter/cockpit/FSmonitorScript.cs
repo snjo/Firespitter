@@ -184,21 +184,21 @@ namespace Firespitter.cockpit
                     }
                     else
                     {
-                        for (int i = 0; i < textArray.Length; i++)
+                        for (int lineCount = 0; lineCount < textArray.Length; lineCount++)
                         {
-                            if (i < linesPerPage)
+                            if (lineCount < linesPerPage)
                             {
-                                if (textArray[i] != oldTextArray[i])
+                                if (textArray[lineCount] != oldTextArray[lineCount])
                                 {
                                     //Debug.Log("FS monitor updating line " + i);
-                                    char[] cA = textArray[i].ToCharArray();
-                                    for (int j = 0; j < charPerLine; j++)
+                                    char[] charArray = textArray[lineCount].ToCharArray();
+                                    for (int charCount = 0; charCount < charPerLine; charCount++)
                                     {
                                         char paddedChar = ' ';
-                                        if (j < cA.Length) paddedChar = cA[j];
-                                        lineList[i][j].renderer.material.mainTextureOffset = (getSheetCharPosition(paddedChar) * spriteScale) - new Vector2(spriteShift, 0f);
+                                        if (charCount < charArray.Length) paddedChar = charArray[charCount];
+                                        lineList[lineCount][charCount].renderer.material.mainTextureOffset = (getSheetCharPosition(paddedChar) * spriteScale) - new Vector2(spriteShift, 0f);
                                     }
-                                    oldTextArray[i] = textArray[i];
+                                    oldTextArray[lineCount] = textArray[lineCount];
                                 }
                             }
                         }
