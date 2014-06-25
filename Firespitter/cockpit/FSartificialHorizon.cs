@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 
 class FSartificialHorizon :InternalModule
 {
     public Transform needle;
     public Transform refTransform; // should correspond to vessel.referencetransform in KSP	
-    //private Transform rollLevel;
-    //private Transform pitchLevel;
-    //public Transform angleJoint;
-    //private Vector3 worldUp = Vector3.up;
     public Material discMat;
     public GameObject innerDisc;
     [KSPField]
@@ -38,8 +30,6 @@ class FSartificialHorizon :InternalModule
     public bool useOffset = true;
     [KSPField]
     public float rollDirection = 1f;
-    //[KSPField]
-    //public string refDirectioName = "refDirection";
     private GameObject testButton;
     private GameObject plusButton;
     private GameObject minusButton;
@@ -61,32 +51,8 @@ class FSartificialHorizon :InternalModule
         testCage = !testCage;
     }
 
-    //public float getRoll()
-    //{
-    //    rollLevel.rotation = Quaternion.LookRotation(refDirection.forward, worldUp);
-    //    float result = rollLevel.localRotation.eulerAngles.z;
-    //    if (result > 180f) result -= 360f;
-    //    return result;
-    //}
-
-    //public float getPitch()
-    //{
-    //    //pitchLevel.position = refDirection.position;
-    //    pitchLevel.rotation = Quaternion.LookRotation(refDirection.right, worldUp);
-    //    float result = pitchLevel.localRotation.eulerAngles.z;
-    //    if (result > 180f) result -= 360f;
-    //    return result;
-    //}
-
-    // Use this for initialization
     void Start()
     {
-        //rollLevel = new GameObject().transform;
-        //rollLevel.transform.parent = refDirection;
-        //rollLevel.localPosition = Vector3.zero;
-        //pitchLevel = new GameObject().transform;
-        //pitchLevel.transform.parent = refDirection;
-        //pitchLevel.localPosition = Vector3.zero;
         refTransform = new GameObject().transform;
         refTransform.parent = part.transform;
         refTransform.rotation = Quaternion.LookRotation(vessel.ReferenceTransform.up, -vessel.ReferenceTransform.forward);
@@ -128,11 +94,8 @@ class FSartificialHorizon :InternalModule
         needle = base.internalProp.FindModelTransform(outerRingName);                        
     }
 
-    // Update is called once per frame
     public override void OnUpdate()
     {
-        //.LookAt(refDirection.forward, new Vector3(0f, 1f, 0f));
-        //needle.rotation = Quaternion.LookRotation(refDirection.forward, Firespitter.Tools.worldUp(vessel));
         needle.localRotation = Quaternion.Euler(0f, 0f, rollDirection * shipHeading.getRoll(refTransform, Firespitter.Tools.WorldUp(vessel)));
 
         if (useOffset)
@@ -149,10 +112,5 @@ class FSartificialHorizon :InternalModule
                 discMat.SetTextureOffset("_MainTex", new Vector2(0f, Mathf.Clamp(pitch * pitchOffsetMultiplier, -pitchOffsetLimit, pitchOffsetLimit) + cageOffset));
             }
         }
-
-        //if (angleJoint != null)
-        //	angleJoint.localRotation = Quaternion.Euler(new Vector3(Mathf.Clamp(getPitch()*-0.2f, -5f, 5f), 0f, 0f));
-
-        //Debug.Log(getRoll());
     }
 }

@@ -77,7 +77,7 @@
     <Compile Include="engine\Stock based modules\FSengineHover.cs" />
     <Compile Include="engine\FSengineWrapper.cs" />
     <Compile Include="engine\FSgroundParticles.cs" />
-    <Compile Include="unused\FSheliLiftEngine.cs" />
+    <None Include="unused\FSheliLiftEngine.cs" />
     <Compile Include="engine\FS engine modules\FSengine.cs" />
     <Compile Include="engine\FSpropellerTweak.cs" />
     <Compile Include="customization\FSmeshSwitch.cs" />

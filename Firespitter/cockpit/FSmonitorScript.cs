@@ -169,42 +169,57 @@ namespace Firespitter.cockpit
 
                 if (arrayCreated)
                 {
-                    char[] c = text.ToCharArray();
-                    if (textMode == TextMode.singleString && text != oldText)
+                    updateCharTextureOffsets();
+                }
+            }
+        }
+
+        private void updateCharTextureOffsets()
+        {            
+            if (textMode == TextMode.singleString && text != oldText)
+            {
+                parseSingleString(text);
+            }
+            else
+            {
+                parseStringArray(textArray);
+            }
+        }
+
+        private void parseStringArray(string[] inputTextArray)
+        {
+            for (int lineCount = 0; lineCount < inputTextArray.Length; lineCount++)
+            {
+                if (lineCount < linesPerPage)
+                {
+                    if (inputTextArray[lineCount] != oldTextArray[lineCount])
                     {
-                        for (int i = 0; i < c.Length; i++)
+                        char[] charArray = inputTextArray[lineCount].ToCharArray();
+                        for (int charCount = 0; charCount < charPerLine; charCount++)
                         {
-                            int charNum = i % charPerLine;
-                            int lineNum = (i - charNum) / 10; // hmmm, seems hard coded somehow...
-                            if (lineNum >= linesPerPage) break;
-                            //Debug.Log(lineNum + " : " + charNum);
-                            lineList[lineNum][charNum].renderer.material.mainTextureOffset = (getSheetCharPosition(c[i]) * spriteScale) - new Vector2(spriteShift, 0f);
-                            oldText = text;
+                            char paddedChar = ' ';
+                            if (charCount < charArray.Length) paddedChar = charArray[charCount];
+                            lineList[lineCount][charCount].renderer.material.mainTextureOffset = (getSheetCharPosition(paddedChar) * spriteScale) - new Vector2(spriteShift, 0f);
                         }
-                    }
-                    else
-                    {
-                        for (int lineCount = 0; lineCount < textArray.Length; lineCount++)
-                        {
-                            if (lineCount < linesPerPage)
-                            {
-                                if (textArray[lineCount] != oldTextArray[lineCount])
-                                {
-                                    //Debug.Log("FS monitor updating line " + i);
-                                    char[] charArray = textArray[lineCount].ToCharArray();
-                                    for (int charCount = 0; charCount < charPerLine; charCount++)
-                                    {
-                                        char paddedChar = ' ';
-                                        if (charCount < charArray.Length) paddedChar = charArray[charCount];
-                                        lineList[lineCount][charCount].renderer.material.mainTextureOffset = (getSheetCharPosition(paddedChar) * spriteScale) - new Vector2(spriteShift, 0f);
-                                    }
-                                    oldTextArray[lineCount] = textArray[lineCount];
-                                }
-                            }
-                        }
+                        oldTextArray[lineCount] = inputTextArray[lineCount];
                     }
                 }
             }
         }
+
+        private void parseSingleString(string inputText)
+        {
+            char[] c = inputText.ToCharArray();
+            for (int i = 0; i < c.Length; i++)
+            {
+                int charNum = i % charPerLine;
+                int lineNum = (i - charNum) / 10; // hmmm, seems hard coded somehow...
+                //int lineNum = (i - charNum) / charPerLine; // should try this instead later.
+                if (lineNum >= linesPerPage) break;
+                lineList[lineNum][charNum].renderer.material.mainTextureOffset = (getSheetCharPosition(c[i]) * spriteScale) - new Vector2(spriteShift, 0f);
+                oldText = inputText;
+            }
+        }
+
     }
 }

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 class WheelList
 {
     public List<WheelClass> wheels;
-    //public List<WheelCollider> wheelColliders = new List<WheelCollider>();
-    //public List<Transform> wheelMeshes;
-    //public List<Transform> suspensionParents;
     private bool _enabled = false;
     private float _brakeTorque = 0f;
     private float _motorTorque = 0f;

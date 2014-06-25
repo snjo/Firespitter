@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using UnityEngine;
 
 // This is a rewrite of DYJ's baiscPropSpinner from Damned Aerospace, for use in constatnly spinning helicopter rotors
