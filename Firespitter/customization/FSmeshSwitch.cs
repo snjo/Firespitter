@@ -28,6 +28,8 @@ namespace Firespitter.customization
         public bool affectColliders = true;
         [KSPField]
         public bool showInfo = true;
+        [KSPField]
+        public bool debugMode = false;
 
         //// in case of multiple instances of this module, on will be the master, the rest slaves.
         //[KSPField]
@@ -45,6 +47,7 @@ namespace Firespitter.customization
         private List<int> fuelTankSetupList = new List<int>();
         private List<string> objectDisplayList = new List<string>();
         private FSfuelSwitch fuelSwitch;
+        private info.FSdebugMessages debug;
 
         private bool initialized = false;
 
@@ -78,7 +81,7 @@ namespace Firespitter.customization
         {
             string[] objectBatchNames = objects.Split(';');
             if (objectBatchNames.Length < 1)
-                Debug.Log("FSmeshSwitch: Found no object names in the object list");
+                debug.debugMessage("FSmeshSwitch: Found no object names in the object list");
             else
             {
                 objectTransforms.Clear();
@@ -92,11 +95,11 @@ namespace Firespitter.customization
                         if (newTransform != null)
                         {
                             newObjects.Add(newTransform);
-                            //Debug.Log("FSmeshSwitch: added object to list: " + objectNames[i]);
+                            debug.debugMessage("FSmeshSwitch: added object to list: " + objectNames[objectCount]);
                         }
                         else
                         {
-                            Debug.Log("FSmeshSwitch: could not find object " + objectBatchNames[batchCount]);
+                            debug.debugMessage("FSmeshSwitch: could not find object " + objectNames[objectCount]);
                         }
                     }
                     if (newObjects.Count > 0) objectTransforms.Add(newObjects);
@@ -133,11 +136,20 @@ namespace Firespitter.customization
             {
                 for (int j = 0; j < objectTransforms[i].Count; j++)
                 {
-                    objectTransforms[i][j].gameObject.renderer.enabled = false;
-                    if (affectColliders)
+                    if (objectTransforms[i][j].gameObject.renderer != null)
                     {
-                        if (objectTransforms[i][j].gameObject.collider != null)
-                            objectTransforms[i][j].gameObject.collider.enabled = false;
+                        debug.debugMessage("Setting renderer state to false");
+                        objectTransforms[i][j].gameObject.renderer.enabled = false;
+                        if (affectColliders)
+                        {
+                            debug.debugMessage("setting collider states");
+                            if (objectTransforms[i][j].gameObject.collider != null)
+                                objectTransforms[i][j].gameObject.collider.enabled = false;
+                        }
+                    }
+                    else
+                    {
+                        debug.debugMessage("Can't disable renderer on the targeted object. Make sure you are targeting a mesh!");
                     }
                 }
             }
@@ -145,21 +157,31 @@ namespace Firespitter.customization
             // enable the selected one last because there might be several entries with the same object, and we don't want to disable it after it's been enabled.
             for (int i = 0; i < objectTransforms[objectNumber].Count; i++)
             {
-                objectTransforms[objectNumber][i].gameObject.renderer.enabled = true;
-                if (affectColliders)
+                if (objectTransforms[objectNumber][i].gameObject.renderer != null)
                 {
-                    if (objectTransforms[objectNumber][i].gameObject.collider != null)
-                    objectTransforms[objectNumber][i].gameObject.collider.enabled = true;
+                    objectTransforms[objectNumber][i].gameObject.renderer.enabled = true;
+                    if (affectColliders)
+                    {
+                        if (objectTransforms[objectNumber][i].gameObject.collider != null)
+                        {
+                            debug.debugMessage("Setting collider true on new active object");
+                            objectTransforms[objectNumber][i].gameObject.collider.enabled = true;
+                        }
+                    }
+                }
+                else
+                {
+                    debug.debugMessage("Can't enable renderer on new active object. Make sure you are targeting a mesh!");
                 }
             }            
 
             if (useFuelSwitchModule)
-            {                
-                //Debug.Log("FStextureSwitch2 calling on FSfuelSwitch tank setup " + objectNumber);
+            {
+                debug.debugMessage("FStextureSwitch2 calling on FSfuelSwitch tank setup " + objectNumber);
                 if (objectNumber < fuelTankSetupList.Count)
                     fuelSwitch.selectTankSetup(fuelTankSetupList[objectNumber], calledByPlayer);
                 else
-                    Debug.Log("FStextureSwitch2: no such fuel tank setup");
+                    debug.debugMessage("FStextureSwitch2: no such fuel tank setup");
             }
 
             setCurrentObjectName();
@@ -190,6 +212,7 @@ namespace Firespitter.customization
         {
             if (!initialized)
             {
+                debug = new info.FSdebugMessages(debugMode, "FSmeshSwitch");
                 // you can't have fuel switching without symmetry, it breaks the editor GUI.
                 if (useFuelSwitchModule) updateSymmetry = true;
 
@@ -203,7 +226,7 @@ namespace Firespitter.customization
                     if (fuelSwitch == null)
                     {
                         useFuelSwitchModule = false;
-                        Debug.Log("FStextureSwitch2: no FSfuelSwitch module found, despite useFuelSwitchModule being true");
+                        debug.debugMessage("FStextureSwitch2: no FSfuelSwitch module found, despite useFuelSwitchModule being true");
                     }
                 }
                 initialized = true;

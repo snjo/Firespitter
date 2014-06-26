@@ -495,7 +495,7 @@ namespace Firespitter.engine
             collective = Mathf.Clamp(collective, -maxCollectivePitch, maxCollectivePitch);
         }
 
-        public virtual void OnCenterOfThrustQuery(CenterOfThrustQuery CoTquery)
+        public override void OnCenterOfThrustQuery(CenterOfThrustQuery CoTquery)
         {
             if (tailRotor)
             {

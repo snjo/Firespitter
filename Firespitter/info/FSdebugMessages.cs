@@ -20,7 +20,7 @@ namespace Firespitter.info
             none,
         }
         OutputMode outputMode = OutputMode.log;
-        public float postToScreenDuration = 5f;
+        public float postToScreenDuration = 5f;        
 
         public FSdebugMessages()
         {
@@ -38,6 +38,11 @@ namespace Firespitter.info
             debugMode = _debugMode;
             outputMode = _outputMode;
             postToScreenDuration = _postToScreenDuration;
+        }
+
+        public void Log(string input)
+        {
+            debugMessage(input);
         }
 
         public void debugMessage(string input) // fully automatic mode, posts to screen or or log depending on general setting
