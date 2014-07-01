@@ -71,7 +71,7 @@ namespace Firespitter.customization
 
         private bool initialized = false;
 
-        FSdebugMessages debug = new FSdebugMessages(false, FSdebugMessages.OutputMode.both, 2f); //set to true for debug   
+        FSdebugMessages debug;
 
         [KSPField(guiActiveEditor = true, guiName = "Current Texture")]
         public string currentTextureName = string.Empty;
@@ -156,11 +156,11 @@ namespace Firespitter.customization
             }
             if (useFuelSwitchModule)
             {
-                debug.debugMessage("FStextureSwitch2 calling on FSfuelSwitch tank setup " + selectedTexture);
+                debug.debugMessage("calling on FSfuelSwitch tank setup " + selectedTexture);
                 if (selectedTexture < fuelTankSetupList.Count)
                     fuelSwitch.selectTankSetup(fuelTankSetupList[selectedTexture], calledByPlayer);
                 else
-                    debug.debugMessage("FStextureSwitch2: no such fuel tank setup");
+                    debug.debugMessage("no such fuel tank setup");
             }
         }
 
@@ -174,7 +174,7 @@ namespace Firespitter.customization
             }
             else
             {
-                debug.debugMessage("FStextureSwitch: No target material in object.");
+                debug.debugMessage("No target material in object.");
             }
         }
 
@@ -279,9 +279,7 @@ namespace Firespitter.customization
         }
 
         public override void OnStart(PartModule.StartState state)
-        {
-            debug.debugMode = debugMode;
-
+        {                        
             initializeData();
 
             useTextureAll(false);
@@ -307,6 +305,7 @@ namespace Firespitter.customization
         {
             if (!initialized)
             {
+                debug = new FSdebugMessages(debugMode, "FStextureSwitch2");
                 // you can't have fuel switching without symmetry, it breaks the editor GUI.
                 if (useFuelSwitchModule) updateSymmetry = true;
 
@@ -316,7 +315,7 @@ namespace Firespitter.customization
                 textureDisplayList = Tools.parseNames(textureDisplayNames);
                 fuelTankSetupList = Tools.parseIntegers(fuelTankSetups);
 
-                debug.debugMessage("FStextureSwitch2 found " + texList.Count + " textures, using number " + selectedTexture + ", found " + objectList.Count + " objects, " + mapList.Count + " maps");
+                debug.debugMessage("found " + texList.Count + " textures, using number " + selectedTexture + ", found " + objectList.Count + " objects, " + mapList.Count + " maps");
 
                 foreach (String targetObjectName in objectList)
                 {
@@ -345,7 +344,7 @@ namespace Firespitter.customization
                     if (fuelSwitch == null)
                     {
                         useFuelSwitchModule = false;
-                        debug.debugMessage("FStextureSwitch2: no FSfuelSwitch module found, despite useFuelSwitchModule being true");
+                        debug.debugMessage("no FSfuelSwitch module found, despite useFuelSwitchModule being true");
                     }
                 }
                 initialized = true;

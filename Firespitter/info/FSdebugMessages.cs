@@ -45,7 +45,7 @@ namespace Firespitter.info
             debugMessage(input);
         }
 
-        public void debugMessage(string input) // fully automatic mode, posts to screen or or log depending on general setting
+        public void debugMessage(object input) // fully automatic mode, posts to screen or or log depending on general setting
         {
             if (debugMode)
             {
@@ -64,7 +64,7 @@ namespace Firespitter.info
             }
         }
 
-        public void debugMessage(string input, bool postToLog, float postToScreenDuration) // fully manual mode, post to screen or log depending on parameters
+        public void debugMessage(object input, bool postToLog, float postToScreenDuration) // fully manual mode, post to screen or log depending on parameters
         {
             if (debugMode)
             {
@@ -72,7 +72,7 @@ namespace Firespitter.info
             }
         }
 
-        public void debugMessage(string input, float postToScreenDuration) // semi-manual mode: posts to screen regardless of general setting, and to log, depending on general setting
+        public void debugMessage(object input, float postToScreenDuration) // semi-manual mode: posts to screen regardless of general setting, and to log, depending on general setting
         {
             if (debugMode)
             {
@@ -91,7 +91,7 @@ namespace Firespitter.info
             }
         }
 
-        public void PostMessage(string input, bool postToLog, float postToScreenDuration) // Posts uninstantiated, so it doesn't care about debugMode.
+        public void PostMessage(object input, bool postToLog, float postToScreenDuration) // Posts uninstantiated, so it doesn't care about debugMode.
         {
             if (postToLog)
             {
@@ -99,7 +99,7 @@ namespace Firespitter.info
             }
             if (postToScreenDuration > 0f) // will only work in the flight scene, gives an error in other places.
             {
-                outputLines.Add(new debugLine(input, postToScreenDuration));
+                outputLines.Add(new debugLine(input.ToString(), postToScreenDuration));
                 //nextPostDuration = postToScreenDuration;
             }
         }
