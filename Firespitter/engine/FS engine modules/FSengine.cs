@@ -101,6 +101,8 @@ namespace Firespitter.engine
         public string cause = "";
 
         [KSPField]
+        public bool showInfo = true; // whether to report part info to the part list right clicl info window
+        [KSPField]
         public bool debugMode = false;
 
         public enum FSengineType
@@ -136,6 +138,35 @@ namespace Firespitter.engine
         public void Deactivate()
         {
             EngineIgnited = false;
+        }
+
+        public override string GetInfo()
+        {
+            if (showInfo)
+            {
+                string info = string.Empty;
+
+                string[] res = resources.Split(';');
+                string resourceNames = string.Empty;
+                for (int i = 0; i < res.Length; i++)
+                {
+                    res[i] = res[i].Split(',')[0];
+                    res[i] = res[i].Trim(' ');
+                    resourceNames += res[i] + "\n";
+                }
+
+                info = String.Concat("Max Thrust: ", maxThrust, "\n",
+                        "Max RPM: ", maxRPM, "\n",
+                        "<color=#99ff00ff>Resources</color>\n",
+                        resourceNames
+                    );
+
+                return info;
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
 
         protected void updateStatus()

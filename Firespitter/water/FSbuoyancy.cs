@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class FSbuoyancy : PartModule
 {
     [KSPField(isPersistant=true, guiName="Buoyancy", guiActive = false, guiActiveEditor = true), UI_FloatRange(minValue=0f, maxValue=50f, stepIncrement=1f)]
     public float buoyancyForce = 12f; // the force applied to lift the part, scaled by depth according to buoyancyRange
     [KSPField]
-    public float buoyancyRange = 1f; // the max depth at which the buoyancy will be scaled up. at this depth, the force applied is equal to buiyoancyForce. At 0 depth, the force is 0
+    public double buoyancyRange = 1f; // the max depth at which the buoyancy will be scaled up. at this depth, the force applied is equal to buiyoancyForce. At 0 depth, the force is 0
     [KSPField]
     public float buoyancyVerticalOffset = 0.1f; // how high the part rides on the water in meters. Not a position offset inside the part. This will be applied in the global axis regardless of part rotation. Think iceberg/styrofoam.
     [KSPField]
@@ -81,17 +82,17 @@ public class FSbuoyancy : PartModule
                 Destroy(part.partBuoyancy);
             }
             
-            float partAltitude = Vector3.Distance(forcePoint.position, vessel.mainBody.position) - (float)vessel.mainBody.Radius - buoyancyVerticalOffset;
-            if (partAltitude < 0f)
+            double partAltitude = Vector3d.Distance(forcePoint.position, vessel.mainBody.position) - vessel.mainBody.Radius - buoyancyVerticalOffset;
+            if (partAltitude < 0d)
             {
                 // float code
 
-                float floatMultiplier = Mathf.Max(0f, -Mathf.Max((float)partAltitude, -buoyancyRange)) / buoyancyRange;
+                double floatMultiplier = Math.Max(0d, -Math.Max(partAltitude, -buoyancyRange)) / buoyancyRange;
 
                 if (floatMultiplier > 0f)
                 {
-                    Vector3 up = (this.vessel.rigidbody.position - this.vessel.mainBody.position).normalized;
-                    Vector3 uplift = up * buoyancyForce * floatMultiplier;
+                    Vector3d up = (this.vessel.rigidbody.position - this.vessel.mainBody.position).normalized;
+                    Vector3d uplift = up * buoyancyForce * floatMultiplier;
 
                     //float relativeDirection = Vector3.Dot(vessel.rigidbody.velocity.normalized, up);                        
 
