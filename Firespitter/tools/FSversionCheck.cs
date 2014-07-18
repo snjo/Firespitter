@@ -5,8 +5,8 @@ using System.Reflection;
     public class FSversionCheck : MonoBehaviour
     {
         static int CompatibleWithMajor = 0;
-        static int CompatibleWithMinor = 23;
-        static int CompatibleWithRevision = 5;
+        static int CompatibleWithMinor = 24;
+        static int CompatibleWithRevision = 0;
         static System.Version FSversion;
         //static bool versionError = false;
 
