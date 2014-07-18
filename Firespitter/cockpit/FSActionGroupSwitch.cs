@@ -43,6 +43,10 @@ namespace Firespitter.cockpit
         /// </summary>
         [KSPField]
         public float flipDirection = 1f;
+        [KSPField]
+        public Vector3 switchRotationOn = new Vector3(-140f, 0f, 0f);
+        [KSPField]
+        public Vector3 switchRotationOff = new Vector3(-40f, 0f, 0f);
         /// <summary>
         /// will post a message in the middle of the screen when setting hover mode, or other custom stuff.
         /// </summary>
@@ -67,6 +71,14 @@ namespace Firespitter.cockpit
 
         public KSPActionGroup actionGroup = KSPActionGroup.Gear;
         public Transform switchObjectTransform;
+
+        public enum SwitchType
+        {
+            flipSwitch,
+            button,
+            undefined
+        }
+        public SwitchType switchTypeEnum = SwitchType.undefined;
 
         private FSgenericButtonHandler buttonHandler;
         private GameObject buttonObject;
@@ -209,6 +221,15 @@ namespace Firespitter.cockpit
             //buttonObject.AddComponent<FSswitchButtonHandler>();
             //buttonObject.GetComponent<FSswitchButtonHandler>().buttonNumber = 1;
             //buttonObject.GetComponent<FSswitchButtonHandler>().target = base.internalProp.gameObject;
+
+            try
+            {
+                switchTypeEnum = (SwitchType) Enum.Parse(typeof(SwitchType), switchType, true);
+            }
+            catch
+            {
+                switchTypeEnum = SwitchType.undefined;
+            }
         }
 
         public void Update()
@@ -218,15 +239,15 @@ namespace Firespitter.cockpit
             {
                 bool groupState = FlightGlobals.ActiveVessel.ActionGroups.groups[actionGroupNumber];
 
-                if (switchType == "flipSwitch")
+                if (switchTypeEnum == SwitchType.flipSwitch)
                 {
                     if (groupState)
                     {
-                        switchObjectTransform.localRotation = Quaternion.Euler(new Vector3(-90f - (50f * flipDirection), 0f, 0f));
+                        switchObjectTransform.localRotation = Quaternion.Euler(switchRotationOn);
                     }
                     else
                     {
-                        switchObjectTransform.localRotation = Quaternion.Euler(new Vector3(-90f + (50f * flipDirection), 0f, 0f));
+                        switchObjectTransform.localRotation = Quaternion.Euler(switchRotationOff);
                     }
                 }
                 if (useEmissiveToggle == 1)

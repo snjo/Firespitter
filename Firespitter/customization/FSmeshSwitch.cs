@@ -136,6 +136,15 @@ namespace Firespitter.customization
             {
                 for (int j = 0; j < objectTransforms[i].Count; j++)
                 {
+                    debug.debugMessage("Setting object enabled");
+                    objectTransforms[i][j].gameObject.SetActive(false);
+                    if (affectColliders)
+                    {
+                        debug.debugMessage("setting collider states");
+                        if (objectTransforms[i][j].gameObject.collider != null)
+                            objectTransforms[i][j].gameObject.collider.enabled = false;
+                    }
+                    /*
                     if (objectTransforms[i][j].gameObject.renderer != null)
                     {
                         debug.debugMessage("Setting renderer state to false");
@@ -151,12 +160,23 @@ namespace Firespitter.customization
                     {
                         debug.debugMessage("Can't disable renderer on the targeted object. Make sure you are targeting a mesh!");
                     }
+                     * */
                 }
             }
             
             // enable the selected one last because there might be several entries with the same object, and we don't want to disable it after it's been enabled.
             for (int i = 0; i < objectTransforms[objectNumber].Count; i++)
             {
+                objectTransforms[objectNumber][i].gameObject.SetActive(true);
+                if (affectColliders)
+                {
+                    if (objectTransforms[objectNumber][i].gameObject.collider != null)
+                    {
+                        debug.debugMessage("Setting collider true on new active object");
+                        objectTransforms[objectNumber][i].gameObject.collider.enabled = true;
+                    }
+                }
+                /*
                 if (objectTransforms[objectNumber][i].gameObject.renderer != null)
                 {
                     objectTransforms[objectNumber][i].gameObject.renderer.enabled = true;
@@ -173,6 +193,7 @@ namespace Firespitter.customization
                 {
                     debug.debugMessage("Can't enable renderer on new active object. Make sure you are targeting a mesh!");
                 }
+                 * */
             }            
 
             if (useFuelSwitchModule)
