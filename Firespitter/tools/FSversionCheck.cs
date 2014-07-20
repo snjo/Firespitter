@@ -18,7 +18,7 @@ using System.Reflection;
         public static bool IsCompatible()
         {
             //string KSPversion = Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision;
-            //string expectedVersion = CompatibleWithMajor + "." + CompatibleWithMinor + "." + CompatibleWithRevision;
+            //string expectedVersion = CompatibleWithMajor + "." + CompatibleWithMinor + "." + CompatibleWithRevision;            
 
             //Debug.Log("Firespitter version check. KSP version: " + KSPversion);
 
