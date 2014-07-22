@@ -109,6 +109,8 @@ class FSwheel : PartModule
     [KSPField]
     public bool overrideModelSpringValues = false;
     [KSPField]
+    public bool overrideSuspensionDistance = false;
+    [KSPField]
     public float forwardsStiffness = 10.0f; //for tire friction
     [KSPField]
     public float forwardsExtremumSlip = 1.0f;
@@ -657,7 +659,7 @@ class FSwheel : PartModule
             else
                 wheelColliderRadius = wheelList.radius;
             if (wheelColliderMass >= 0f) wheelList.mass = wheelColliderMass;
-            if (wheelColliderSuspensionDistance >= 0f) wheelList.suspensionDistance = wheelColliderSuspensionDistance;
+            if (wheelColliderSuspensionDistance >= 0f || overrideSuspensionDistance) wheelList.suspensionDistance = wheelColliderSuspensionDistance;
             else
                 wheelColliderSuspensionDistance = wheelList.suspensionDistance;
 

@@ -83,6 +83,13 @@ namespace Firespitter.wheel
             {
                 wheel = firstWheelCollider.gameObject;
             }
+            else
+            {
+                wheel = new GameObject();
+                wheel.transform.parent = part.gameObject.transform;
+                wheel.transform.localRotation = Quaternion.identity;
+                wheel.transform.localPosition = Vector3.zero;
+            }
         }
 
         private void createTextures()
@@ -154,6 +161,8 @@ namespace Firespitter.wheel
                 anglePointUpX = new Vector3(wheelPointUp.x, guidePointUp.y, guidePointUp.z);
                 anglePointUpZ = new Vector3(guidePointUp.x, guidePointUp.y, wheelPointUp.z);
 
+                //Debug.Log("guideLine " + part.GetInstanceID());
+
                 guideLine.SetPosition(0, anglePointUpX);
                 guideLine.SetPosition(1, guidePointUp);
                 guideLine.SetPosition(2, anglePointUpZ);
@@ -168,6 +177,8 @@ namespace Firespitter.wheel
                 guideLine.SetPosition(11, anglePointBackHorizontal);
                 guideLine.SetPosition(12, guidePointBack);
                 guideLine.SetPosition(13, anglePointBackVertical);
+
+                //Debug.Log("wheelLine " + part.GetInstanceID());
 
                 wheelLine.SetPosition(0, wheelPointUp);
                 wheelLine.SetPosition(1, centerPoint);
