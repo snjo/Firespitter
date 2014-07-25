@@ -1101,7 +1101,7 @@ class FSwheel : PartModule
 
     public void OnGUI()
     {
-        if (debugMode)
+        if (debugMode && HighLogic.LoadedSceneIsFlight)
         {
             //float rpmOverSpeed = currentRPM / (float)vessel.srf_velocity.magnitude;
             //GUI.Label(new Rect(300f, 300f, 400f, 100f), "Speed: " + Mathf.Round((float)vessel.srf_velocity.magnitude).ToString() + ", rpm: " + currentRPM + " speed / RP: " + rpmOverSpeed);

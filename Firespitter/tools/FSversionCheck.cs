@@ -6,7 +6,7 @@ using System.Reflection;
     {
         static int CompatibleWithMajor = 0;
         static int CompatibleWithMinor = 24;
-        static int CompatibleWithRevision = 0;
+        static int CompatibleWithRevision = 1;
         static System.Version FSversion;
         //static bool versionError = false;
 
@@ -47,4 +47,9 @@ using System.Reflection;
         //     + "\nThis may cause errors both in Firespitter parts, other mods, and in the game in general.\nProceed at your own risk, and don't submit bugs when running incompatible versions.", "OK", false, HighLogic.Skin);
         //    Debug.Log("Warning player of incompatible version via popup");
         //}
+
+        internal static bool IsUnityCompatible()
+        {
+            return true;
+        }
     }
