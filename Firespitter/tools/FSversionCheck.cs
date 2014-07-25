@@ -6,7 +6,7 @@ using System.Reflection;
     {
         static int CompatibleWithMajor = 0;
         static int CompatibleWithMinor = 24;
-        static int CompatibleWithRevision = 1;
+        static int CompatibleWithRevision = 2;
         static System.Version FSversion;
         //static bool versionError = false;
 
