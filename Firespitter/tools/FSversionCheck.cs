@@ -8,23 +8,16 @@ using System.Reflection;
         static int CompatibleWithMinor = 24;
         static int CompatibleWithRevision = 2;
         static System.Version FSversion;
-        //static bool versionError = false;
 
-        //private FSGUIPopup warningPopup;
-        //private string KSPversion = string.Empty;
-        //private string expectedVersion = string.Empty;
-
-        //public void Start()
-        public static bool IsCompatible()
+        public void Start()
         {
-            //string KSPversion = Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision;
-            //string expectedVersion = CompatibleWithMajor + "." + CompatibleWithMinor + "." + CompatibleWithRevision;            
-
-            //Debug.Log("Firespitter version check. KSP version: " + KSPversion);
-
-            FSversion = Assembly.GetExecutingAssembly().GetName().Version;
-
             Debug.Log("firespitter.dll version: " + FSversion.ToString() + ", compiled for KSP " + CompatibleWithMajor + "." + CompatibleWithMinor + "." + CompatibleWithRevision);
+        }
+
+        public static bool IsCompatible()
+        {            
+
+            FSversion = Assembly.GetExecutingAssembly().GetName().Version;            
 
             if (Versioning.version_major != CompatibleWithMajor
                 ||
@@ -38,15 +31,6 @@ using System.Reflection;
             else
                 return true;
         }
-
-        //private void warnPlayer()
-        //{
-        //    //versionError = true;
-        //    PopupDialog.SpawnPopupDialog("Firespitter version warning", "This version of the firespitter plugin was made for KSP version "
-        //     + expectedVersion + ". You are using " + KSPversion + "."
-        //     + "\nThis may cause errors both in Firespitter parts, other mods, and in the game in general.\nProceed at your own risk, and don't submit bugs when running incompatible versions.", "OK", false, HighLogic.Skin);
-        //    Debug.Log("Warning player of incompatible version via popup");
-        //}
 
         internal static bool IsUnityCompatible()
         {
