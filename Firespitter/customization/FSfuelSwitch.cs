@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Firespitter.customization
 {
-    public class FSfuelSwitch : PartModule
+    public class FSfuelSwitch : PartModule, IPartCostModifier
     {
         [KSPField]
         public string resourceNames = "ElectricCharge;LiquidFuel,Oxidizer;MonoPropellant";
@@ -15,11 +15,16 @@ namespace Firespitter.customization
         [KSPField]
         public string tankMass = "0;0;0;0";
         [KSPField]
+        public string tankCost = "0,0,0,0";
+        [KSPField]
+        public bool displayCurrentTankCost = false;
+        [KSPField]
         public bool hasGUI = true;
         [KSPField]
         public bool availableInFlight = false;
         [KSPField]
         public bool availableInEditor = true;
+        
 
         [KSPField(isPersistant = true)]
         public Vector4 currentAmounts = Vector4.zero;
@@ -30,16 +35,18 @@ namespace Firespitter.customization
         [KSPField]
         public bool showInfo = true; // if false, does not feed info to the part list pop up info menu
 
+        [KSPField(guiActive = false, guiActiveEditor = false, guiName = "Added cost")]
+        public float addedCost = 0f;
         [KSPField(guiActive = false, guiActiveEditor = true, guiName = "Dry mass")]
         public float dryMassInfo = 0f;
         private List<FSmodularTank> tankList = new List<FSmodularTank>();
         private List<float> weightList = new List<float>();
+        private List<float> tankCostList = new List<float>();
         private bool initialized = false;
         [KSPField (isPersistant = true)]
-        private bool brandNewPart = true;
-        
+        private bool brandNewPart = true;        
 
-        UIPartActionWindow tweakableUI;
+        UIPartActionWindow tweakableUI;        
 
         public override void OnStart(PartModule.StartState state)
         {            
@@ -53,7 +60,8 @@ namespace Firespitter.customization
             if (!initialized)
             {
                 setupTankList(false);
-                this.weightList = Tools.parseFloats(this.tankMass);
+                weightList = Tools.parseFloats(tankMass);
+                tankCostList = Tools.parseFloats(tankCost);
                 if (HighLogic.LoadedSceneIsFlight) hasLaunched = true;
                 if (hasGUI)
                 {
@@ -65,6 +73,12 @@ namespace Firespitter.customization
                     Events["nextTankSetupEvent"].guiActive = false;
                     Events["nextTankSetupEvent"].guiActiveEditor = false;
                 }
+
+                if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER)
+                {
+                    Fields["addedCost"].guiActiveEditor = displayCurrentTankCost;
+                }
+
                 initialized = true;
             }
         }
@@ -108,7 +122,7 @@ namespace Firespitter.customization
                 }
             }
 
-            Debug.Log("refreshing UI");
+            //Debug.Log("refreshing UI");
 
             if (tweakableUI == null)
             {
@@ -120,7 +134,7 @@ namespace Firespitter.customization
             }
             else
             {
-                Debug.Log("no UI");
+                Debug.Log("no UI to refresh");
             }
         }
 
@@ -167,8 +181,21 @@ namespace Firespitter.customization
             }
             currentPart.Resources.UpdateList();
             updateWeight(currentPart, selectedTankSetup);
+            updateCost();
+        }
 
-            
+        private float updateCost()
+        {
+            if (selectedTankSetup < tankCostList.Count)
+            {
+                addedCost = tankCostList[selectedTankSetup];
+            }
+            else
+            {
+                addedCost = 0f;
+            }
+            //GameEvents.onEditorShipModified.Fire(EditorLogic.fetch.ship); //crashes game
+            return addedCost;
         }
 
         private void updateWeight(Part currentPart, int newTankSetup)
@@ -306,6 +333,11 @@ namespace Firespitter.customization
                     newTank.resources.Add(newResource);
                 }
             }            
+        }
+
+        public float GetModuleCost()
+        {
+            return updateCost();
         }
 
         public override string GetInfo()

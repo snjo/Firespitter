@@ -11,13 +11,12 @@ using System.Reflection;
 
         public void Start()
         {
+            FSversion = Assembly.GetExecutingAssembly().GetName().Version;            
             Debug.Log("firespitter.dll version: " + FSversion.ToString() + ", compiled for KSP " + CompatibleWithMajor + "." + CompatibleWithMinor + "." + CompatibleWithRevision);
         }
 
         public static bool IsCompatible()
-        {            
-
-            FSversion = Assembly.GetExecutingAssembly().GetName().Version;            
+        {                        
 
             if (Versioning.version_major != CompatibleWithMajor
                 ||

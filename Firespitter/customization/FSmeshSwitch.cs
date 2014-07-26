@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Firespitter.customization
 {
-    public class FSmeshSwitch : PartModule
+    public class FSmeshSwitch : PartModule //, IPartCostModifier
     {
         [KSPField]
         public int moduleID = 0;
@@ -54,6 +54,8 @@ namespace Firespitter.customization
 
         [KSPField(guiActiveEditor = true, guiName = "Current Variant")]
         public string currentObjectName = string.Empty;
+        
+        private float moduleCost;
 
         [KSPEvent(guiActive = false, guiActiveEditor = true, guiActiveUnfocused = false, guiName = "Next part variant")]
         public void nextObjectEvent()
@@ -63,7 +65,7 @@ namespace Firespitter.customization
             {
                 selectedObject = 0;
             }
-            switchToObject(selectedObject, true);
+            switchToObject(selectedObject, true);            
         }
 
         [KSPEvent(guiActive = false, guiActiveEditor = true, guiActiveUnfocused = false, guiName = "Prev part variant")]
@@ -74,7 +76,7 @@ namespace Firespitter.customization
             {
                 selectedObject = objectTransforms.Count - 1;
             }
-            switchToObject(selectedObject, true);
+            switchToObject(selectedObject, true);            
         }
 
         private void parseObjectNames()
@@ -253,6 +255,11 @@ namespace Firespitter.customization
                 initialized = true;
             }
         }
+
+        //public float GetModuleCost()
+        //{
+        //    return moduleCost;
+        //}
 
         public override string GetInfo()
         {
