@@ -29,6 +29,7 @@ public class FSinternalPropRotator : InternalModule
     private float smoothBrake = 0f;
     private int brakeActionInt = 0;
     private bool firstRun = true;
+    Firespitter.info.FSdebugMessages debug = new Firespitter.info.FSdebugMessages(true, "FSinternalPropRotator");
          
 
 
@@ -50,22 +51,28 @@ public class FSinternalPropRotator : InternalModule
 
     public override void OnAwake()
     {
-        if (this.pitchTransform != null) return;
+        if (pitchTransform != null) return;
 
         if (pitchObject != "none")
         {
             usePitch = true;
-            this.pitchTransform = base.internalProp.FindModelTransform(this.pitchObject);
+            pitchTransform = base.internalProp.FindModelTransform(pitchObject);
+            if (pitchTransform == null)
+                debug.debugMessage("Could not find pitch transform " + pitchObject);
         }
         if (rollObject != "none")
         {
             useRoll = true;
-            this.rollTransform = base.internalProp.FindModelTransform(this.rollObject);
+            rollTransform = base.internalProp.FindModelTransform(rollObject);
+            if (rollTransform == null)
+                debug.debugMessage("Could not find roll transform " + rollTransform);
         }
         if (yawObject != "none")
         {
             useYaw = true;
-            this.yawTransform = base.internalProp.FindModelTransform(this.yawObject);  
+            yawTransform = base.internalProp.FindModelTransform(yawObject);
+            if (yawTransform == null)
+                debug.debugMessage("Could not find yaw transform " + yawObject);
         }
 
         brakeActionInt = BaseAction.GetGroupIndex(KSPActionGroup.Brakes);
