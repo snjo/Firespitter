@@ -15,7 +15,7 @@ namespace Firespitter.customization
         [KSPField]
         public string tankMass = "0;0;0;0";
         [KSPField]
-        public string tankCost = "0,0,0,0";
+        public string tankCost = "0; 0; 0; 0";
         [KSPField]
         public bool displayCurrentTankCost = false;
         [KSPField]
