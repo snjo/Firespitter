@@ -134,10 +134,29 @@ namespace Firespitter.engine
             staged = true;            
         }
 
-        [KSPEvent(guiName = "Deactivate Engine", guiActive = true, guiActiveUnfocused = true, unfocusedRange = 5f)]
+        [KSPEvent(guiName = "Shutdown Engine", guiActive = true, guiActiveUnfocused = true, unfocusedRange = 5f)]
         public void Deactivate()
         {
             EngineIgnited = false;
+        }
+
+        [KSPAction("Activate Engine")]
+        public void ActivateAction(KSPActionParam param)
+        {
+            Activate();
+        }
+
+        [KSPAction("Shutdown Engine")]
+        public void DeactivateAction(KSPActionParam param)
+        {
+            Deactivate();
+        }
+
+        [KSPAction("Toggle Engine")]
+        public void ToggleAction(KSPActionParam param)
+        {
+            EngineIgnited = !EngineIgnited;
+            if (EngineIgnited) staged = true;
         }
 
         public override string GetInfo()

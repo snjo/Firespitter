@@ -7,6 +7,7 @@ namespace Firespitter.engine
     {
         ModuleEngines engine = new ModuleEngines();
         Transform partTransform;
+        Transform RotorParent;
 
         private int timeCount = 0;
         private float idleThrust = 0.001f;
@@ -20,6 +21,8 @@ namespace Firespitter.engine
         public int spinUpTime = 5;
         [KSPField]
         public float rotationSpeed = -700f; // in RPM
+        
+        private Quaternion defaultRotation = Quaternion.identity;
         //[KSPField]
         //public float trimAmount = 0.1f;
 
@@ -111,6 +114,11 @@ namespace Firespitter.engine
             base.OnStart(state);
             engine = part.Modules.OfType<ModuleEngines>().FirstOrDefault();
             partTransform = part.FindModelTransform(thrustTransform);
+            RotorParent = part.FindModelTransform(rotorparent);
+            if (partTransform != null)
+            {
+                defaultRotation = partTransform.localRotation;
+            }
             //maxThrust = engine.maxThrust;            
         }
 
@@ -139,13 +147,13 @@ namespace Firespitter.engine
 
             engine.throttleLocked = true;
 
-            if (steeringInput.y < 0)
+            if (steeringInput.y > 0)
             {
-                partTransform.localRotation = Quaternion.Euler(new Vector3(-90, 0, 0));
+                partTransform.localRotation = defaultRotation.Inverse();
             }
             else
             {
-                partTransform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+                partTransform.localRotation = defaultRotation;
             }
 
             if (steeringInput.y == 0)
@@ -153,22 +161,14 @@ namespace Firespitter.engine
                 engine.maxThrust = idleThrust;
             }
             else
-            {
-                if (steeringInput.y < 0)
-                {
-                    engine.maxThrust = maxThrust * -steeringInput.y;
-                }
-                else
-                {
-                    engine.maxThrust = maxThrust * steeringInput.y;
-                }
+            {                
+                engine.maxThrust = maxThrust * Mathf.Abs(steeringInput.y);                
             }
 
             // blade rotation
 
             bool engineActive = engine && engine.getIgnitionState && !engine.getFlameoutState;
-
-            Transform RotorParent = part.FindModelTransform(rotorparent);
+            
             if (engineActive && timeCount < 1000)
             {
                 timeCount += spinUpTime;

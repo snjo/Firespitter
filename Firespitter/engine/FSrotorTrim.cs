@@ -8,7 +8,6 @@ namespace Firespitter.engine
     /// </summary>
     public class FSrotorTrim : PartModule
     {
-
         [KSPField]
         public string targetPartObject = "thrustTrimObject";
         [KSPField]
@@ -29,6 +28,10 @@ namespace Firespitter.engine
         public float steerAmount = 20f;
         [KSPField]
         public float hoverHeatModifier = 5f;
+        [KSPField]
+        public bool useTransformTranslation = false;
+        [KSPField]
+        public float translationDistance = 0.5f;
         //[KSPField]
         //public string rootPart = "copterEngineMain";
 
@@ -40,6 +43,7 @@ namespace Firespitter.engine
         private Vector3 currentRotation = new Vector3(0, 0, 0);
 
         private Transform partTransform;
+        private Vector3 thrustTransformDefaultPosition = Vector3.zero;
 
         [KSPAction("Toggle Steering")]
         public void toggleSteeringAction(KSPActionParam param)
@@ -87,6 +91,14 @@ namespace Firespitter.engine
             currentRotation = steerDegrees * axis * (1 - steerThrustModifier);
         }
 
+        public void translateThrustTransform(Vector3 steeringInput)
+        {
+            float steerThrustModifier = vessel.ctrlState.mainThrottle / 1.7f;
+            partTransform.localPosition = thrustTransformDefaultPosition;
+            partTransform.position -= vessel.ReferenceTransform.up.normalized * translationDistance * steeringInput.z * steerThrustModifier;
+            partTransform.position -= vessel.ReferenceTransform.right.normalized * translationDistance * steeringInput.x * steerThrustModifier;
+        }
+
 
         private void setPartRotation()
         {
@@ -112,6 +124,10 @@ namespace Firespitter.engine
         public override void OnStart(PartModule.StartState state)
         {
             partTransform = part.FindModelTransform(targetPartObject);
+            if (partTransform != null)
+            {
+                thrustTransformDefaultPosition = partTransform.localPosition;
+            }
         }
 
         public override void OnFixedUpdate()
@@ -135,19 +151,29 @@ namespace Firespitter.engine
 
             bool inputReceived = (steeringInput != new Vector3(0, 0, 0));
 
-            if (steeringEnabled && inputReceived)
+            if (steeringEnabled) // && inputReceived)
             {
-                steerPart(steerAmount, new Vector3(steeringInput.x, steeringInput.y, steeringInput.z));
+                if (useTransformTranslation)
+                {
+                    translateThrustTransform(steeringInput);
+                }
+                else
+                {
+                    steerPart(steerAmount, new Vector3(steeringInput.x, steeringInput.y, steeringInput.z));
+                }
             }
             else steerPart(0, steeringInput);
 
-            if (Input.GetKey(hoverKey)) //Auto hover
+            if (!useTransformTranslation)
             {
-                autoHover();
-            }
-            else
-            {
-                setPartRotation();
+                if (Input.GetKey(hoverKey)) //Auto hover
+                {
+                    autoHover();
+                }
+                else
+                {
+                    setPartRotation();
+                }
             }
         }
     }
