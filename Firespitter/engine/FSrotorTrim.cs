@@ -45,6 +45,8 @@ namespace Firespitter.engine
         private Transform partTransform;
         private Vector3 thrustTransformDefaultPosition = Vector3.zero;
 
+        private bool initialized = false;
+
         [KSPAction("Toggle Steering")]
         public void toggleSteeringAction(KSPActionParam param)
         {
@@ -127,52 +129,60 @@ namespace Firespitter.engine
             if (partTransform != null)
             {
                 thrustTransformDefaultPosition = partTransform.localPosition;
-            }
-        }
-
-        public override void OnFixedUpdate()
-        {
-            if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
-
-            FlightCtrlState ctrl = vessel.ctrlState;
-
-            Vector3 steeringInput = new Vector3(0, 0, 0);
-
-            if (altInputModeEnabled)
-            {
-                steeringInput.x = ctrl.yaw;
+                initialized = true;
             }
             else
             {
-                steeringInput.x = ctrl.roll;
+                Debug.Log("FSrotorTrim: Could not find partTransform '" + targetPartObject + "', disabling module");
             }
+        }
 
-            steeringInput.z = -ctrl.pitch;
-
-            bool inputReceived = (steeringInput != new Vector3(0, 0, 0));
-
-            if (steeringEnabled) // && inputReceived)
+        public void FixedUpdate()
+        {
+            if (initialized)
             {
-                if (useTransformTranslation)
+                if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+
+                FlightCtrlState ctrl = vessel.ctrlState;
+
+                Vector3 steeringInput = new Vector3(0, 0, 0);
+
+                if (altInputModeEnabled)
                 {
-                    translateThrustTransform(steeringInput);
+                    steeringInput.x = ctrl.yaw;
                 }
                 else
                 {
-                    steerPart(steerAmount, new Vector3(steeringInput.x, steeringInput.y, steeringInput.z));
+                    steeringInput.x = ctrl.roll;
                 }
-            }
-            else steerPart(0, steeringInput);
 
-            if (!useTransformTranslation)
-            {
-                if (Input.GetKey(hoverKey)) //Auto hover
+                steeringInput.z = -ctrl.pitch;
+
+                bool inputReceived = (steeringInput != new Vector3(0, 0, 0));
+
+                if (steeringEnabled) // && inputReceived)
                 {
-                    autoHover();
+                    if (useTransformTranslation)
+                    {
+                        translateThrustTransform(steeringInput);
+                    }
+                    else
+                    {
+                        steerPart(steerAmount, new Vector3(steeringInput.x, steeringInput.y, steeringInput.z));
+                    }
                 }
-                else
+                else steerPart(0, steeringInput);
+
+                if (!useTransformTranslation)
                 {
-                    setPartRotation();
+                    if (Input.GetKey(hoverKey)) //Auto hover
+                    {
+                        autoHover();
+                    }
+                    else
+                    {
+                        setPartRotation();
+                    }
                 }
             }
         }

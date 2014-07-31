@@ -7,7 +7,7 @@ namespace Firespitter.engine
     {
         ModuleEngines engine = new ModuleEngines();
         Transform partTransform;
-        Transform RotorParent;
+        Transform rotorParentTransform;
 
         private int timeCount = 0;
         private float idleThrust = 0.001f;
@@ -38,16 +38,18 @@ namespace Firespitter.engine
         [KSPField(guiActive = true, guiName = "Inverted Left/Right", isPersistant = true)]
         public bool invertInput = false;
 
+        private bool initialized = false;
+
         //[KSPField(guiActive = true, guiName = "Trim with Alt Key", isPersistant = true)]
         //public bool trimWithAlt = true;
 
-        [KSPEvent(name = "toggleAltInputMode", active = true, guiActive = true, guiName = "QE or AD to rotate")]
+        [KSPEvent(name = "toggleAltInputMode", active = true, guiActive = true, guiActiveEditor = true, guiName = "QE or AD to rotate")]
         public void toggleAltInputMode()
         {
             altInputModeEnabled = !altInputModeEnabled;
         }
 
-        [KSPEvent(name = "toggleInvertInput", active = true, guiActive = true, guiName = "Invert Left/Right")]
+        [KSPEvent(name = "toggleInvertInput", active = true, guiActive = true, guiActiveEditor = true, guiName = "Invert Left/Right")]
         public void toggleInvertInput()
         {
             invertInput = !invertInput;
@@ -110,78 +112,84 @@ namespace Firespitter.engine
         }
 
         public override void OnStart(PartModule.StartState state)
-        {
-            base.OnStart(state);
+        {            
             engine = part.Modules.OfType<ModuleEngines>().FirstOrDefault();
             partTransform = part.FindModelTransform(thrustTransform);
-            RotorParent = part.FindModelTransform(rotorparent);
+            rotorParentTransform = part.FindModelTransform(rotorparent);
             if (partTransform != null)
             {
                 defaultRotation = partTransform.localRotation;
+                initialized = true;
             }
-            //maxThrust = engine.maxThrust;            
+            else
+            {
+                Debug.Log("FSrotorTrim: Could not find partTransform '" + thrustTransform + "', disabling module");
+            }
         }
 
-        public override void OnUpdate()
+        public void FixedUpdate()
         {
-            if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
-            FlightCtrlState ctrl = vessel.ctrlState;
-            Vector3 steeringInput = new Vector3(0, 0, 0);
-
-
-
-
-            if (altInputModeEnabled)
+            if (initialized)
             {
-                steeringInput.y = ctrl.roll;
+                if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+                FlightCtrlState ctrl = vessel.ctrlState;
+                Vector3 steeringInput = new Vector3(0, 0, 0);
+
+                if (altInputModeEnabled)
+                {
+                    steeringInput.y = ctrl.roll;
+                }
+                else
+                {
+                    steeringInput.y = ctrl.yaw;
+                }
+
+                //bool inputReceived = steeringInput.y != 0f;
+                //Debug.Log("Force: " + steeringInput.y);
+
+                if (invertInput) steeringInput *= -1; // if the part is upside down, you can toggle inverse controls for it.            
+
+                engine.throttleLocked = true;
+
+                if (steeringInput.y > 0)
+                {
+                    partTransform.localRotation = defaultRotation.Inverse();
+                }
+                else
+                {
+                    partTransform.localRotation = defaultRotation;
+                }
+
+                if (steeringInput.y == 0)
+                {
+                    engine.maxThrust = idleThrust;
+                }
+                else
+                {
+                    engine.maxThrust = maxThrust * Mathf.Abs(steeringInput.y);
+                }
+
+                // blade rotation
+
+                bool engineActive = engine && engine.getIgnitionState && !engine.getFlameoutState;
+
+                if (engineActive && timeCount < 1000)
+                {
+                    timeCount += spinUpTime;
+                }
+                else if (!engineActive && timeCount > 0)
+                {
+                    timeCount -= spinUpTime;
+                }
+
+                if (timeCount < 0) timeCount = 0; // in case people give the spinUpTime in an unexpected way
+
+                float currentSpeed = ((rotationSpeed * 6) * TimeWarp.deltaTime * ((float)timeCount / 1000));
+                if (rotorParentTransform != null)
+                {
+                    rotorParentTransform.transform.Rotate(Vector3.forward * currentSpeed);
+                }
             }
-            else
-            {
-                steeringInput.y = ctrl.yaw;
-            }
-
-            //bool inputReceived = steeringInput.y != 0f;
-            //Debug.Log("Force: " + steeringInput.y);
-
-            if (invertInput) steeringInput *= -1; // if the part is upside down, you can toggle inverse controls for it.            
-
-            engine.throttleLocked = true;
-
-            if (steeringInput.y > 0)
-            {
-                partTransform.localRotation = defaultRotation.Inverse();
-            }
-            else
-            {
-                partTransform.localRotation = defaultRotation;
-            }
-
-            if (steeringInput.y == 0)
-            {
-                engine.maxThrust = idleThrust;
-            }
-            else
-            {                
-                engine.maxThrust = maxThrust * Mathf.Abs(steeringInput.y);                
-            }
-
-            // blade rotation
-
-            bool engineActive = engine && engine.getIgnitionState && !engine.getFlameoutState;
-            
-            if (engineActive && timeCount < 1000)
-            {
-                timeCount += spinUpTime;
-            }
-            else if (!engineActive && timeCount > 0)
-            {
-                timeCount -= spinUpTime;
-            }
-
-            if (timeCount < 0) timeCount = 0; // in case people give the spinUpTime in an unexpected way
-
-            float currentSpeed = ((rotationSpeed * 6) * TimeWarp.deltaTime * ((float)timeCount / 1000));
-            RotorParent.transform.Rotate(Vector3.forward * currentSpeed);
         }
     }
 }
