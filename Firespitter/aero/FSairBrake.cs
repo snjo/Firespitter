@@ -21,9 +21,9 @@ public class FSairBrake : PartModule // Inspired by Vlad Just Vlad's airbrake pl
     private float currentAngle = 0f;    
     private float animationIncrement = 1f;
     private bool firstActivation = true;
-    Transform partTransform = new GameObject().transform;
-    Transform defaultRotation = new GameObject().transform;
-    Transform deployedRotation = new GameObject().transform;       
+    Transform partTransform;
+    //Transform defaultRotation = new GameObject().transform;
+    //Transform deployedRotation = new GameObject().transform;       
 
     [KSPField(guiActive = true, guiName = "drag", isPersistant = false)]
     public string currentDrag;
@@ -67,19 +67,27 @@ public class FSairBrake : PartModule // Inspired by Vlad Just Vlad's airbrake pl
         if (firstActivation)
         {
             partTransform = part.FindModelTransform(targetPartObject);
+            if (partTransform != null)
+            {                
+                //defaultRotation.rotation = partTransform.transform.localRotation;
+                //deployedRotation.rotation = defaultRotation.rotation;
+                //deployedRotation.Rotate(new Vector3(-deployedAngle, 0, 0));                
+            }
+            else
+            {
+                Debug.Log("FSairBrake: Could not find transform " + targetPartObject + ", disabling brake anim. Drag function still active.");
+            }
+
             normalMinDrag = part.minimum_drag;
             normalMaxDrag = part.maximum_drag;
-            defaultRotation.rotation = partTransform.transform.localRotation;
-            deployedRotation.rotation = defaultRotation.rotation;
-            deployedRotation.Rotate(new Vector3(-deployedAngle, 0, 0));
             firstActivation = false;
         }
     }
 
     public void FixedUpdate()
-    {
-        base.OnUpdate();
+    {        
         if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+
 
         float angleChange = targetAngle - currentAngle;
 
@@ -94,12 +102,16 @@ public class FSairBrake : PartModule // Inspired by Vlad Just Vlad's airbrake pl
 
         currentAngle += angleChange;
 
-        partTransform.transform.Rotate(-angleChange, 0, 0);
+        if (partTransform != null)
+        {
+            partTransform.transform.Rotate(-angleChange, 0, 0);
+        }
 
         part.maximum_drag = deployedDrag * (currentAngle / deployedAngle);
         part.minimum_drag = part.maximum_drag;
 
         currentDrag = "" + Math.Ceiling(part.maximum_drag);
+        
     }
 }
 

@@ -55,7 +55,7 @@ namespace Firespitter.customization
         [KSPField(guiActiveEditor = true, guiName = "Current Variant")]
         public string currentObjectName = string.Empty;
         
-        private float moduleCost;
+        //private float moduleCost;
 
         [KSPEvent(guiActive = false, guiActiveEditor = true, guiActiveUnfocused = false, guiName = "Next part variant")]
         public void nextObjectEvent()
@@ -145,24 +145,7 @@ namespace Firespitter.customization
                         debug.debugMessage("setting collider states");
                         if (objectTransforms[i][j].gameObject.collider != null)
                             objectTransforms[i][j].gameObject.collider.enabled = false;
-                    }
-                    /*
-                    if (objectTransforms[i][j].gameObject.renderer != null)
-                    {
-                        debug.debugMessage("Setting renderer state to false");
-                        objectTransforms[i][j].gameObject.renderer.enabled = false;
-                        if (affectColliders)
-                        {
-                            debug.debugMessage("setting collider states");
-                            if (objectTransforms[i][j].gameObject.collider != null)
-                                objectTransforms[i][j].gameObject.collider.enabled = false;
-                        }
-                    }
-                    else
-                    {
-                        debug.debugMessage("Can't disable renderer on the targeted object. Make sure you are targeting a mesh!");
-                    }
-                     * */
+                    }                    
                 }
             }
             
@@ -177,34 +160,16 @@ namespace Firespitter.customization
                         debug.debugMessage("Setting collider true on new active object");
                         objectTransforms[objectNumber][i].gameObject.collider.enabled = true;
                     }
-                }
-                /*
-                if (objectTransforms[objectNumber][i].gameObject.renderer != null)
-                {
-                    objectTransforms[objectNumber][i].gameObject.renderer.enabled = true;
-                    if (affectColliders)
-                    {
-                        if (objectTransforms[objectNumber][i].gameObject.collider != null)
-                        {
-                            debug.debugMessage("Setting collider true on new active object");
-                            objectTransforms[objectNumber][i].gameObject.collider.enabled = true;
-                        }
-                    }
-                }
-                else
-                {
-                    debug.debugMessage("Can't enable renderer on new active object. Make sure you are targeting a mesh!");
-                }
-                 * */
+                }                
             }            
 
             if (useFuelSwitchModule)
             {
-                debug.debugMessage("FStextureSwitch2 calling on FSfuelSwitch tank setup " + objectNumber);
+                debug.debugMessage("calling on FSfuelSwitch tank setup " + objectNumber);
                 if (objectNumber < fuelTankSetupList.Count)
                     fuelSwitch.selectTankSetup(fuelTankSetupList[objectNumber], calledByPlayer);
                 else
-                    debug.debugMessage("FStextureSwitch2: no such fuel tank setup");
+                    debug.debugMessage("no such fuel tank setup");
             }
 
             setCurrentObjectName();
@@ -249,7 +214,7 @@ namespace Firespitter.customization
                     if (fuelSwitch == null)
                     {
                         useFuelSwitchModule = false;
-                        debug.debugMessage("FStextureSwitch2: no FSfuelSwitch module found, despite useFuelSwitchModule being true");
+                        debug.debugMessage("no FSfuelSwitch module found, despite useFuelSwitchModule being true");
                     }
                 }
                 initialized = true;
