@@ -1001,8 +1001,8 @@ class FSwheel : PartModule
             }
             else
             {
-                part.minimum_drag = 0f;
-                part.maximum_drag = 0f;
+                part.minimum_drag = retractedDrag;
+                part.maximum_drag = retractedDrag;
             }
         }
     }
