@@ -314,7 +314,7 @@ namespace Firespitter.customization
                 string[] resourceNameArray = tankArray[tankCount].Split(',');
                 for (int nameCount = 0; nameCount < resourceNameArray.Length; nameCount++)
                 {
-                    engine.FSresource newResource = new engine.FSresource(resourceNameArray[nameCount]);
+                    engine.FSresource newResource = new engine.FSresource(resourceNameArray[nameCount].Trim(' '));
                     if (resourceList[tankCount] != null)
                     {
                         if (nameCount < resourceList[tankCount].Count)
