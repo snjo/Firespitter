@@ -22,7 +22,7 @@ namespace Firespitter.engine
         [KSPField]
         public bool disableAtmosphericNerf = false;
 
-        private ModuleEngines engine = new ModuleEngines();
+        private FSengineWrapper engine;
         private float fullThrottle;
 
         [KSPAction("Hover Throttle")]
@@ -44,7 +44,7 @@ namespace Firespitter.engine
         public override void OnStart(PartModule.StartState state)
         {
             base.OnStart(state);
-            engine = part.Modules.OfType<ModuleEngines>().FirstOrDefault();
+            engine = new FSengineWrapper(part);
             fullThrottle = engine.maxThrust;
         }
 
