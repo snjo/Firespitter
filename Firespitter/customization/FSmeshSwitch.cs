@@ -193,6 +193,7 @@ namespace Firespitter.customization
 
             switchToObject(selectedObject, false);
             Events["nextObjectEvent"].guiName = buttonName;
+            Events["previousObjectEvent"].guiName = previousButtonName;
             if (!showPreviousButton) Events["previousObjectEvent"].guiActiveEditor = false;
         }
 

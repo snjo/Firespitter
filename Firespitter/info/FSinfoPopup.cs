@@ -39,11 +39,11 @@ namespace Firespitter.info
         public bool showOnEachFlightStart = false;
         [KSPField(isPersistant = true)]
         public bool hasBeenShown = false;
-        [KSPField(isPersistant = true)]
+        [KSPField]
         public float countDownDuration = 20f;
-        [KSPField(isPersistant = true)]
-        public bool hideMeshInFlight = false;
-        [KSPField(isPersistant = true)]
+        //[KSPField(isPersistant = true)]
+        //public bool hideMeshInFlight = false;
+        [KSPField]
         public string toggleKey = "i";
         [KSPField(isPersistant = true)]
         public bool useHotkey = true;

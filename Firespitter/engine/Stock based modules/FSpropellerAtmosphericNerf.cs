@@ -42,8 +42,7 @@ namespace Firespitter.engine
         }
 
         public override void OnStart(PartModule.StartState state)
-        {
-            base.OnStart(state);
+        {            
             engine = new FSengineWrapper(part);
             fullThrottle = engine.maxThrust;
         }
