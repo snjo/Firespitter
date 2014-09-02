@@ -643,7 +643,7 @@ class FSwheel : PartModule
                 wheelList.forwardsExtremumSlip = forwardsExtremumSlip;
                 wheelList.forwardsExtremumValue = forwardsExtremumValue;
                 wheelList.sidewaysStiffness = sidewaysStiffness;
-                wheelList.forwardsAsymptoteSlip = sidewaysAsymptoteSlip;
+                wheelList.sidewaysAsymptoteSlip = sidewaysAsymptoteSlip;
                 wheelList.sidewaysAsymptoteValue = sidewaysAsymptoteValue;
                 wheelList.sidewaysExtremumSlip = sidewaysExtremumSlip;
                 wheelList.sidewaysExtremumValue = sidewaysExtremumValue;
