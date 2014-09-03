@@ -185,7 +185,7 @@ namespace Firespitter.customization
             {
                 if (GameDatabase.Instance.ExistsTexture(mapList[selectedTexture]))
                 {
-                    debug.debugMessage("map exists in db");
+                    debug.debugMessage("map " + mapList[selectedTexture] + " exists in db");
                     targetMat.SetTexture(additionalMapType, GameDatabase.Instance.GetTexture(mapList[selectedTexture], mapIsNormal));
                     selectedMapURL = mapList[selectedTexture];
 
@@ -198,6 +198,10 @@ namespace Firespitter.customization
                     {
                         debug.debugMessage("not setting currentTextureName. selectedTexture is " + selectedTexture + ", texDispList count is" + textureDisplayList.Count + ", texList count is " + texList.Count);
                     }
+                }
+                else
+                {
+                    debug.debugMessage("map " + mapList[selectedTexture] + " does not exist in db");
                 }
             }
             else
