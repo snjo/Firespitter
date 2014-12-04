@@ -6,11 +6,11 @@ namespace Firespitter.engine
     public class FSswitchEngineThrustTransform : PartModule
     {
         [KSPField]
-        public string defaultTTName = "thrustTransform";
+        public string defaultTTName = "thrustTransform"; // the normal position for the thrustTransform
         [KSPField]
-        public string alternateTTName = "alternateThrustTransform";
+        public string alternateTTName = "alternateThrustTransform"; // Optional - the position the thrustTransform will assume when the reverse is active. Otherwise, it gets set to the same as default, but flipped 180 degrees
         [KSPField]
-        public int useNamedAlternate = 0;
+        public int useNamedAlternate = 0; // if 1, use the alternateTTName to define the reverse tranform instead of creating a 180 deg flip of thrustTransform
 
         private Transform thrustTransform;
         private Transform defaultTT;
