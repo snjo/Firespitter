@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using Firespitter.info;
+using System.Linq;
 using UnityEngine;
 
 namespace Firespitter.engine
@@ -29,13 +30,18 @@ namespace Firespitter.engine
         [KSPField]
         public int moduleID = 0;
 
+        [KSPField]
+        public bool debugMode = false;
+
+        private FSdebugMessages debug = new FSdebugMessages(false, "FSswitchEngineThrustTransform");
+
         //private bool showMenu = false;
         //private Rect windowRect = new Rect(500f, 250f, 250f, 50f);
         //private FSGUIPopup popup;
 
         public override void OnStart(PartModule.StartState state)
         {
-
+            debug.debugMode = debugMode;
             engine = new FSengineWrapper(part);
             if (engine.type != FSengineWrapper.EngineType.NONE)
             {
@@ -47,10 +53,13 @@ namespace Firespitter.engine
                 //defaultTT = part.FindModelTransform(defaultTTName);
                 if (useNamedAlternate == 1)
                 {
+                    debug.debugMessage("Finding alternate TT");
                     alternateTT = part.FindModelTransform(alternateTTName);
+                    if (alternateTT == null) debug.debugMessage("Did not find alternate TT " + alternateTTName);
                 }
                 else
                 {
+                    debug.debugMessage("Using flipped default TT as reverse");
                     alternateTT = new GameObject().transform;
                     alternateTT.localPosition = defaultTT.localPosition;
                     alternateTT.localRotation = defaultTT.localRotation;
@@ -147,10 +156,12 @@ namespace Firespitter.engine
                 isReversed = doReverse;
                 if (doReverse)
                 {
+                    thrustTransform.localPosition = alternateTT.localPosition;
                     thrustTransform.localRotation = alternateTT.localRotation;
                 }
                 else
                 {
+                    thrustTransform.localPosition = defaultTT.localPosition;
                     thrustTransform.localRotation = defaultTT.localRotation;
                 }
                 Events["normalTTEvent"].guiActive = doReverse;
