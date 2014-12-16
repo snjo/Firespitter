@@ -339,6 +339,10 @@ namespace Firespitter.customization
         {
             return updateCost();
         }
+        public float GetModuleCost(float modifier)
+        {
+            return updateCost();
+        }
 
         public override string GetInfo()
         {

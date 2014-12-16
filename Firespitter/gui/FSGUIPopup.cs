@@ -245,7 +245,7 @@ public class FSGUIPopup
                     EditorLogic editor = EditorLogic.fetch;
                     if (editor)
                     {
-                        if (editor.editorScreen == EditorLogic.EditorScreen.Actions)
+                        if (editor.editorScreen == EditorScreen.Actions)
                         {
                             List<Part> partlist = EditorActionGroups.Instance.GetSelectedParts();
                             if (partlist.Count > 0)

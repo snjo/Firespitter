@@ -675,7 +675,7 @@ class FSwingBase : PartModule
             EditorLogic editor = EditorLogic.fetch;
             if (editor)
             {
-                if (editor.editorScreen == EditorLogic.EditorScreen.Actions)// && popup.showMenu)
+                if (editor.editorScreen == EditorScreen.Actions)// && popup.showMenu)
                 {
                     Vector4 inputAxis = Vector4.zero;
 
