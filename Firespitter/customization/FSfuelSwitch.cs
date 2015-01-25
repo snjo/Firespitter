@@ -29,7 +29,7 @@ namespace Firespitter.customization
         [KSPField(isPersistant = true)]
         public Vector4 currentAmounts = Vector4.zero;
         [KSPField(isPersistant = true)]
-        public int selectedTankSetup = 0;
+        public int selectedTankSetup = -1;
         [KSPField(isPersistant = true)]
         public bool hasLaunched = false;
         [KSPField]
@@ -51,7 +51,11 @@ namespace Firespitter.customization
         public override void OnStart(PartModule.StartState state)
         {            
             initializeData();
-            assignResourcesToPart(false);
+            if (selectedTankSetup == -1)
+            {
+                selectedTankSetup = 0;
+                assignResourcesToPart(false);
+            }
             brandNewPart = false;
         }
 
@@ -101,8 +105,11 @@ namespace Firespitter.customization
         public void selectTankSetup(int i, bool calledByPlayer)
         {            
             initializeData();
-            selectedTankSetup = i;
-            assignResourcesToPart(calledByPlayer);            
+            if (selectedTankSetup != i)
+            {
+                selectedTankSetup = i;
+                assignResourcesToPart(calledByPlayer);
+            }
         }
 
         private void assignResourcesToPart(bool calledByPlayer)
