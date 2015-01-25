@@ -92,7 +92,7 @@ namespace Firespitter
             for (int i = 0; i < array.Length; i++)
             {
                 float item = 0f;
-                if (float.TryParse(array[i], out item))
+                if (float.TryParse(array[i].Trim(), out item))
                 {
                     list.Add(item);
                 }
@@ -103,6 +103,26 @@ namespace Firespitter
             }
             return list;
         }
+
+        public static List<double> parseDoubles(string stringOfDoubles)
+        {
+            System.Collections.Generic.List<double> list = new System.Collections.Generic.List<double>();
+            string[] array = stringOfDoubles.Trim().Split(';');
+            for (int i = 0; i < array.Length; i++)
+            {
+                double item = 0f;
+                if (double.TryParse(array[i].Trim(), out item))
+                {
+                    list.Add(item);
+                }
+                else
+                {
+                    Debug.Log("FStools: invalid float: [len:" + array[i].Length + "] '" + array[i]+ "']");
+                }
+            }
+            return list;
+        }
+
 
         public static List<string> parseNames(string names)
         {

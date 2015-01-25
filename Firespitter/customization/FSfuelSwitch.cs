@@ -39,12 +39,14 @@ namespace Firespitter.customization
         public float addedCost = 0f;
         [KSPField(guiActive = false, guiActiveEditor = true, guiName = "Dry mass")]
         public float dryMassInfo = 0f;
-        private List<FSmodularTank> tankList = new List<FSmodularTank>();
-        private List<float> weightList = new List<float>();
-        private List<float> tankCostList = new List<float>();
+        private List<FSmodularTank> tankList;
+        private List<double> weightList;
+        private List<double> tankCostList;
         private bool initialized = false;
         [KSPField (isPersistant = true)]
-        private bool brandNewPart = true;        
+        public bool brandNewPart = true;
+        [KSPField (isPersistant = true)]
+        public bool configLoaded = false;
 
         UIPartActionWindow tweakableUI;        
 
@@ -59,13 +61,35 @@ namespace Firespitter.customization
             brandNewPart = false;
         }
 
+        public override void OnAwake()
+        {
+            //Debug.Log("FS AWAKE "+initialized+" "+configLoaded+" "+resourceAmounts);
+            if (configLoaded)
+            {
+                initializeData();
+            }
+            //Debug.Log("FS AWAKE DONE " + (configLoaded ? tankList.Count.ToString() : "NO CONFIG"));
+        }
+
+        public override void OnLoad(ConfigNode node)
+        {
+            base.OnLoad(node);
+            //Debug.Log("FS LOAD " + initialized + " " + resourceAmounts+configLoaded);
+            if (!configLoaded)
+            {
+                initializeData();
+            }
+            configLoaded = true;
+            //Debug.Log("FS LOAD DONE " + tankList.Count);
+        }
+
         private void initializeData()
         {
             if (!initialized)
             {
                 setupTankList(false);
-                weightList = Tools.parseFloats(tankMass);
-                tankCostList = Tools.parseFloats(tankCost);
+                weightList = Tools.parseDoubles(tankMass);
+                tankCostList = Tools.parseDoubles(tankCost);
                 if (HighLogic.LoadedSceneIsFlight) hasLaunched = true;
                 if (hasGUI)
                 {
@@ -78,7 +102,7 @@ namespace Firespitter.customization
                     Events["nextTankSetupEvent"].guiActiveEditor = false;
                 }
 
-                if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER)
+                if (HighLogic.CurrentGame == null || HighLogic.CurrentGame.Mode == Game.Modes.CAREER)
                 {
                     Fields["addedCost"].guiActiveEditor = displayCurrentTankCost;
                 }
@@ -168,7 +192,7 @@ namespace Firespitter.customization
                             if (calledByPlayer || brandNewPart)
                             {
                                 newResourceNode.AddValue("amount", tankList[tankCount].resources[resourceCount].maxAmount);
-                                setResource(resourceCount, tankList[tankCount].resources[resourceCount].amount);
+                                setResource(resourceCount, (float)tankList[tankCount].resources[resourceCount].amount);
                             }
                             else
                             {
@@ -193,9 +217,9 @@ namespace Firespitter.customization
 
         private float updateCost()
         {
-            if (selectedTankSetup < tankCostList.Count)
+            if (selectedTankSetup > 0 && selectedTankSetup < tankCostList.Count)
             {
-                addedCost = tankCostList[selectedTankSetup];
+                addedCost = (float)tankCostList[selectedTankSetup];
             }
             else
             {
@@ -209,20 +233,18 @@ namespace Firespitter.customization
         {
             if (newTankSetup < weightList.Count)
             {
-                currentPart.mass = basePartMass + weightList[newTankSetup];
+                currentPart.mass = (float)(basePartMass + weightList[newTankSetup]);
             }
         }
 
         public override void OnUpdate()
         {
             updateResourcePersistence();
-
-            
         }
 
         private void updateResourcePersistence()
         {
-            if (selectedTankSetup < tankList.Count)
+            if (selectedTankSetup > 0 && selectedTankSetup < tankList.Count)
             {
                 if (tankList[selectedTankSetup] != null)
                 {
@@ -288,25 +310,28 @@ namespace Firespitter.customization
 
         private void setupTankList(bool calledByPlayer)
         {
-            tankList.Clear();
+            tankList = new List<FSmodularTank>();
+            weightList = new List<double>();
+            tankCostList = new List<double>();
 
             // First find the amounts each tank type is filled with
 
-            List<List<float>> resourceList = new List<List<float>>();
+            List<List<double>> resourceList = new List<List<double>>();
             string[] resourceTankArray = resourceAmounts.Split(';');
+            //Debug.Log("FSDEBUGRES: " + resourceTankArray.Length+" "+resourceAmounts);
             for (int tankCount = 0; tankCount < resourceTankArray.Length; tankCount++)
             {
-                resourceList.Add(new List<float>());
-                string[] resourceAmountArray = resourceTankArray[tankCount].Split(',');
+                resourceList.Add(new List<double>());
+                string[] resourceAmountArray = resourceTankArray[tankCount].Trim().Split(',');
                 for (int amountCount = 0; amountCount < resourceAmountArray.Length; amountCount++)
                 {
                     try
                     {
-                        resourceList[tankCount].Add(float.Parse(resourceAmountArray[amountCount]));
+                        resourceList[tankCount].Add(double.Parse(resourceAmountArray[amountCount].Trim()));
                     }
                     catch
                     {
-                        Debug.Log("FSfuelSwitch: error parsing resource amount " + tankCount + "/" +amountCount + ": " + resourceTankArray[amountCount]);
+                        Debug.Log("FSfuelSwitch: error parsing resource amount " + tankCount + "/" + amountCount + ": '" + resourceTankArray[amountCount] + "': '" + resourceAmountArray[amountCount].Trim()+"'");
                     }
                 }
             }
