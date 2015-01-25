@@ -11,6 +11,8 @@ namespace Firespitter.customization
         [KSPField]
         public string resourceAmounts = "100;75,25;200";
         [KSPField]
+        public string initialResourceAmounts = "";
+        [KSPField]
         public float basePartMass = 0.25f;
         [KSPField]
         public string tankMass = "0;0;0;0";
@@ -25,9 +27,6 @@ namespace Firespitter.customization
         [KSPField]
         public bool availableInEditor = true;
         
-
-        [KSPField(isPersistant = true)]
-        public Vector4 currentAmounts = Vector4.zero;
         [KSPField(isPersistant = true)]
         public int selectedTankSetup = -1;
         [KSPField(isPersistant = true)]
@@ -44,8 +43,6 @@ namespace Firespitter.customization
         private List<double> tankCostList;
         private bool initialized = false;
         [KSPField (isPersistant = true)]
-        public bool brandNewPart = true;
-        [KSPField (isPersistant = true)]
         public bool configLoaded = false;
 
         UIPartActionWindow tweakableUI;        
@@ -58,7 +55,6 @@ namespace Firespitter.customization
                 selectedTankSetup = 0;
                 assignResourcesToPart(false);
             }
-            brandNewPart = false;
         }
 
         public override void OnAwake()
@@ -118,10 +114,6 @@ namespace Firespitter.customization
             if (selectedTankSetup >= tankList.Count)
             {
                 selectedTankSetup = 0;
-            }
-            if (HighLogic.LoadedSceneIsFlight)
-            {
-                currentAmounts = Vector4.zero;
             }
             assignResourcesToPart(true);            
         }
@@ -189,16 +181,15 @@ namespace Firespitter.customization
                             //Debug.Log("new node: " + tankList[i].resources[j].name);
                             ConfigNode newResourceNode = new ConfigNode("RESOURCE");
                             newResourceNode.AddValue("name", tankList[tankCount].resources[resourceCount].name);
-                            if (calledByPlayer || brandNewPart)
+                            newResourceNode.AddValue("maxAmount", tankList[tankCount].resources[resourceCount].maxAmount);
+                            if (calledByPlayer && !HighLogic.LoadedSceneIsEditor)
                             {
-                                newResourceNode.AddValue("amount", tankList[tankCount].resources[resourceCount].maxAmount);
-                                setResource(resourceCount, (float)tankList[tankCount].resources[resourceCount].amount);
-                            }
+                                newResourceNode.AddValue("amount", 0.0f);
+                            } 
                             else
                             {
-                                newResourceNode.AddValue("amount", getResource(resourceCount));
+                                newResourceNode.AddValue("amount", tankList[tankCount].resources[resourceCount].amount);
                             }
-                            newResourceNode.AddValue("maxAmount", tankList[tankCount].resources[resourceCount].maxAmount);
 
                             //Debug.Log("add node to part");
                             currentPart.AddResource(newResourceNode);                          
@@ -239,28 +230,6 @@ namespace Firespitter.customization
 
         public override void OnUpdate()
         {
-            updateResourcePersistence();
-        }
-
-        private void updateResourcePersistence()
-        {
-            if (selectedTankSetup > 0 && selectedTankSetup < tankList.Count)
-            {
-                if (tankList[selectedTankSetup] != null)
-                {
-                    for (int i = 0; i < tankList[selectedTankSetup].resources.Count; i++)
-                    {
-                        if (tankList[selectedTankSetup].resources[i].name == "Structural")
-                        {
-
-                        }
-                        else
-                        {
-                            setResource(i, (float)part.Resources[tankList[selectedTankSetup].resources[i].name].amount);
-                        }
-                    }
-                }
-            }
         }
 
         public void Update()
@@ -268,43 +237,6 @@ namespace Firespitter.customization
             if (HighLogic.LoadedSceneIsEditor)
             {
                 dryMassInfo = part.mass;
-                updateResourcePersistence();
-            }
-        }
-
-        private float getResource(int number)
-        {
-            switch (number)
-            {
-                case 0:
-                    return currentAmounts.x;
-                case 1:
-                    return currentAmounts.y;
-                case 2:
-                    return currentAmounts.z;
-                case 3:
-                    return currentAmounts.w;
-                default:
-                    return 0f;
-            }
-        }
-
-        private void setResource(int number, float amount)
-        {
-            switch (number)
-            {
-                case 0:
-                    currentAmounts.x = amount;
-                    break;
-                case 1:
-                    currentAmounts.y = amount;
-                    break;
-                case 2:
-                    currentAmounts.z = amount;
-                    break;
-                case 3:
-                    currentAmounts.w = amount;
-                    break;
             }
         }
 
@@ -317,17 +249,32 @@ namespace Firespitter.customization
             // First find the amounts each tank type is filled with
 
             List<List<double>> resourceList = new List<List<double>>();
+            List<List<double>> initialResourceList = new List<List<double>>();
             string[] resourceTankArray = resourceAmounts.Split(';');
+            string[] initialResourceTankArray = initialResourceAmounts.Split(';');
+            if (initialResourceAmounts.Equals("") ||
+                initialResourceTankArray.Length != resourceTankArray.Length)
+            {
+                initialResourceTankArray = resourceTankArray;
+            }
             //Debug.Log("FSDEBUGRES: " + resourceTankArray.Length+" "+resourceAmounts);
             for (int tankCount = 0; tankCount < resourceTankArray.Length; tankCount++)
             {
                 resourceList.Add(new List<double>());
+                initialResourceList.Add(new List<double>());
                 string[] resourceAmountArray = resourceTankArray[tankCount].Trim().Split(',');
+                string[] initialResourceAmountArray = initialResourceTankArray[tankCount].Trim().Split(',');
+                if (initialResourceAmounts.Equals("") ||
+                    initialResourceAmountArray.Length != resourceAmountArray.Length)
+                {
+                    initialResourceAmountArray = resourceAmountArray;
+                }
                 for (int amountCount = 0; amountCount < resourceAmountArray.Length; amountCount++)
                 {
                     try
                     {
                         resourceList[tankCount].Add(double.Parse(resourceAmountArray[amountCount].Trim()));
+                        initialResourceList[tankCount].Add(double.Parse(initialResourceAmountArray[amountCount].Trim()));
                     }
                     catch
                     {
@@ -352,14 +299,7 @@ namespace Firespitter.customization
                         if (nameCount < resourceList[tankCount].Count)
                         {
                             newResource.maxAmount = resourceList[tankCount][nameCount];
-                            if (calledByPlayer)
-                            {
-                                newResource.amount = resourceList[tankCount][nameCount];
-                            }
-                            else
-                            {                                
-                                newResource.amount = getResource(nameCount);
-                            }
+                            newResource.amount    = initialResourceList[tankCount][nameCount];
                         }
                     }
                     newTank.resources.Add(newResource);
