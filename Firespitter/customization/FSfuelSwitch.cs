@@ -91,11 +91,15 @@ namespace Firespitter.customization
                 {
                     Events["nextTankSetupEvent"].guiActive = availableInFlight;
                     Events["nextTankSetupEvent"].guiActiveEditor = availableInEditor;
+                    Events["previousTankSetupEvent"].guiActive = availableInFlight;
+                    Events["previousTankSetupEvent"].guiActiveEditor = availableInEditor;
                 }
                 else
                 {
                     Events["nextTankSetupEvent"].guiActive = false;
                     Events["nextTankSetupEvent"].guiActiveEditor = false;
+                    Events["previousTankSetupEvent"].guiActive = false;
+                    Events["previousTankSetupEvent"].guiActiveEditor = false;
                 }
 
                 if (HighLogic.CurrentGame == null || HighLogic.CurrentGame.Mode == Game.Modes.CAREER)
@@ -116,6 +120,17 @@ namespace Firespitter.customization
                 selectedTankSetup = 0;
             }
             assignResourcesToPart(true);            
+        }
+
+        [KSPEvent(guiActive = true, guiActiveEditor = true, guiName = "Previous tank setup")]
+        public void previousTankSetupEvent()
+        {
+            selectedTankSetup--;
+            if (selectedTankSetup < 0)
+            {
+                selectedTankSetup = tankList.Count-1;
+            }
+            assignResourcesToPart(true);
         }
 
         public void selectTankSetup(int i, bool calledByPlayer)
@@ -208,7 +223,7 @@ namespace Firespitter.customization
 
         private float updateCost()
         {
-            if (selectedTankSetup > 0 && selectedTankSetup < tankCostList.Count)
+            if (selectedTankSetup >= 0 && selectedTankSetup < tankCostList.Count)
             {
                 addedCost = (float)tankCostList[selectedTankSetup];
             }
