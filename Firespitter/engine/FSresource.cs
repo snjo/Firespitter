@@ -8,8 +8,8 @@ namespace Firespitter.engine
         public int ID;
         public float ratio;
         public double currentSupply = 0f;
-        public float amount = 0f;
-        public float maxAmount = 0f;
+        public double amount = 0f;
+        public double maxAmount = 0f;
 
         public FSresource(string _name, float _ratio)
         {

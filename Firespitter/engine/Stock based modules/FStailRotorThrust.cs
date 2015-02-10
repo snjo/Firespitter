@@ -153,7 +153,7 @@ namespace Firespitter.engine
 
                 if (steeringInput.y > 0)
                 {
-                    partTransform.localRotation = defaultRotation.Inverse();
+                    partTransform.localRotation = Quaternion.FromToRotation(new Vector3(0, 1, 0), new Vector3(0, -1, 0)) * defaultRotation;
                 }
                 else
                 {
