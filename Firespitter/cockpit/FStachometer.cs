@@ -99,7 +99,7 @@ class FStachometer : InternalModule
         }
         if (heatNeedle != null)
         {
-            heatNeedle.localRotation = Quaternion.Euler(rotationAxis * Mathf.Lerp(minAngle, maxAngle, engine.part.temperature / engine.part.maxTemp));
+            heatNeedle.localRotation = Quaternion.Euler(rotationAxis * Mathf.Lerp(minAngle, maxAngle, (float)engine.part.temperature / (float)engine.part.maxTemp));
         }        
         //debug
         //float limiter = engine.thrustPercentage / 100f;
