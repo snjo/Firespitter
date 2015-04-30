@@ -4,8 +4,8 @@ using System.Reflection;
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class FSversionCheck : MonoBehaviour
     {
-        static int CompatibleWithMajor = 0;
-        static int CompatibleWithMinor = 90;
+        static int CompatibleWithMajor = 1;
+        static int CompatibleWithMinor = 0;
         static int CompatibleWithRevision = 0;
         static System.Version FSversion;
 
