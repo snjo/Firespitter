@@ -77,7 +77,7 @@ namespace Firespitter.customization
             }
             if (basePartMass != part.mass)
             {
-                throw new MassDiscrepancyException(part.name);
+                Debug.LogError("Error: FSFuelSwitch Mass Discrepancy detected in part '" + part.name + "'.", part);
             }
             configLoaded = true;
             //Debug.Log("FS LOAD DONE " + tankList.Count);
@@ -351,10 +351,5 @@ namespace Firespitter.customization
             else
                 return string.Empty;
         }
-    }
-
-    class MassDiscrepancyException : System.Exception
-    {
-        public MassDiscrepancyException(string p) : base(p) { }
     }
 }
