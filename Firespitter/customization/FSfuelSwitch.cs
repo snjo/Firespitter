@@ -75,6 +75,10 @@ namespace Firespitter.customization
             {
                 initializeData();
             }
+            if (basePartMass != part.mass)
+            {
+                Debug.LogError("Error: FSFuelSwitch Mass Discrepancy detected in part '" + part.name + "'.", part);
+            }
             configLoaded = true;
             //Debug.Log("FS LOAD DONE " + tankList.Count);
         }
@@ -347,5 +351,5 @@ namespace Firespitter.customization
             else
                 return string.Empty;
         }
-    }    
+    }
 }
