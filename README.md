@@ -19,3 +19,5 @@ UV map texture guides are included so you can re-skin to your liking.
 For reuse of the plugin, please either direct people to download the dll from my official release, OR recompile the wanted partmodule/class with a new class name to avoid conflicts.
 For modders re-using the dll directly, you MUST place it in the Firespitter folder in your zip file, so people don't end up with two copies of the dll.
 The right path is: [KSP_OS]\GameData\Firespitter\Plugins\
+
+Firespitter Partcatalog icon by KwirkyJ
