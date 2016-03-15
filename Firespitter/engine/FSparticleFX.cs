@@ -51,7 +51,7 @@ namespace Firespitter
 
         private void addComponents()
         {
-            pEmitter = (ParticleEmitter)gameObject.AddComponent("MeshParticleEmitter");
+            pEmitter =  gameObject.AddComponent<MeshParticleEmitter>();
             pRenderer = gameObject.AddComponent<ParticleRenderer>();
             pAnimator = gameObject.AddComponent<ParticleAnimator>();
         }
@@ -95,8 +95,8 @@ namespace Firespitter
             
             if (useLocalSpaceVelocityHack)
             {
-                //float velMagnitude = parentObject.rigidbody.velocity.magnitude;
-                float fxSpeed = Vector3.Dot(gameObject.transform.forward, parentObject.rigidbody.velocity);
+                //float velMagnitude = parentObject.GetComponent<Rigidbody>().velocity.magnitude;
+                float fxSpeed = Vector3.Dot(gameObject.transform.forward, parentObject.GetComponent<Rigidbody>().velocity);
                 if (fxSpeed > 0f)
                     fxSpeed = 0;
                 pEmitter.localVelocity = new Vector3(0f, 0f, 1f + (-fxSpeed * 0.1f));

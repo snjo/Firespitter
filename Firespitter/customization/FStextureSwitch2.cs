@@ -327,9 +327,9 @@ namespace Firespitter.customization
                     List<Material> matList = new List<Material>();
                     foreach (Transform t in targetObjectTransformArray)
                     {
-                        if (t != null && t.gameObject.renderer != null) // check for if the object even has a mesh. otherwise part list loading crashes
+                        if (t != null && t.gameObject.GetComponent<Renderer>() != null) // check for if the object even has a mesh. otherwise part list loading crashes
                         {
-                            Material targetMat = t.gameObject.renderer.material;
+                            Material targetMat = t.gameObject.GetComponent<Renderer>().material;
                             if (targetMat != null)
                             {
                                 if (!matList.Contains(targetMat))

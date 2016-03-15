@@ -267,11 +267,11 @@ class FSwingBase : PartModule
     {
         if (leadingEdgeCurrent > 0f)
         {
-            part.rigidbody.drag = leadingEdgeDrag * (float)vessel.atmDensity * leadingEdgeCurrent;
+            part.GetComponent<Rigidbody>().drag = leadingEdgeDrag * (float)vessel.atmDensity * leadingEdgeCurrent;
         }
         else
         {
-            part.rigidbody.drag = 0f;
+            part.GetComponent<Rigidbody>().drag = 0f;
         }
     }
 
@@ -281,7 +281,7 @@ class FSwingBase : PartModule
         if (newState == true)
         {
             leadingEdgeTarget = 1f;
-            //part.rigidbody.drag = leadingEdgeDrag * vessel.atmDensity * ;            
+            //part.GetComponent<Rigidbody>().drag = leadingEdgeDrag * vessel.atmDensity * ;            
             if (affectStockWingModule)
             {
                 currentDeflectionLiftCoeff = deflectionLiftCoeff + leadingEdgeLift;
@@ -295,7 +295,7 @@ class FSwingBase : PartModule
         else
         {
             leadingEdgeTarget = 0f;
-            //part.rigidbody.drag = 0f;
+            //part.GetComponent<Rigidbody>().drag = 0f;
             if (affectStockWingModule)
             {
                 stockWingModule.deflectionLiftCoeff = deflectionLiftCoeff;

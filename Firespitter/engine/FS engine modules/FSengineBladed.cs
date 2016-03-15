@@ -239,7 +239,7 @@ namespace Firespitter.engine
 
         private float getAirSpeed()
         {
-            partVelocity = GetVelocity(rigidbody, transform.position);
+            partVelocity = GetVelocity(GetComponent<Rigidbody>(), transform.position);
             float airDirection = Vector3.Dot(baseTransform.up, partVelocity.normalized);
             airSpeedThroughRotor = partVelocity.magnitude * airDirection;
             partFacingUp = Mathf.Sign(Vector3.Dot(vessel.upAxis, baseTransform.up));

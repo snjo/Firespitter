@@ -91,7 +91,7 @@ namespace Firespitter.cockpit
         {
             int charCount = 0;
             int lineCount = 0;
-            spriteSheetMat = base.internalProp.FindModelTransform(charPlateObject).renderer.material;
+            spriteSheetMat = base.internalProp.FindModelTransform(charPlateObject).GetComponent<Renderer>().material;
 
             //baseCharPlate = GameObject.Find(charPlateObject);
             baseCharPlate = base.internalProp.FindModelTransform(charPlateObject).gameObject;
@@ -111,9 +111,9 @@ namespace Firespitter.cockpit
                         //newPlate.transform.localPosition += new Vector3(charSpacing * (charCount), 0f, lineSpacing * (lineCount));
                         newPlate.transform.localPosition += new Vector3(-charSpacing * charCount, -lineSpacing * lineCount, 0f);
                         newPlate.name = "cpl" + lineCount + "c" + charCount;
-                        newPlate.renderer.material = new Material(spriteSheetMat.shader);
-                        newPlate.renderer.material.mainTexture = spriteSheetMat.mainTexture;
-                        newPlate.renderer.material.mainTextureScale = new Vector2(-spriteScale, spriteScale); ;
+                        newPlate.GetComponent<Renderer>().material = new Material(spriteSheetMat.shader);
+                        newPlate.GetComponent<Renderer>().material.mainTexture = spriteSheetMat.mainTexture;
+                        newPlate.GetComponent<Renderer>().material.mainTextureScale = new Vector2(-spriteScale, spriteScale); ;
                         charList.Add(newPlate);
                     }
                     lineList.Add(charList);
@@ -198,7 +198,7 @@ namespace Firespitter.cockpit
                         {
                             char paddedChar = ' ';
                             if (charCount < charArray.Length) paddedChar = charArray[charCount];
-                            lineList[lineCount][charCount].renderer.material.mainTextureOffset = (getSheetCharPosition(paddedChar) * spriteScale) - new Vector2(spriteShift, 0f);
+                            lineList[lineCount][charCount].GetComponent<Renderer>().material.mainTextureOffset = (getSheetCharPosition(paddedChar) * spriteScale) - new Vector2(spriteShift, 0f);
                         }
                         oldTextArray[lineCount] = inputTextArray[lineCount];
                     }
@@ -215,7 +215,7 @@ namespace Firespitter.cockpit
                 int lineNum = (i - charNum) / 10; // hmmm, seems hard coded somehow...
                 //int lineNum = (i - charNum) / charPerLine; // should try this instead later.
                 if (lineNum >= linesPerPage) break;
-                lineList[lineNum][charNum].renderer.material.mainTextureOffset = (getSheetCharPosition(c[i]) * spriteScale) - new Vector2(spriteShift, 0f);
+                lineList[lineNum][charNum].GetComponent<Renderer>().material.mainTextureOffset = (getSheetCharPosition(c[i]) * spriteScale) - new Vector2(spriteShift, 0f);
                 oldText = inputText;
             }
         }

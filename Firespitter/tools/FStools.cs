@@ -11,7 +11,7 @@ namespace Firespitter
         public static Vector3 WorldUp(Vessel vessel)
         {
             if (vessel != null)
-                return (vessel.rigidbody.position - vessel.mainBody.position).normalized;
+                return (vessel.GetComponent<Rigidbody>().position - vessel.mainBody.position).normalized;
             else
                 return Vector3.zero;
         }

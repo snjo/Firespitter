@@ -485,16 +485,16 @@ class FSwheel : PartModule
             switch (status)
             {
                 case BrakeStatus.on:
-                    brakeEmissiveObject.renderer.material.SetColor("_EmissiveColor", new Color(onEmissiveColor.x, onEmissiveColor.y, onEmissiveColor.z));
+                    brakeEmissiveObject.GetComponent<Renderer>().material.SetColor("_EmissiveColor", new Color(onEmissiveColor.x, onEmissiveColor.y, onEmissiveColor.z));
                     break;
                 case BrakeStatus.off:
-                    brakeEmissiveObject.renderer.material.SetColor("_EmissiveColor", new Color(offEmissiveColor.x, offEmissiveColor.y, offEmissiveColor.z));
+                    brakeEmissiveObject.GetComponent<Renderer>().material.SetColor("_EmissiveColor", new Color(offEmissiveColor.x, offEmissiveColor.y, offEmissiveColor.z));
                     break;
                 case BrakeStatus.deploying:
-                    brakeEmissiveObject.renderer.material.SetColor("_EmissiveColor", new Color(deployingEmissiveColor.x, deployingEmissiveColor.y, deployingEmissiveColor.z));
+                    brakeEmissiveObject.GetComponent<Renderer>().material.SetColor("_EmissiveColor", new Color(deployingEmissiveColor.x, deployingEmissiveColor.y, deployingEmissiveColor.z));
                     break;
                 case BrakeStatus.disabled:
-                    brakeEmissiveObject.renderer.material.SetColor("_EmissiveColor", new Color(disabledEmissiveColor.x, disabledEmissiveColor.y, disabledEmissiveColor.z));
+                    brakeEmissiveObject.GetComponent<Renderer>().material.SetColor("_EmissiveColor", new Color(disabledEmissiveColor.x, disabledEmissiveColor.y, disabledEmissiveColor.z));
                     break;
             }
         }
@@ -971,7 +971,7 @@ class FSwheel : PartModule
             if (reverseMotor)
                 throttleInput *= -1;
             double resourceConsumed = (double)Mathf.Abs(resourceConsumptionRate * throttleInput) * (double)TimeWarp.deltaTime;
-            if (!CheatOptions.InfiniteFuel)
+            if (!CheatOptions.InfinitePropellant)
             {
                 double receivedResource = base.part.RequestResource(resourceName, resourceConsumed);
                 if (resourceConsumed > 0f)

@@ -111,7 +111,7 @@ namespace Firespitter.engine
         {
             {
                 Vector3 heading = (Vector3d)this.vessel.transform.up;
-                Vector3d up = (this.vessel.rigidbody.position - this.vessel.mainBody.position).normalized;
+                Vector3d up = (this.vessel.GetComponent<Rigidbody>().position - this.vessel.mainBody.position).normalized;
 
                 Transform modifiedUp = new GameObject().transform;
                 modifiedUp.rotation = Quaternion.LookRotation(up, heading);

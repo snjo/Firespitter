@@ -85,7 +85,7 @@ public class FSkerbalPuppet : PartModule
         {            
             foreach (Transform t in puppetTransforms)
             {
-                t.gameObject.renderer.enabled = showPuppet;                
+                t.gameObject.GetComponent<Renderer>().enabled = showPuppet;                
             }
             doUpdate = false;
         }

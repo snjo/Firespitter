@@ -66,7 +66,7 @@ namespace Firespitter.engine
         {
             //if (engineIgnited && !flameOut)
             //    momentum += powerProduction;
-            airVelocity = part.rigidbody.velocity.magnitude * Vector3.Dot(rotorHubTransform.forward, part.rigidbody.velocity.normalized) * autoGyroDirection;
+            airVelocity = part.GetComponent<Rigidbody>().velocity.magnitude * Vector3.Dot(rotorHubTransform.forward, part.GetComponent<Rigidbody>().velocity.normalized) * autoGyroDirection;
             //if (airVelocity < 1f)
             RPM += airVelocity * fallingPowerProduction;
             //float momentumAdjustment = -requestedThrottle + 0.5f;
