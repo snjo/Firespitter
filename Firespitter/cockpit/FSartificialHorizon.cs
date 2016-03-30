@@ -64,7 +64,7 @@ class FSartificialHorizon :InternalModule
             if (innerDiscTransform != null)
             {
                 innerDisc = innerDiscTransform.gameObject;
-                discMat = innerDisc.renderer.material;
+                discMat = innerDisc.GetComponent<Renderer>().material;
             }
         }
         catch

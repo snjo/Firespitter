@@ -66,12 +66,12 @@ public class FScameraToTV : InternalModule
         newTex.Create();
         newMat = new Material(Shader.Find("Diffuse"));
         //newMat = new Material(Shader.Find("KSP/Emissive/Diffuse"));
-        //newMat = TVplaneObject.renderer.material;
-        //newMat.CopyPropertiesFromMaterial(TVplaneObject.renderer.material);
+        //newMat = TVplaneObject.GetComponent<Renderer>().material;
+        //newMat.CopyPropertiesFromMaterial(TVplaneObject.GetComponent<Renderer>().material);
         newMat.SetTexture("_MainTex", newTex);        
 
         TVplaneObject = base.internalProp.FindModelTransform(TVplaneName).gameObject;
-        TVplaneObject.renderer.material = newMat;
+        TVplaneObject.GetComponent<Renderer>().material = newMat;
 
         foreach (Part part in vessel.Parts)
         {

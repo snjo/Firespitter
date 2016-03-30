@@ -64,18 +64,18 @@ namespace Firespitter.engine
         {
             for (int i = 0; i < bladeObjects.Count; i++)
             {
-                bladeObjects[i].renderer.enabled = newState;                
+                bladeObjects[i].GetComponent<Renderer>().enabled = newState;                
             }
             if (duplicatedBlades)
             {
                 for (int i = 0; i < blurObjects.Length; i++)
                 {
-                    blurObjects[i].gameObject.renderer.enabled = !newState;                    
+                    blurObjects[i].gameObject.GetComponent<Renderer>().enabled = !newState;                    
                 }
             }
             else
             {
-                rotorDisc.renderer.enabled = !newState;
+                rotorDisc.GetComponent<Renderer>().enabled = !newState;
             }
         }
 
@@ -118,7 +118,7 @@ namespace Firespitter.engine
                     rotorDisc = part.FindModelTransform(rotorDiscName);
                     if (rotorDisc != null)
                     {
-                        rotorDisc.gameObject.renderer.enabled = false;
+                        rotorDisc.gameObject.GetComponent<Renderer>().enabled = false;
 
                         if (blade1 != "")
                             bladeNames.Add(blade1);

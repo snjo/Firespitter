@@ -149,7 +149,7 @@ namespace Firespitter.engine
                 //group.audio.rolloffMode = AudioRolloffMode.Logarithmic;            
                 group.audio.rolloffMode = AudioRolloffMode.Linear;
                 group.audio.dopplerLevel = 0f;
-                group.audio.panLevel = 1f;
+                group.audio.panStereo = 1f;
                 group.audio.clip = GameDatabase.Instance.GetAudioClip(name);
                 group.audio.loop = loop;
                 group.audio.playOnAwake = false;

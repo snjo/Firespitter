@@ -143,8 +143,8 @@ namespace Firespitter.customization
                     if (affectColliders)
                     {
                         debug.debugMessage("setting collider states");
-                        if (objectTransforms[i][j].gameObject.collider != null)
-                            objectTransforms[i][j].gameObject.collider.enabled = false;
+                        if (objectTransforms[i][j].gameObject.GetComponent<Collider>() != null)
+                            objectTransforms[i][j].gameObject.GetComponent<Collider>().enabled = false;
                     }                    
                 }
             }
@@ -155,10 +155,10 @@ namespace Firespitter.customization
                 objectTransforms[objectNumber][i].gameObject.SetActive(true);
                 if (affectColliders)
                 {
-                    if (objectTransforms[objectNumber][i].gameObject.collider != null)
+                    if (objectTransforms[objectNumber][i].gameObject.GetComponent<Collider>() != null)
                     {
                         debug.debugMessage("Setting collider true on new active object");
-                        objectTransforms[objectNumber][i].gameObject.collider.enabled = true;
+                        objectTransforms[objectNumber][i].gameObject.GetComponent<Collider>().enabled = true;
                     }
                 }                
             }            

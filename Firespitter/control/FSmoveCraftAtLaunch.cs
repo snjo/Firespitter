@@ -183,10 +183,10 @@ public class FSmoveCraftAtLaunch : PartModule
         {
             //Debug.Log("FSmoveCAL: moving vessel to: " + launchPosition);
             vessel.SetPosition(calculateLaunchPosition(), true);
-            if (!vessel.rigidbody.isKinematic)
+            if (!vessel.GetComponent<Rigidbody>().isKinematic)
             {
-                vessel.rigidbody.velocity = Vector3.zero;
-                vessel.rigidbody.angularVelocity = Vector3.zero;
+                vessel.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                vessel.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             }
         }
     }
@@ -198,7 +198,7 @@ public class FSmoveCraftAtLaunch : PartModule
         base.vessel.Landed = false;
         base.vessel.Splashed = true;
         base.vessel.GoOnRails();
-        base.vessel.rigidbody.WakeUp();
+        base.vessel.GetComponent<Rigidbody>().WakeUp();
         base.vessel.ResumeStaging();
         vessel.landedAt = "";
         InputLockManager.ClearControlLocks();

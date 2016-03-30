@@ -91,7 +91,7 @@ namespace Firespitter.engine
                 //Debug.Log("Entering fixed update");
                 try
                 {
-                    velocityDirection = part.gameObject.rigidbody.velocity;
+                    velocityDirection = part.gameObject.GetComponent<Rigidbody>().velocity;
                 }
                 catch
                 {
@@ -110,7 +110,7 @@ namespace Firespitter.engine
                     if (!resourceReceived)
                         thrustUsed = 0f;
                     if (thrustUsed > 0f)
-                        part.gameObject.rigidbody.AddForceAtPosition(finalThrust, t.transform.position);
+                        part.gameObject.GetComponent<Rigidbody>().AddForceAtPosition(finalThrust, t.transform.position);
                     if (useFX)
                     {
                         particleFX[i].pEmitter.minEmission = defaultEmitterMinEmission * thrustUsed;
@@ -124,7 +124,7 @@ namespace Firespitter.engine
         private bool consumeResource(float modifier)
         {
             float resourceRequested = resourceConsumption * modifier * TimeWarp.deltaTime;
-            if (CheatOptions.InfiniteRCS)
+            if (CheatOptions.InfinitePropellant)
                 return true;
             if (modifier > 0f)
             {
@@ -149,7 +149,7 @@ namespace Firespitter.engine
                 if (thrustModifier > 0f && velocityDirection.magnitude > minVelocityToActivate)
                 {
                     finalThrust = -thrustDirection * thrustModifier * maxThrust;
-                    //part.gameObject.rigidbody.AddForceAtPosition(-thrustDirection * thrustModifier * maxThrust, t.transform.position);
+                    //part.gameObject.GetComponent<Rigidbody>().AddForceAtPosition(-thrustDirection * thrustModifier * maxThrust, t.transform.position);
                 }
                 else
                 {

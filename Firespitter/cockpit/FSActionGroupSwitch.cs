@@ -97,8 +97,8 @@ namespace Firespitter.cockpit
             //set emissive color if used when clicked, start countdown to reset emissive if that applies
             if (useEmissiveToggle == 1)
             {
-                switchObjectTransform.renderer.material.SetColor("_EmissiveColor", new Color(onEmissiveColor.x, onEmissiveColor.y, onEmissiveColor.z));
-                //switchObjectTransform.renderer.material.SetColor("_EmissiveColor", Color.yellow);            
+                switchObjectTransform.GetComponent<Renderer>().material.SetColor("_EmissiveColor", new Color(onEmissiveColor.x, onEmissiveColor.y, onEmissiveColor.z));
+                //switchObjectTransform.GetComponent<Renderer>().material.SetColor("_EmissiveColor", Color.yellow);            
                 emissiveCountdown = resetEmissiveTime;
             }
 
@@ -254,8 +254,8 @@ namespace Firespitter.cockpit
                 {
                     if (emissiveCountdown == 0)
                     {
-                        switchObjectTransform.renderer.material.SetColor("_EmissiveColor", new Color(offEmissiveColor.x, offEmissiveColor.y, offEmissiveColor.z, 1f));
-                        //switchObjectTransform.renderer.material.SetColor("_EmissiveColor", Color.green);
+                        switchObjectTransform.GetComponent<Renderer>().material.SetColor("_EmissiveColor", new Color(offEmissiveColor.x, offEmissiveColor.y, offEmissiveColor.z, 1f));
+                        //switchObjectTransform.GetComponent<Renderer>().material.SetColor("_EmissiveColor", Color.green);
                         emissiveCountdown--;
                     }
                     else if (emissiveCountdown > 0)

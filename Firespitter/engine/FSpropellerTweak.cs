@@ -271,7 +271,7 @@ namespace Firespitter.engine
 
                 //if (centerOfMass != null)
                 //{
-                //    part.rigidbody.centerOfMass = centerOfMass.po;
+                //    part.GetComponent<Rigidbody>().centerOfMass = centerOfMass.po;
                 //}
             }
         }
@@ -282,11 +282,11 @@ namespace Firespitter.engine
             {
                 if (amount == 0)
                 {
-                    exhausts[0].renderer.enabled = false;
+                    exhausts[0].GetComponent<Renderer>().enabled = false;
                 }
                 else
                 {
-                    exhausts[0].renderer.enabled = true;
+                    exhausts[0].GetComponent<Renderer>().enabled = true;
                 }
 
                 if (amount != exhausts.Count)

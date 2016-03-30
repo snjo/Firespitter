@@ -301,7 +301,7 @@ namespace Firespitter.engine
 
             for (int i = 0; i < thrustTransforms.Length; i++)
             {
-                rigidbody.AddForceAtPosition(-thrustTransforms[i].forward * applyThrust, thrustTransforms[i].position);
+                GetComponent<Rigidbody>().AddForceAtPosition(-thrustTransforms[i].forward * applyThrust, thrustTransforms[i].position);
             }
             smoothFxThrust = Mathf.Lerp(smoothFxThrust, finalThrustNormalized, smoothFXSpeed);
 
@@ -310,7 +310,7 @@ namespace Firespitter.engine
 
         private float getForwardSpeed()
         {
-            Vector3 vel = GetVelocity(part.rigidbody, thrustTransforms[0].position);
+            Vector3 vel = GetVelocity(part.GetComponent<Rigidbody>(), thrustTransforms[0].position);
             float thrustTransformRelativeSpeed = Vector3.Dot(-vel.normalized, thrustTransforms[0].forward) * vel.magnitude;
             thrustTransformRelativeSpeed = Mathf.Max(0f, thrustTransformRelativeSpeed);            
             return thrustTransformRelativeSpeed;

@@ -75,7 +75,7 @@ public class FSbuoyancy : PartModule
     {
         if (!HighLogic.LoadedSceneIsFlight)
             return;
-        if (vessel.mainBody.ocean && part.rigidbody != null)
+        if (vessel.mainBody.ocean && part.GetComponent<Rigidbody>() != null)
         {
             if (part.partBuoyancy != null)
             {
@@ -91,20 +91,20 @@ public class FSbuoyancy : PartModule
 
                 if (floatMultiplier > 0f)
                 {
-                    Vector3d up = (this.vessel.rigidbody.position - this.vessel.mainBody.position).normalized;
+                    Vector3d up = (this.vessel.GetComponent<Rigidbody>().position - this.vessel.mainBody.position).normalized;
                     Vector3d uplift = up * buoyancyForce * floatMultiplier;
 
-                    //float relativeDirection = Vector3.Dot(vessel.rigidbody.velocity.normalized, up);                        
+                    //float relativeDirection = Vector3.Dot(vessel.GetComponent<Rigidbody>().velocity.normalized, up);                        
 
                     if (vessel.verticalSpeed < maxVerticalSpeed) // || relativeDirection < 0f) // if you are going down, apply force regardless, of going up, limit up speed
                     {
-                        this.part.rigidbody.AddForceAtPosition(uplift, forcePoint.position);
+                        this.part.GetComponent<Rigidbody>().AddForceAtPosition(uplift, forcePoint.position);
                     }
                 }
 
                 // set water drag
 
-                part.rigidbody.drag = dragInWater;
+                part.GetComponent<Rigidbody>().drag = dragInWater;
 
                 // splashed status
 
@@ -114,7 +114,7 @@ public class FSbuoyancy : PartModule
 
                 // part destruction
 
-                if (base.rigidbody.velocity.magnitude > waterImpactTolerance)
+                if (base.GetComponent<Rigidbody>().velocity.magnitude > waterImpactTolerance)
 							{								
 								GameEvents.onCrashSplashdown.Fire(new EventReport(FlightEvents.SPLASHDOWN_CRASH, this.part, this.part.partInfo.title, "ocean", 0, "FSbuoyancy: Hit the water too hard"));
 								this.part.Die();
@@ -129,11 +129,11 @@ public class FSbuoyancy : PartModule
                     if (splashTimer <= 0f)
                     {
                         splashTimer = splashCooldown;
-                        if (base.rigidbody.velocity.magnitude > 6f && partAltitude > -buoyancyRange) // don't splash if you are deep in the water or going slow
+                        if (base.GetComponent<Rigidbody>().velocity.magnitude > 6f && partAltitude > -buoyancyRange) // don't splash if you are deep in the water or going slow
                         {
                             if (Vector3.Distance(base.transform.position, FlightGlobals.camera_position) < 500f)
                             {
-                                FXMonger.Splash(base.transform.position, base.rigidbody.velocity.magnitude / 50f);
+                                FXMonger.Splash(base.transform.position, base.GetComponent<Rigidbody>().velocity.magnitude / 50f);
                             }
                         }
                     }
@@ -147,7 +147,7 @@ public class FSbuoyancy : PartModule
                     splashed = false;
 
                     // set air drag
-                    part.rigidbody.drag = 0f;
+                    part.GetComponent<Rigidbody>().drag = 0f;
 
                     part.WaterContact = false;
                     part.vessel.checkSplashed();
