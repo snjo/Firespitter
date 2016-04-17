@@ -326,15 +326,6 @@ namespace Firespitter.customization
             }            
         }
 
-        public float GetModuleCost()
-        {
-            return updateCost();
-        }
-        public float GetModuleCost(float modifier)
-        {
-            return updateCost();
-        }
-
         public override string GetInfo()
         {
             if (showInfo)
@@ -350,6 +341,16 @@ namespace Firespitter.customization
             }
             else
                 return string.Empty;
+        }
+
+        public float GetModuleCost(float defaultCost, ModifierStagingSituation sit)
+        {
+            return updateCost();
+        }
+
+        public ModifierChangeWhen GetModuleCostChangeWhen()
+        {
+            return ModifierChangeWhen.CONSTANTLY;
         }
     }
 }
