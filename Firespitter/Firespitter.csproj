@@ -157,7 +157,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy Firespitter.dll C:\SYNC\Dropbox\KSP_DEV\GameData\Firespitter\Plugins</PostBuildEvent>
+    <PostBuildEvent>copy Firespitter.dll D:\Dropbox\KSP_DEV\GameData\Firespitter\Plugins</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
