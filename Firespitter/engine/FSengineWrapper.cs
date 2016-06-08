@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using UnityEngine;
 
 namespace Firespitter.engine
 {
@@ -40,6 +41,15 @@ namespace Firespitter.engine
                 }
             }
             //Debug.Log("FSengineWrapper: engine type is " + type.ToString());
+        }
+
+        public FSengineWrapper(Part part, string name)
+        {
+            engineFX = part.Modules.OfType<ModuleEnginesFX>().Where(p => p.engineID == name).FirstOrDefault();
+            if (engineFX != null)
+                type = EngineType.ModuleEngineFX;
+            //Debug.Log("FSengineWrapper: engine type is " + type.ToString());
+            
         }
 
         public float maxThrust
