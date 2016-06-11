@@ -8,6 +8,8 @@ namespace Firespitter.engine
     public class FSplanePropellerSpinner : PartModule
     {
         [KSPField]
+        public string engineID;
+        [KSPField]
         public string propellerName = "propeller";
         [KSPField]
         public float rotationSpeed = -320f; // in RPM
@@ -82,7 +84,11 @@ namespace Firespitter.engine
         public override void OnStart(PartModule.StartState state)
         {
             base.OnStart(state);
-            engine = new Firespitter.engine.FSengineWrapper(part);
+
+            if (engineID == String.Empty || engineID == "")
+                engine = new Firespitter.engine.FSengineWrapper(part);
+            else
+                engine = new Firespitter.engine.FSengineWrapper(part, engineID);
 
             if (engine.type == FSengineWrapper.EngineType.FSengine)
             {
