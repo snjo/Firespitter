@@ -182,12 +182,12 @@ namespace Firespitter.customization
 
         private void setupTankInPart(Part currentPart, bool calledByPlayer)
         {
-            currentPart.Resources.list.Clear();
+            currentPart.Resources.dict = new DictionaryValueList<int, PartResource>();
             PartResource[] partResources = currentPart.GetComponents<PartResource>();
-            for (int i = 0; i < partResources.Length; i++)
-            {
-                DestroyImmediate(partResources[i]);
-            }            
+            //for (int i = 0; i < partResources.Length; i++)
+            //{
+            //    DestroyImmediate(partResources[i]);
+            //}            
 
             for (int tankCount = 0; tankCount < tankList.Count; tankCount++)
             {
@@ -220,7 +220,7 @@ namespace Firespitter.customization
                     }
                 }
             }
-            currentPart.Resources.UpdateList();
+
             updateWeight(currentPart, selectedTankSetup);
             updateCost();
         }

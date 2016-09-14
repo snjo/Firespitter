@@ -157,7 +157,7 @@ class FSwingBase : PartModule
     private Vector3 ctrllSrfDefRot = new Vector3();
     private Vector3 flapDefRot = new Vector3();
 
-    private ControlSurface stockWingModule;
+    private ModuleControlSurface stockWingModule;
     private FSliftSurface mainLift;
     private float mainLiftAreaDefault;
 
@@ -475,7 +475,7 @@ class FSwingBase : PartModule
             if (affectStockWingModule)
             {
                 //Debug.Log("FSwing: getting stock wing module");
-                stockWingModule = part as ControlSurface;
+                stockWingModule = part.FindModuleImplementing<ModuleControlSurface>();
                 if (stockWingModule != null)
                 {
                     //Debug.Log("FSwing: success");

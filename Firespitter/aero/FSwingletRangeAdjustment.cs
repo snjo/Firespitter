@@ -5,7 +5,7 @@ using UnityEngine;
 public class FSwingletRangeAdjustment : PartModule
 {
     private float defaultRange;
-    ControlSurface winglet = new ControlSurface();
+    ModuleControlSurface winglet = new ModuleControlSurface();
     private bool FARActive = false;
 
     [KSPField]
@@ -115,7 +115,7 @@ public class FSwingletRangeAdjustment : PartModule
         else
         {
             //winglet = part.Modules.OfType<ControlSurface>().FirstOrDefault();
-            winglet = part as ControlSurface;
+            winglet = part.FindModuleImplementing<ModuleControlSurface>();
             defaultRange = winglet.ctrlSurfaceRange;
             if (!currentControlRangeSet)
             {

@@ -1,12 +1,16 @@
 ﻿
+using ModuleWheels;
+
 public class FSexternalLandingGearControl : PartModule
 {
-    private ModuleLandingGear gear;
+    private ModuleWheelDeployment gear;
+    private ModuleWheelBrakes brakes;
 
     public override void OnStart(PartModule.StartState state)
     {
         base.OnStart(state);
-        gear = part.GetComponent<ModuleLandingGear>();
+        gear = part.GetComponent<ModuleWheelDeployment>();
+        brakes = part.GetComponent<ModuleWheelBrakes>();
         if (gear != null)
         {
             gear.Events["LowerLandingGear"].guiActiveUnfocused = true;
@@ -19,18 +23,18 @@ public class FSexternalLandingGearControl : PartModule
     [KSPEvent(name = "brakesOn", guiActive = true, active = true, guiName = "Brakes On", externalToEVAOnly = true, unfocusedRange = 6f, guiActiveUnfocused = true)]
     public void brakesOnEvent()
     {
-        if (gear != null)
+        if (gear != null && brakes != null)
         {
-            gear.brakesEngaged = true;
+            brakes.BrakeAction(new KSPActionParam(KSPActionGroup.Brakes, KSPActionType.Activate));
         }
     }
 
     [KSPEvent(name = "brakesOff", guiActive = true, active = true, guiName = "Brakes Off", externalToEVAOnly = true, unfocusedRange = 6f, guiActiveUnfocused = true)]
     public void brakesOffEvent()
     {
-        if (gear != null)
+        if (gear != null && brakes != null)
         {
-            gear.brakesEngaged = false;
+            brakes.BrakeAction(new KSPActionParam(KSPActionGroup.Brakes, KSPActionType.Deactivate));
         }
     }
 
