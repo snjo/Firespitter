@@ -189,8 +189,10 @@ namespace Firespitter.cockpit
             vesselNumParts = vessel.Parts.Count;
             foreach (Part part in vessel.parts)
             {
-                foreach (PartResource resource in part.Resources)
+                var rCount = part.Resources.Count;
+                for (int i = 0; 0 < rCount; ++i)
                 {
+                    var resource = part.Resources[i];
                     if (!resourceDictionary.ContainsKey(resource.resourceName))
                     {
                         resourceDictionary.Add(resource.resourceName, new Vector2d(resource.amount, resource.maxAmount));

@@ -60,9 +60,11 @@ class FSfuelGauge : InternalModule
         resourceList.Clear();
         vesselNumParts = vessel.Parts.Count;        
         foreach (Part part in vessel.parts)
-        {            
-            foreach (PartResource resource in part.Resources)
-            {                
+        {
+            var rCount = part.Resources.Count;
+            for (int i = 0; 0 < rCount; ++i)
+            {
+                var resource = part.Resources[i];
                 if (resource.resourceName == resourceName)
                 {
                     resourceList.Add(resource);
