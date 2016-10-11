@@ -182,6 +182,22 @@ class FSliftSurface : PartModule, ILiftProvider
         }
     }
 
+    bool ILiftProvider.DisableBodyLift
+    {
+        get { return DisableBodyLift; }
+    }
+
+    public bool IsLifting { get; }
+
+    //TODO
+    public bool DisableBodyLift
+    {
+        get
+        {
+            return false;  
+        }
+    }
+
     public CoLqueryData liftQuery(Vector3 refVector)
     {
         CoLqueryData qry = new CoLqueryData();
