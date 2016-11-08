@@ -34,6 +34,16 @@ public class FSanimateGeneric : PartModule
     [KSPField]
     public Vector4 defaultWindowRect = new Vector4(550f, 300f, 150f, 100f);
 
+    // animationRampspeed is how quickly it gets up to speed.  1 meaning it gets to full speed (as defined by 
+    // the animSpeed and customAnimationSpeed) immediately, less than that will ramp up over time
+    [KSPField]
+    public float animationRampSpeed = 1f;
+    // When the mod starts, what speed to set the initial animSpeed to
+    [KSPField]
+    public float startAnimSpeed = 1f;
+    // Multiplier to be used when in reverse mode
+    [KSPField]
+    public float reverseAnimSpeed = 1f;
 
     [KSPField(isPersistant = true)]
     public bool isAnimating = false;
@@ -68,6 +78,15 @@ public class FSanimateGeneric : PartModule
     //private bool showMenu = false;
     //private Rect windowRect; // = new Rect(550f, 300f, 150f, 100f);
 
+
+    // The following are for the new functionality for the animation ramp ability
+
+    private enum RampDirection { none, up, down };
+    private RampDirection rampDirection = RampDirection.none;
+    private float ramp = 0;
+    private float unstartedSpeed;
+    private bool animSpeediInited = false;
+
     [KSPAction("Toggle")]
     public void toggleAction(KSPActionParam param)
     {
@@ -93,16 +112,19 @@ public class FSanimateGeneric : PartModule
             {
                 Actions["toggleAction"].guiName = toggleActionName;
             }
-            anim[animationName].speed = -1f * customAnimationSpeed;
+            // Following two commented out lines (anim[animationName].speed =, and anim.Play) now taken care of in LateUpdate
+            //anim[animationName].speed = -1f *  customAnimationSpeed;
             if (anim[animationName].normalizedTime == 0f || anim[animationName].normalizedTime == 1f)
                 anim[animationName].normalizedTime = 1f;
-            anim.Play(animationName);
+            
+            //anim.Play(animationName);
             startDeployed = false; // to get the hangar toggle button state right
             if (startRetractEffect != string.Empty)
             {
                 part.Effect(startRetractEffect);
                 Debug.Log("start retract effect");
             }
+            rampDirection = RampDirection.down;
         }
         else
         {
@@ -112,16 +134,19 @@ public class FSanimateGeneric : PartModule
             {
                 Actions["toggleAction"].guiName = toggleActionName;
             }
-            anim[animationName].speed = 1f * customAnimationSpeed;
+            // Following two commented out lines (anim[animationName].speed =, and anim.Play) now taken care of in LateUpdate
+            //anim[animationName].speed = 1f * customAnimationSpeed;
             if (anim[animationName].normalizedTime == 0f || anim[animationName].normalizedTime == 1f)
                 anim[animationName].normalizedTime = 0f;
-            anim.Play(animationName);
+
+            //anim.Play(animationName);
             startDeployed = true; // to get the hangar toggle button state right
             if (startDeployEffect != string.Empty)
             {
                 part.Effect(startDeployEffect);
                 Debug.Log("start deploy effect");
             }
+            rampDirection = RampDirection.up;
         }
 
         reverseAnimation = !reverseAnimation;
@@ -138,7 +163,7 @@ public class FSanimateGeneric : PartModule
     public override void OnStart(PartModule.StartState state)
     {
         base.OnStart(state);
-        
+
         anim = part.FindModelAnimators(animationName).FirstOrDefault();
         if (anim != null)
         {
@@ -172,7 +197,7 @@ public class FSanimateGeneric : PartModule
             }
             else
             {
-                animSpeed = -1f * customAnimationSpeed;
+                animSpeed = -1f * customAnimationSpeed * reverseAnimSpeed;
                 //this fixes the animation running on entering the scene, but mayn not be good for paused animations
                 //animTime = 0f;
             }
@@ -183,8 +208,10 @@ public class FSanimateGeneric : PartModule
 
             //set up animation state according to persistent values
             anim[animationName].layer = layer;
-            anim[animationName].speed = animSpeed;
-            anim.Play(animationName);
+            // Following two commented out lines now taken care of in LateUpdate
+            //anim[animationName].speed = animSpeed * startAnimSpeed;
+
+            //anim.Play(animationName);
             anim[animationName].normalizedTime = animTime;            
 
             if (reverseAnimation)
@@ -221,6 +248,78 @@ public class FSanimateGeneric : PartModule
         //popup = new FSGUIPopup(part, "FSanimateGeneric", moduleID, FSGUIwindowID.animateGeneric + moduleID, windowRect, startDeployedString, new PopupElement(new PopupButton("Yes", "No", 0f, guiToggleEvent)));
         //popup.sections[0].elements[0].useTitle = false;
         //popup.sections[0].elements[0].buttons[0].toggle(reverseAnimation);
+    }
+
+    //
+    // Process the ramping in LateUpdate
+    //
+    public void LateUpdate()
+    {
+        if (!HighLogic.LoadedSceneIsFlight && !HighLogic.LoadedSceneIsEditor) return;
+
+        if (anim != null)
+        {
+            switch (rampDirection)
+            {
+                case RampDirection.up:
+                    if (ramp < 1f)
+                    {
+                        if (ramp < 0)
+                        {
+                            if (reverseAnimSpeed == 0)
+                                ramp = 0;
+                            else
+                                ramp += animationRampSpeed / reverseAnimSpeed;
+                        }
+                        else
+                            ramp += animationRampSpeed;
+                    }
+                    if (ramp > 1f)
+                        ramp = 1f;
+                    break;
+                case RampDirection.down:
+                    if (ramp > -1f)
+                    {
+                        if (ramp < 0)
+                        {
+                            if (reverseAnimSpeed != 0)                                
+                                ramp -= animationRampSpeed / reverseAnimSpeed;
+                        }
+                        else
+                            ramp -= animationRampSpeed;
+                    }
+                    if (ramp < -1f)
+                    {
+                        ramp = -1f;
+                        //rampDirection = RampDirection.up;
+                    }
+                    break;
+            }
+            if (/* reverseAnimation && */ ramp < 0)
+            {                
+                anim[animationName].speed = 1f * customAnimationSpeed * reverseAnimSpeed * ramp;
+            }
+            else
+            {
+                anim[animationName].speed = 1f * customAnimationSpeed * ramp;
+            }
+            if (rampDirection == RampDirection.none)
+            {
+                if (!animSpeediInited)
+                {
+                    anim[animationName].speed = animSpeed * startAnimSpeed;
+                    animSpeediInited = true;
+                    unstartedSpeed = anim[animationName].speed;
+                    ramp = startAnimSpeed;
+                }
+                else
+                    anim[animationName].speed = unstartedSpeed;
+            }
+            // Debug.Log("rampDirection: " + rampDirection.ToString() + "   animSpeed: " + animSpeed.ToString() + "   startAnimSpeed: " + startAnimSpeed.ToString() + "   anim[animationName].speed: " + anim[animationName].speed.ToString());
+            // I don't think that this causes a problem, to call it every time here even if the speed didn't change.  Also catches any other
+            // changes
+            anim.Play(animationName);
+        }
     }
 
     //public void guiToggleEvent()
