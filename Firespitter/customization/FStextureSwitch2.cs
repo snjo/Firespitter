@@ -161,6 +161,12 @@ namespace Firespitter.customization
                     fuelSwitch.selectTankSetup(fuelTankSetupList[selectedTexture], calledByPlayer);
                 else
                     debug.debugMessage("no such fuel tank setup");
+                if (calledByPlayer && HighLogic.LoadedSceneIsFlight)
+                {
+                    //Do a screeen message of what we just swapped to!
+                    var msg = string.Format("Converted Tank to {0}", textureDisplayList[selectedTexture]);
+                    ScreenMessages.PostScreenMessage(msg, 5f, ScreenMessageStyle.UPPER_CENTER);
+                }
             }
         }
 
