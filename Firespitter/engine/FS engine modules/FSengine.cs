@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 namespace Firespitter.engine
 {
     public class FSengine : PartModule, IThrustProvider
@@ -432,19 +434,21 @@ namespace Firespitter.engine
             {
                 newPos += thrustTransforms[i].position - part.transform.position;
                 newDir += thrustTransforms[i].forward;
-            }            
+            }
             CoTquery.pos = part.transform.position + (newPos / thrustTransforms.Length);
             CoTquery.dir = newDir.normalized;
             CoTquery.thrust = maxThrust * (maxThrottle / 100f);
         }
         public float GetMaxThrust()
         {
-            return this.maxThrust;
+            return 0;
+            //return this.maxThrust;
         }
 
         public float GetCurrentThrust()
         {
-            return this.finalThrust;
+            return 0;
+            //return this.finalThrust;
         }
         public EngineType GetEngineType()
         {
