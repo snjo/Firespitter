@@ -145,14 +145,16 @@ namespace Firespitter.engine
                 if (!GameDatabase.Instance.ExistsAudioClip(name))
                     return false;
                 group.audio = gameObject.AddComponent<AudioSource>();
-                group.audio.volume = GameSettings.SHIP_VOLUME;
-                //group.audio.rolloffMode = AudioRolloffMode.Logarithmic;            
-                group.audio.rolloffMode = AudioRolloffMode.Linear;
-                group.audio.dopplerLevel = 0f;
-                group.audio.panStereo = 1f;
-                group.audio.clip = GameDatabase.Instance.GetAudioClip(name);
-                group.audio.loop = loop;
                 group.audio.playOnAwake = false;
+                group.audio.loop = loop;
+                //group.audio.rolloffMode = AudioRolloffMode.Linear; // audio gradual cutoff is too sudden/choppy with Linear
+                group.audio.rolloffMode = AudioRolloffMode.Logarithmic;
+                group.audio.dopplerLevel = 0f; // makes audio sound too distorted, so I set to 0 (disabled)
+                group.audio.volume = GameSettings.SHIP_VOLUME;
+                //group.audio.panStereo = 0f;
+                group.audio.spatialBlend = 1f;
+                group.audio.clip = GameDatabase.Instance.GetAudioClip(name);
+
 
 
                 //highPassFilter = group.audio.GetComponent<AudioHighPassFilter>();            
