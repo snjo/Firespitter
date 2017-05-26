@@ -44,6 +44,7 @@ namespace Firespitter.engine
 
         private Transform partTransform;
         private Vector3 thrustTransformDefaultPosition = Vector3.zero;
+        private Transform modifiedUp;
 
         private bool initialized = false;
 
@@ -113,7 +114,6 @@ namespace Firespitter.engine
                 Vector3 heading = (Vector3d)this.vessel.transform.up;
                 Vector3d up = (this.vessel.GetComponent<Rigidbody>().position - this.vessel.mainBody.position).normalized;
 
-                Transform modifiedUp = new GameObject().transform;
                 modifiedUp.rotation = Quaternion.LookRotation(up, heading);
                 modifiedUp.Rotate(new Vector3(-90, 0, 180));
 
@@ -135,6 +135,9 @@ namespace Firespitter.engine
             {
                 Debug.Log("FSrotorTrim: Could not find partTransform '" + targetPartObject + "', disabling module");
             }
+            modifiedUp = new GameObject("ModifiedUpTransform").transform;
+            modifiedUp.parent = part.transform;
+            modifiedUp.localPosition = Vector3.zero;
         }
 
         public void FixedUpdate()
