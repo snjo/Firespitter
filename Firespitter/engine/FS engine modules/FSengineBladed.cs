@@ -401,12 +401,12 @@ namespace Firespitter.engine
                 //}
                 if (useThrottleKeys || (useThrottleState && hoverMode))
                 {
-                    if (Input.GetKey(GameSettings.THROTTLE_UP.primary) || Input.GetKey(GameSettings.THROTTLE_UP.secondary))
+                    if (Input.GetKey(GameSettings.THROTTLE_UP.primary.code) || Input.GetKey(GameSettings.THROTTLE_UP.secondary.code))
                     {
                         increaseCollective = true;
                         userInput = true;
                     }
-                    if (Input.GetKey(GameSettings.THROTTLE_DOWN.primary) || Input.GetKey(GameSettings.THROTTLE_DOWN.secondary))
+                    if (Input.GetKey(GameSettings.THROTTLE_DOWN.primary.code) || Input.GetKey(GameSettings.THROTTLE_DOWN.secondary.code))
                     {
                         decreaseCollective = true;
                         userInput = true;
