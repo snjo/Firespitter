@@ -53,22 +53,17 @@ namespace Firespitter.wheel
             createTextures();
 
             Debug.Log("create guideLine");
-
-            guideLine = part.gameObject.GetComponent<LineRenderer>();
-            if (guideLine == null)
-                guideLine = part.gameObject.AddComponent<LineRenderer>();
+            guideLine = part.gameObject.GetComponent<LineRenderer>() ?? part.gameObject.AddComponent<LineRenderer>();
             guideLine.SetWidth(0.02f, 0.02f);
-            guideLine.material = new Material(Shader.Find("Unlit/Texture"));
-            guideLine.material.SetTexture("_MainTex", guideLineTex);
+			// TODO: A way to ressurrect lost Shaders.
+			guideLine.material = new Material(Shader.Find("Unlit/Texture") ?? Shader.Find("Standard")); 
+			guideLine.material.SetTexture("_MainTex", guideLineTex);
             guideLine.SetVertexCount(14);
 
             Debug.Log("create wheelLine");
-
-            wheelLine = wheel.GetComponent<LineRenderer>();
-            if (wheelLine == null)
-                wheelLine = wheel.AddComponent<LineRenderer>();
+            wheelLine = wheel.GetComponent<LineRenderer>() ?? wheel.AddComponent<LineRenderer>();
             wheelLine.SetWidth(0.02f, 0.02f);
-            wheelLine.material = new Material(Shader.Find("Unlit/Texture"));
+			wheelLine.material = new Material(Shader.Find("Unlit/Texture") ?? Shader.Find("Standard"));
             wheelLine.material.SetTexture("_MainTex", wheelLineTex);
             wheelLine.SetVertexCount(4);
 
