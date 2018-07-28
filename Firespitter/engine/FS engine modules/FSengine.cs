@@ -265,9 +265,8 @@ namespace Firespitter.engine
         {
             getThrottleDelegate = getThrottle;
             debug = new info.FSdebugMessages(debugMode, "FSengine");
-            //part.stackIcon.SetIcon(DefaultIcons.LIQUID_ENGINE);
-            part.stagingIcon = "LIQUID_ENGINE";
-            thrustTransforms = part.FindModelTransforms(thrustTransformName);
+
+			this.PopulateModelTransforms();
 
             velocityCurve = Firespitter.Tools.stringToFloatCurve(velocityLimit);
             atmosphericThrustCurve = Firespitter.Tools.stringToFloatCurve(atmosphericThrust);
@@ -276,8 +275,26 @@ namespace Firespitter.engine
             fillResourceList(resources);
         }
 
+		private void PopulateModelTransforms()
+		{
+			//part.stackIcon.SetIcon(DefaultIcons.LIQUID_ENGINE);
+			part.stagingIcon = "LIQUID_ENGINE";
+			thrustTransforms = part.FindModelTransforms(thrustTransformName);
+		}
+
         public virtual void FixedUpdate()
-        {
+		{
+			try
+			{
+				this.HandleFixedUpdate();
+			}
+			catch (NullReferenceException e)
+			{
+				this.PopulateModelTransforms();
+			}
+		}
+        private void HandleFixedUpdate()
+		{
             if (!HighLogic.LoadedSceneIsFlight) return;
 
             calculateFinalThrust();
