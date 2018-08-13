@@ -1,7 +1,8 @@
 # Firespitter :: TODO list
 
-* Fix the deprecated reference to `ModuleLandingGear` on 'Firespitter/Parts/Wheel/FS_apacheLandingGearFlip/part/FSapacheLandingGearFlip'
 * Convert the workarounds PNG into DDS.
+* 'Firespitter/Parts/Wheel/FS_apacheLandingGearFlip/part/FSapacheLandingGearFlip'
+	+ Fix the animation for raising/lowering on Flying Scene (works fine on SPH!)
 * Rebalance Parts
 	+ Open Cockpits with 3400ºK of heat resistance? :-D
 * Figure out a way to fix the FSWheel.
