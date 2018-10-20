@@ -28,11 +28,11 @@ public class FSmoveCraftAtLaunch : PartModule
     // Beach by Island: lat -1.53556797173857, long 287.956960620886, alt 1.56112247915007
 
     [KSPField(isPersistant = true, guiActiveEditor=true)]
-    public float latitude = -0.039751f;
+    public float latitude = 0;
     [KSPField(isPersistant = true, guiActiveEditor = true)]
-    public float longitude = 285.639486f;
+    public float longitude = 0;
     [KSPField(isPersistant = true, guiActiveEditor = true)]
-    public float altitude = 1.6f;
+    public float altitude = 0;
     [KSPField(isPersistant = true, guiActiveEditor = true), UI_FloatRange(minValue = -50f, maxValue = 50f, stepIncrement = 1f)]
     public float altitudeShift = 0f;
 
@@ -51,6 +51,7 @@ public class FSmoveCraftAtLaunch : PartModule
     PopupElement fileNameElement;
     private string[] files;
     private int selectedPositionNumber = -1;
+	private bool isDefaultPosition = false;
     //public FSGUIPopup popup;
     //private Transform boundsTransform;
     //private Transform partPosition;
@@ -82,13 +83,14 @@ public class FSmoveCraftAtLaunch : PartModule
         selectedPositionNumber++;
         if (selectedPositionNumber > files.Length - 1)
             selectedPositionNumber = -1;
-        if (selectedPositionNumber == -1)
+		this.isDefaultPosition = -1 == this.selectedPositionNumber;
+		if (this.isDefaultPosition)
         {
             selectedPositionName = string.Empty;
             positionDisplayName = "Default";
-            latitude = -0.048589f;
-            longitude = 285.27609f;
-            altitude = 71.966535f;
+			this.latitude = 0;
+			this.longitude = 0;
+			this.altitude = 0;
         }
         else
         {
@@ -179,16 +181,15 @@ public class FSmoveCraftAtLaunch : PartModule
 
     public void tryMoveVessel()
     {
-        if (vessel != null)
-        {
-            //Debug.Log("FSmoveCAL: moving vessel to: " + launchPosition);
-            vessel.SetPosition(calculateLaunchPosition(), true);
-            if (!vessel.GetComponent<Rigidbody>().isKinematic)
-            {
-                vessel.GetComponent<Rigidbody>().velocity = Vector3.zero;
-                vessel.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-            }
-        }
+		if (null == vessel) return;
+
+		//Debug.Log("FSmoveCAL: moving vessel to: " + this.positionDisplayName);
+		vessel.SetPosition(calculateLaunchPosition(), true);
+		if (!vessel.GetComponent<Rigidbody>().isKinematic)
+		{
+			vessel.GetComponent<Rigidbody>().velocity = Vector3.zero;
+			vessel.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+		}
     }
 
     public void fixCraftLock()
@@ -207,13 +208,10 @@ public class FSmoveCraftAtLaunch : PartModule
 
     public void Update() //TODO, check if this is the active vessel
     {
+		if (this.hasLaunched) return;
+		if (this.isDefaultPosition) return;
         if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
-        if (selectedPositionName == string.Empty) return;
-
-
         
-        
-        if (!hasLaunched)
         {
             //Debug.Log("FSmoveCraftAtLaunch: Launching vessel at " + positionDisplayName + ", lat " + latitude + ", long " + longitude + ", alt " + altitude);
             // --------- TEMP DISABLING ----------
@@ -232,11 +230,8 @@ public class FSmoveCraftAtLaunch : PartModule
             {
                 timer -= Time.deltaTime;
                 tryMoveVessel();
-                //moveBounds();
-            }
-             
+            }             
         }
-         
     }
 
     public void OnGUI()
