@@ -151,9 +151,14 @@
     <Compile Include="wheel\FSwheelAlignment.cs" />
     <Compile Include="wheel\WheelClass.cs" />
     <Compile Include="wheel\WheelList.cs" />
+    <None Include="util\shaders\Nightvision.shader" />
+    <None Include="util\shaders\Unlit_Texture.shader" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Documentation.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="util\shaders\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
