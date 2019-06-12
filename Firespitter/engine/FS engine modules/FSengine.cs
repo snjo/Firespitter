@@ -320,7 +320,7 @@ namespace Firespitter.engine
 
             for (int i = 0; i < thrustTransforms.Length; i++)
             {
-                GetComponent<Rigidbody>().AddForceAtPosition(-thrustTransforms[i].forward * applyThrust, thrustTransforms[i].position);
+                this.GetComponent<Part>().AddForceAtPosition(-thrustTransforms[i].forward * applyThrust, thrustTransforms[i].position);
             }
             smoothFxThrust = Mathf.Lerp(smoothFxThrust, finalThrustNormalized, smoothFXSpeed);
 

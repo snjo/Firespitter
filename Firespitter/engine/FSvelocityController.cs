@@ -110,7 +110,7 @@ namespace Firespitter.engine
                     if (!resourceReceived)
                         thrustUsed = 0f;
                     if (thrustUsed > 0f)
-                        part.gameObject.GetComponent<Rigidbody>().AddForceAtPosition(finalThrust, t.transform.position);
+                        part.gameObject.GetComponent<Part>().AddForceAtPosition(finalThrust, t.transform.position);
                     if (useFX)
                     {
                         particleFX[i].pEmitter.minEmission = defaultEmitterMinEmission * thrustUsed;
@@ -149,7 +149,7 @@ namespace Firespitter.engine
                 if (thrustModifier > 0f && velocityDirection.magnitude > minVelocityToActivate)
                 {
                     finalThrust = -thrustDirection * thrustModifier * maxThrust;
-                    //part.gameObject.GetComponent<Rigidbody>().AddForceAtPosition(-thrustDirection * thrustModifier * maxThrust, t.transform.position);
+                    part.gameObject.GetComponent<Part>().AddForceAtPosition(-thrustDirection * thrustModifier * maxThrust, t.transform.position);
                 }
                 else
                 {
