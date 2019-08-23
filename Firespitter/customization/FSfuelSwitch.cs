@@ -168,10 +168,11 @@ namespace Firespitter.customization
 
             if (tweakableUI == null)
             {
-                tweakableUI = Tools.FindActionWindow(part);
+                tweakableUI = UIPartActionController.Instance.GetItem(part);
             }
             if (tweakableUI != null)
             {
+                tweakableUI.CreatePartList(true);
                 tweakableUI.displayDirty = true;
             }
             else
