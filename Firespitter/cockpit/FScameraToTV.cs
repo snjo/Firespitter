@@ -16,47 +16,11 @@ public class FScameraToTV : InternalModule
     //Vector3 originalPosition = new Vector3();
     Quaternion originalRotation = new Quaternion();
 
-    public static Material normal = new Material(
-                "Shader \"Unlit/Texture\" {" +
-                "   Properties {" +
-                "       _MainTex (\"MainTex\", 2D) = \"black\" {}" +
-                "   }" +
-                "   SubShader {" +
-                "       Tags { \"RenderType\"=\"Opaque\" }" +
-                "       LOD 100" +
-                "       Pass {" +
-                "           Lighting Off" +
-                "           SetTexture [_MainTex] { combine texture }" +
-                "       }" +
-                "   }" +
-                "}"
-            );
+	// TODO: Compiler este Shader e usá-lo corretamente
+	public static Material normal = new Material(Shader.Find("Unlit/Texture") ?? Shader.Find("Standard"));
 
-    public static Material nightVision = new Material(
-                "Shader \"Nightvision\" {" +
-                "    Properties {" +
-                "        _MainTex (\"MainTex\", 2D) = \"white\" {}" +
-                "    }" +
-                "    SubShader {" +
-        //"        Tags { \"RenderType\"=\"Opaque\" }"+ works
-        //"        Tags { \"RenderType\"=\"Opaque\" }" + 
-        //"        Tags { \"LightMode\"=\"PixelOrNone\" }" + no
-                "        Pass {" +
-                "            Blend SrcColor DstColor" +
-                "            SetTexture [_MainTex] {" +
-                "                constantColor (0.5,0.7,0.5,0.5)" +
-                "                combine constant + texture" +
-                "            }" +
-                "        }" +
-                "        Pass {" +
-                "            Blend SrcColor DstColor" +
-                "            SetTexture [_MainTex] {" +
-                "                combine texture * previous" +
-                "            }" +
-                "        }" +
-                "    }" +
-                "} "
-            );
+	// TODO: Compiler este Shader e usá-lo corretamente
+	public static Material nightVision = new Material(Shader.Find("Nightvision") ?? Shader.Find("Standard"));
 
     public void Start()
     {        

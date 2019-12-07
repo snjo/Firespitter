@@ -34,7 +34,9 @@ namespace Firespitter.engine
         Transform[] transformArray;
         private bool transformsFound = false;
         private Vector3 velocityDirection = new Vector3(0f, 0f, 0f);
-        private Firespitter.FSparticleFX[] particleFX;
+        //KSP 1.8
+        //private Firespitter.FSparticleFX[] particleFX;
+        //KSP 1.8
         private Texture2D particleTexture;
         private Vector3 finalThrust = new Vector3(0f, 0f, 0f);
 
@@ -50,7 +52,9 @@ namespace Firespitter.engine
             if (transformArray.Length > 0)
             {
                 transformsFound = true;
-                particleFX = new Firespitter.FSparticleFX[transformArray.Length];
+                //KSP 1.8
+                //particleFX = new Firespitter.FSparticleFX[transformArray.Length];
+                //KSP 1.8
             }
             else
             {
@@ -64,16 +68,18 @@ namespace Firespitter.engine
                 particleTexture = GameDatabase.Instance.GetTexture(particleTextureName, false);
                 if (particleTexture != null)
                 {
-                    for (int i = 0; i < particleFX.Length; i++)
-                    {
-                        particleFX[i] = new Firespitter.FSparticleFX(transformArray[i].gameObject, particleTexture);
-                        particleFX[i].EmitterLocalVelocity = EmitterLocalVelocity;
-                        //Debug.Log("KTvelocityController: particle texture found: " + particleTextureName);
-                        particleFX[i].setupFXValues();
-                        particleFX[i].pEmitter.minEmission = 0f;
-                        particleFX[i].pEmitter.maxEmission = 0f;
-                        particleFX[i].pEmitter.useWorldSpace = false;
-                    }
+                    //KSP 1.8
+                    //for (int i = 0; i < particleFX.Length; i++)
+                    //{
+                    //    particleFX[i] = new Firespitter.FSparticleFX(transformArray[i].gameObject, particleTexture);
+                    //    particleFX[i].EmitterLocalVelocity = EmitterLocalVelocity;
+                    //    //Debug.Log("KTvelocityController: particle texture found: " + particleTextureName);
+                    //    particleFX[i].setupFXValues();
+                    //    particleFX[i].pEmitter.minEmission = 0f;
+                    //    particleFX[i].pEmitter.maxEmission = 0f;
+                    //    particleFX[i].pEmitter.useWorldSpace = false;
+                    //}
+                    //KSP 1.8
                 }
                 else
                 {
@@ -111,11 +117,13 @@ namespace Firespitter.engine
                         thrustUsed = 0f;
                     if (thrustUsed > 0f)
                         part.gameObject.GetComponent<Rigidbody>().AddForceAtPosition(finalThrust, t.transform.position);
-                    if (useFX)
-                    {
-                        particleFX[i].pEmitter.minEmission = defaultEmitterMinEmission * thrustUsed;
-                        particleFX[i].pEmitter.maxEmission = defaultEmitterMaxEmission * thrustUsed;
-                    }
+                    //KSP 1.8
+                    //if (useFX)
+                    //{
+                    //    particleFX[i].pEmitter.minEmission = defaultEmitterMinEmission * thrustUsed;
+                    //    particleFX[i].pEmitter.maxEmission = defaultEmitterMaxEmission * thrustUsed;
+                    //}
+                    //KSP 1.8
                     i++;
                 }
             }

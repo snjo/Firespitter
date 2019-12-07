@@ -701,28 +701,30 @@ class FSwheel : PartModule
                 }
                 else
                 {
-                    for (int i = 0; i < wheelList.wheels.Count; i++)
-                    {
-                        wheelList.wheels[i].smokeFX = new Firespitter.FSparticleFX(wheelList.wheels[i].fxLocation, smokeFXtexture);
-                        wheelList.wheels[i].smokeFX.AnimatorColor0 = new Color(1.0f, 1.0f, 1.0f, 0.8f);
-                        wheelList.wheels[i].smokeFX.AnimatorColor1 = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-                        wheelList.wheels[i].smokeFX.AnimatorColor2 = new Color(1.0f, 1.0f, 1.0f, 0.2f);
-                        wheelList.wheels[i].smokeFX.AnimatorColor3 = new Color(1.0f, 1.0f, 1.0f, 0.1f);
-                        wheelList.wheels[i].smokeFX.AnimatorColor4 = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+                    //for (int i = 0; i < wheelList.wheels.Count; i++)
+                    //{
+                        //KSP 1.8
+                        //wheelList.wheels[i].smokeFX = new Firespitter.FSparticleFX(wheelList.wheels[i].fxLocation, smokeFXtexture);
+                        //wheelList.wheels[i].smokeFX.AnimatorColor0 = new Color(1.0f, 1.0f, 1.0f, 0.8f);
+                        //wheelList.wheels[i].smokeFX.AnimatorColor1 = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                        //wheelList.wheels[i].smokeFX.AnimatorColor2 = new Color(1.0f, 1.0f, 1.0f, 0.2f);
+                        //wheelList.wheels[i].smokeFX.AnimatorColor3 = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+                        //wheelList.wheels[i].smokeFX.AnimatorColor4 = new Color(1.0f, 1.0f, 1.0f, 0.0f);
 
-                        wheelList.wheels[i].smokeFX.EmitterMinSize = 0.3f;
-                        wheelList.wheels[i].smokeFX.EmitterMaxSize = 0.5f;
-                        wheelList.wheels[i].smokeFX.EmitterMinEnergy = 0.1f;
-                        wheelList.wheels[i].smokeFX.EmitterMaxEnergy = 0.3f;
-                        wheelList.wheels[i].smokeFX.EmitterMinEmission = 0f;
-                        wheelList.wheels[i].smokeFX.EmitterMaxEmission = 0f;
-                        wheelList.wheels[i].smokeFX.AnimatorSizeGrow = 0.1f;
+                        //wheelList.wheels[i].smokeFX.EmitterMinSize = 0.3f;
+                        //wheelList.wheels[i].smokeFX.EmitterMaxSize = 0.5f;
+                        //wheelList.wheels[i].smokeFX.EmitterMinEnergy = 0.1f;
+                        //wheelList.wheels[i].smokeFX.EmitterMaxEnergy = 0.3f;
+                        //wheelList.wheels[i].smokeFX.EmitterMinEmission = 0f;
+                        //wheelList.wheels[i].smokeFX.EmitterMaxEmission = 0f;
+                        //wheelList.wheels[i].smokeFX.AnimatorSizeGrow = 0.1f;
                         
-                        wheelList.wheels[i].smokeFX.setupFXValues();
+                        //wheelList.wheels[i].smokeFX.setupFXValues();
+                        //KSP 1.8                    }
+                    //}
                     }
                 }
-            }
-
+            
             #endregion
 
         }        
@@ -1063,40 +1065,42 @@ class FSwheel : PartModule
 
     private void updateScreechEffect(int wheelNumber)
     {
-        if (wheelList.wheels[wheelNumber].screechCountdown > 0f)
-        {
+        //KSP 1.8
+        //if (wheelList.wheels[wheelNumber].screechCountdown > 0f)
+        //{
             // emit particles
-            if (wheelList.wheels[wheelNumber].wheelCollider.isGrounded)
-            {
-                if (useCustomParticleFX)
-                {
-                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = particleEmissionRate * fxLevel;
-                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = particleEmissionRate * fxLevel;
-                }
-                else
-                {
-                    part.Effect("tireSmoke", fxLevel);
-                }
-            }
-            else
-            {
-                if (useCustomParticleFX)
-                {
-                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = 0f;
-                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = 0f;
-                }
-            }
-            //smokeFX
-            wheelList.wheels[wheelNumber].screechCountdown -= TimeWarp.deltaTime;
-        }
-        else
-        {
-            if (useCustomParticleFX)
-            {
-                wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = 0f;
-                wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = 0f;
-            }
-        }
+            //if (wheelList.wheels[wheelNumber].wheelCollider.isGrounded)
+            //{
+            //    if (useCustomParticleFX)
+            //    {
+            //        wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = particleEmissionRate * fxLevel;
+            //        wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = particleEmissionRate * fxLevel;
+            //    }
+            //    else
+            //    {
+            //        part.Effect("tireSmoke", fxLevel);
+            //    }
+            //}
+            //else
+            //{
+            //    if (useCustomParticleFX)
+            //    {
+            //        wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = 0f;
+            //        wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = 0f;
+            //    }
+            //}
+            ////smokeFX
+            //wheelList.wheels[wheelNumber].screechCountdown -= TimeWarp.deltaTime;
+        //}
+        //else
+        //{
+        //    if (useCustomParticleFX)
+        //    {
+        //        wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = 0f;
+        //        wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = 0f;
+        //    }
+        //}
+        //KSP 1.8
     }
 
     public void OnGUI()

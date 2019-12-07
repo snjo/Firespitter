@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 namespace Firespitter.engine
 {
-    public class FSengine : PartModule
+    public class FSengine : PartModule, IThrustProvider
     {
         /// <summary>
         /// The total force applied when at full RPM, and full throttle, scaled by the various curves
@@ -263,9 +265,8 @@ namespace Firespitter.engine
         {
             getThrottleDelegate = getThrottle;
             debug = new info.FSdebugMessages(debugMode, "FSengine");
-            //part.stackIcon.SetIcon(DefaultIcons.LIQUID_ENGINE);
-            part.stagingIcon = "LIQUID_ENGINE";
-            thrustTransforms = part.FindModelTransforms(thrustTransformName);
+
+			this.PopulateModelTransforms();
 
             velocityCurve = Firespitter.Tools.stringToFloatCurve(velocityLimit);
             atmosphericThrustCurve = Firespitter.Tools.stringToFloatCurve(atmosphericThrust);
@@ -274,8 +275,26 @@ namespace Firespitter.engine
             fillResourceList(resources);
         }
 
+		private void PopulateModelTransforms()
+		{
+			//part.stackIcon.SetIcon(DefaultIcons.LIQUID_ENGINE);
+			part.stagingIcon = "LIQUID_ENGINE";
+			thrustTransforms = part.FindModelTransforms(thrustTransformName);
+		}
+
         public virtual void FixedUpdate()
-        {
+		{
+			try
+			{
+				this.HandleFixedUpdate();
+			}
+			catch (NullReferenceException e)
+			{
+				this.PopulateModelTransforms();
+			}
+		}
+        private void HandleFixedUpdate()
+		{
             if (!HighLogic.LoadedSceneIsFlight) return;
 
             calculateFinalThrust();
@@ -432,10 +451,25 @@ namespace Firespitter.engine
             {
                 newPos += thrustTransforms[i].position - part.transform.position;
                 newDir += thrustTransforms[i].forward;
-            }            
+            }
             CoTquery.pos = part.transform.position + (newPos / thrustTransforms.Length);
             CoTquery.dir = newDir.normalized;
             CoTquery.thrust = maxThrust * (maxThrottle / 100f);
-        }        
+        }
+        public float GetMaxThrust()
+        {
+            return 0; // purely visual, only used by the game's FX.
+            //return this.maxThrust;
+        }
+
+        public float GetCurrentThrust()
+        {
+            return 0; // purely visual, only used by the game's FX.
+            //return this.finalThrust;
+        }
+        public EngineType GetEngineType()
+        {
+            return EngineType.Generic; // doesn't affect anything
+        }
     }
 }
