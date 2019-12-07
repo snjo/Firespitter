@@ -54,13 +54,13 @@ namespace Firespitter.engine
         private bool usePitch;
         private bool useRoll;
         private bool useYaw;
-        private Transform pitchTransform = new GameObject().transform;
-        private Transform rollTransform = new GameObject().transform;
-        private Transform yawTransform = new GameObject().transform;
-        private Transform gimbalTransform = new GameObject().transform;
-        private Transform pitchGimbalExtreme = new GameObject().transform;
-        private Transform rollGimbalExtreme = new GameObject().transform;
-        private Transform yawGimbalExtreme = new GameObject().transform;
+        private Transform pitchTransform;
+        private Transform rollTransform;
+        private Transform yawTransform;
+        private Transform gimbalTransform;
+        private Transform pitchGimbalExtreme;
+        private Transform rollGimbalExtreme;
+        private Transform yawGimbalExtreme;
 
         private FSengineWrapper engine;
 
@@ -153,6 +153,18 @@ namespace Firespitter.engine
                 yawTransform.localRotation = Quaternion.Euler((yawResponseAxis * rotation.z) + yawDefaultRotation);
                 //yawTransform.localRotation = Quaternion.Euler(new Vector3(rotation.z, 0, 0) + yawDefaultRotation);
             }
+        }
+
+        public override void OnAwake()
+        {
+            base.OnAwake();
+            pitchTransform = new GameObject().transform;
+            rollTransform = new GameObject().transform;
+            yawTransform = new GameObject().transform;
+            gimbalTransform = new GameObject().transform;
+            pitchGimbalExtreme = new GameObject().transform;
+            rollGimbalExtreme = new GameObject().transform;
+            yawGimbalExtreme = new GameObject().transform;
         }
 
         public override void OnStart(PartModule.StartState state)
