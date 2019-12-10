@@ -16,11 +16,17 @@ public class FScameraToTV : InternalModule
     //Vector3 originalPosition = new Vector3();
     Quaternion originalRotation = new Quaternion();
 
-	// TODO: Compiler este Shader e usá-lo corretamente
-	public static Material normal = new Material(Shader.Find("Unlit/Texture") ?? Shader.Find("Standard"));
+    // TODO: Compiler este Shader e usá-lo corretamente
+    public static Material normal;
 
-	// TODO: Compiler este Shader e usá-lo corretamente
-	public static Material nightVision = new Material(Shader.Find("Nightvision") ?? Shader.Find("Standard"));
+    // TODO: Compiler este Shader e usá-lo corretamente
+    public static Material nightVision;
+
+    public void Awake()
+    {
+        normal = new Material(Shader.Find("Unlit/Texture") ?? Shader.Find("Standard"));
+        nightVision = new Material(Shader.Find("Nightvision") ?? Shader.Find("Standard"));
+    }
 
     public void Start()
     {        

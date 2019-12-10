@@ -31,7 +31,7 @@ namespace Firespitter.engine
         private List<float> availableAnglesList = new List<float>
         {
         };
-        Transform partTransform = new GameObject().transform;
+        Transform partTransform;
         private FSpropellerAtmosphericNerf atmosphericNerf = new FSpropellerAtmosphericNerf();
 
         FSGUIPopup popup;
@@ -219,6 +219,12 @@ namespace Firespitter.engine
             if (availableAngles2.x != 0) availableAnglesList.Add(availableAngles2.x);
             if (availableAngles2.y != 0) availableAnglesList.Add(availableAngles2.y);
             if (availableAngles2.z != 0) availableAnglesList.Add(availableAngles2.z);
+        }
+
+        public override void OnAwake()
+        {
+            base.OnAwake();
+            partTransform = new GameObject().transform;
         }
 
         public override void OnStart(PartModule.StartState state)
