@@ -98,7 +98,7 @@ public class FSbuoyancy : PartModule
 
                     if (vessel.verticalSpeed < maxVerticalSpeed) // || relativeDirection < 0f) // if you are going down, apply force regardless, of going up, limit up speed
                     {
-                        this.part.GetComponent<Rigidbody>().AddForceAtPosition(uplift, forcePoint.position);
+                        this.part.AddForceAtPosition(uplift, forcePoint.position);
                     }
                 }
 

@@ -218,9 +218,9 @@ namespace Firespitter.aero
 
                 Vector3 liftVector = getLiftVector();
 
-                commonRigidBody.AddForceAtPosition(liftVector, liftTransform.position);
+                this.part.AddForceAtPosition(liftVector, liftTransform.position);
 
-                commonRigidBody.AddForceAtPosition(liftAndDrag.y * dragMultiplier * -commonRigidBody.GetPointVelocity(liftTransform.position).normalized, liftTransform.position);
+                this.part.AddForceAtPosition(liftAndDrag.y * dragMultiplier * -commonRigidBody.GetPointVelocity(liftTransform.position).normalized, liftTransform.position);
             }
             catch (Exception e)
             {

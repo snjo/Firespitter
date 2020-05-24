@@ -148,9 +148,10 @@ class FSliftSurface : PartModule, ILiftProvider
         Vector3 liftVector = getLiftVector();
 
         //Vector3 liftVector = liftAndDrag.x * -liftTransform.up;
-        commonRigidBody.AddForceAtPosition(liftVector, liftTransform.position);
-
-        commonRigidBody.AddForceAtPosition(liftAndDrag.y * dragMultiplier * -commonRigidBody.GetPointVelocity(liftTransform.position).normalized, liftTransform.position);
+        this.part.AddForceAtPosition(liftVector, liftTransform.position);
+        
+        // Warning: what happens when commonRigidBody is null? See getLiftAndDrag on line 75!
+        this.part.AddForceAtPosition(liftAndDrag.y * dragMultiplier * commonRigidBody.GetPointVelocity(liftTransform.position).normalized, liftTransform.position);
     }
 
     public override void OnUpdate()
