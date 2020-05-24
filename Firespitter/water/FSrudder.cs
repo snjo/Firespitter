@@ -189,7 +189,7 @@ public class FSrudder : PartModule
                         transformDirection = -transform.forward;
                         break;
                 }                
-                this.GetComponent<Part>().AddForceAtPosition(transformDirection * forcetoAdd, base.transform.position);
+                this.part.AddForceAtPosition(transformDirection * forcetoAdd, base.transform.position);
 
                 if (rudderTransform != null)
                 {
