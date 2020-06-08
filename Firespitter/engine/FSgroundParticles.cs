@@ -3,7 +3,7 @@
 namespace Firespitter.engine
 {
     public class FSgroundParticles : PartModule
-    {        
+    {
         //TODO: look for engine and engine thrust
 
         // The URL to the bitmap, no file extension, for the dust particle
@@ -19,7 +19,7 @@ namespace Firespitter.engine
         private FSengineWrapper engine;
 
         // a disc mesh will be created at runtime. Particles spawn inside this mesh on the ground
-        private GameObject washDisc = new GameObject();        
+        private GameObject washDisc;
 
         // how far off the ground you can be and still spawn dust particles
         [KSPField]
@@ -48,7 +48,7 @@ namespace Firespitter.engine
         public Vector4 particleColor1 = new Vector4(1.0f, 1.0f, 1.0f, 0.1f);
         [KSPField]
         public Vector4 particleColor2 = new Vector4(1.0f, 1.0f, 1.0f, 0.15f);
-        [KSPField]        
+        [KSPField]
         public Vector4 particleColor3 = new Vector4(1.0f, 1.0f, 1.0f, 0.2f);
         [KSPField]
         public Vector4 particleColor4 = new Vector4(1.0f, 1.0f, 1.0f, 0.05f);
@@ -56,8 +56,16 @@ namespace Firespitter.engine
         private MeshFilter meshFilter;
 
         // a class which contains mesh emitter, animator and renderer, assigned to a GameObject
-        private FSparticleFX particleFX;
-        private Texture2D particleTexture;
+        //KSP 1.8
+        //private FSparticleFX particleFX;
+        //private Texture2D particleTexture;
+        //KSP 1.8
+
+        new void Awake()
+        {
+            base.Awake();
+            washDisc = new GameObject();
+        }
 
         void Start()
         {
@@ -67,47 +75,49 @@ namespace Firespitter.engine
 
             // Create the mesh disc. Particles spawn inside this mesh on the ground
             washDisc.transform.parent = transform;
-            meshFilter = washDisc.AddComponent<MeshFilter>();            
+            meshFilter = washDisc.AddComponent<MeshFilter>();
             meshFilter.mesh = MeshCreator.createDisc(emissionDiscSize, 100);
 
+
+            //KSP 1.8
             // fetch the particle texture from KSP's Game Database
-            particleTexture = GameDatabase.Instance.GetTexture(particleTextureName, false);            
-                                      
-            if (particleTexture == null)
-            {
-                Debug.Log("FSgroundParticles: particle texture loading error");
-                // it should use the default particle in this case, or just some pink crap maybe
-            }
-            else
-            {
-                //Setting the values for the particle system. the animator is never doing anything exciting, all particle motion is handled in the late update code
-                particleFX = new FSparticleFX(washDisc, particleTexture);  
-           
-                // particles change color and alpha over time.
-                particleFX.AnimatorColor0 = getColorFromV4(particleColor0);
-                particleFX.AnimatorColor1 = getColorFromV4(particleColor1);
-                particleFX.AnimatorColor2 = getColorFromV4(particleColor2);
-                particleFX.AnimatorColor3 = getColorFromV4(particleColor3);
-                particleFX.AnimatorColor4 = getColorFromV4(particleColor4);                
+            //particleTexture = GameDatabase.Instance.GetTexture(particleTextureName, false);            
 
-                particleFX.EmitterMinSize = particleSize.x;
-                particleFX.EmitterMaxSize = particleSize.y;
-                particleFX.EmitterMinEnergy = particleEnergy.x;
-                particleFX.EmitterMaxEnergy = particleEnergy.y;
-                particleFX.EmitterMinEmission = 0f;
-                particleFX.EmitterMaxEmission = 0f;
-                particleFX.AnimatorSizeGrow = particleSizeGrow;
+            //if (particleTexture == null)
+            //{
+            //    Debug.Log("FSgroundParticles: particle texture loading error");
+            //    // it should use the default particle in this case, or just some pink crap maybe
+            //}
+            //else
+            //{
+            //    //Setting the values for the particle system. the animator is never doing anything exciting, all particle motion is handled in the late update code
+            //    particleFX = new FSparticleFX(washDisc, particleTexture);  
 
-                particleFX.EmitterLocalVelocity = new Vector3(0f, 0f, 0f);
-                particleFX.EmitterRndVelocity = new Vector3(0f, 0f, 0f);                
-                // creates the emitters etc and assigns the above values
-                particleFX.setupFXValues();
+            //    // particles change color and alpha over time.
+            //    particleFX.AnimatorColor0 = getColorFromV4(particleColor0);
+            //    particleFX.AnimatorColor1 = getColorFromV4(particleColor1);
+            //    particleFX.AnimatorColor2 = getColorFromV4(particleColor2);
+            //    particleFX.AnimatorColor3 = getColorFromV4(particleColor3);
+            //    particleFX.AnimatorColor4 = getColorFromV4(particleColor4);                
 
-                //particleFX.pEmitter.rndRotation = true;
+            //    particleFX.EmitterMinSize = particleSize.x;
+            //    particleFX.EmitterMaxSize = particleSize.y;
+            //    particleFX.EmitterMinEnergy = particleEnergy.x;
+            //    particleFX.EmitterMaxEnergy = particleEnergy.y;
+            //    particleFX.EmitterMinEmission = 0f;
+            //    particleFX.EmitterMaxEmission = 0f;
+            //    particleFX.AnimatorSizeGrow = particleSizeGrow;
 
-                // Can't turn on Interpolate Triangles on the emitter, casue it's not exposed to code. REALLY?!? WHY?
-            }
+            //    particleFX.EmitterLocalVelocity = new Vector3(0f, 0f, 0f);
+            //    particleFX.EmitterRndVelocity = new Vector3(0f, 0f, 0f);                
+            //    // creates the emitters etc and assigns the above values
+            //    particleFX.setupFXValues();
 
+            //    //particleFX.pEmitter.rndRotation = true;
+
+            //    // Can't turn on Interpolate Triangles on the emitter, casue it's not exposed to code. REALLY?!? WHY?
+            //}
+            //KSP 1.8
             thrustTransform = part.FindModelTransform(thrustTransformName);
         }
 
@@ -131,7 +141,7 @@ namespace Firespitter.engine
                 // layer 15 is the landscap/buildine layer. parts are layer 10, ignore those. the runway should also be layer 15, but it's not registering properly...
                 if (hit[i].collider.gameObject.layer == 15)
                 {
-                    washDisc.transform.position = hit[i].point + Vector3.up * 0.1f;                    
+                    washDisc.transform.position = hit[i].point + Vector3.up * 0.1f;
                     distanceFromGround = hit[i].distance;
                     break;
                 }
@@ -149,7 +159,7 @@ namespace Firespitter.engine
             //Debug.Log("seaAltitude: " + seaAltitude);
 
             // rotate the disc so it's horizontal (does not follow the terrain slope though. Maybe there is a terrain normal to look at, but it looks OK on hills as is)
-            washDisc.transform.LookAt(transform.position + vessel.upAxis, Vector3.forward);                 
+            washDisc.transform.LookAt(transform.position + vessel.upAxis, Vector3.forward);
 
             // scale the emission amount based on distance from ground
             currentDistance = Mathf.Clamp(distanceFromGround, 1f, maxDistance);
@@ -158,8 +168,8 @@ namespace Firespitter.engine
             if (engine != null)
             {
                 if (engine.type == FSengineWrapper.EngineType.FSengine)
-                {                    
-                    currentEmission *= engine.finalThrustNormalized * engine.fsengine.RPMnormalized;                    
+                {
+                    currentEmission *= engine.finalThrustNormalized * engine.fsengine.RPMnormalized;
                 }
                 else
                 {
@@ -168,35 +178,39 @@ namespace Firespitter.engine
             }
             currentEmission = Mathf.Clamp(currentEmission, 0f, emission);
 
-            particleFX.pEmitter.minEmission = currentEmission;
-            particleFX.pEmitter.maxEmission = currentEmission;
+            //KSP 1.8
+            //particleFX.pEmitter.minEmission = currentEmission;
+            //particleFX.pEmitter.maxEmission = currentEmission;
+            //KSP 1.8
         }
 
         void LateUpdate()
         {
             if (!HighLogic.LoadedSceneIsFlight) return;
 
-            // to change particles you first have to get the array, modify it, then feed the whole thing back to the emitter
-            Particle[] particles = particleFX.pEmitter.particles;
+            //KSP 1.8
+            //    // to change particles you first have to get the array, modify it, then feed the whole thing back to the emitter
+            //    Particle[] particles = particleFX.pEmitter.particles;
 
-            for (int i = 0; i < particles.Length; i++)
-            {
-                // Oh hey, you can't access Interpolate Triangles on mesh emitters, so I have to this junk! Fuck you, whoever made the old Unity particle system.
-                // if a new particle has a very high energy, it means it's a newly created one. Move it!
-                if (particles[i].energy > particles[i].startEnergy - (Time.deltaTime * 1.1f))
-                {
-                    //particles spawn on the outer points of the disc. move it a random amount towrds the center to distribute the spawning. a high number of outer points makes it look OK without exra sideways randomness.
-                    particles[i].position = Vector3.Lerp(particles[i].position, washDisc.transform.position, UnityEngine.Random.value);
-                }
-                
-                // The position of the current particle relative to the disc center
-                Vector3 offset = washDisc.transform.position - particles[i].position;
-                // Repel the particles. The closer a particle is to the disc center, the faster it moves away from it.
-                particles[i].position -= offset.normalized * 0.01f * Mathf.Clamp((maxDistance - currentDistance) - offset.magnitude, 1f, 15f);
-            }
+            //    for (int i = 0; i < particles.Length; i++)
+            //    {
+            //        // Oh hey, you can't access Interpolate Triangles on mesh emitters, so I have to this junk! Fuck you, whoever made the old Unity particle system.
+            //        // if a new particle has a very high energy, it means it's a newly created one. Move it!
+            //        if (particles[i].energy > particles[i].startEnergy - (Time.deltaTime * 1.1f))
+            //        {
+            //            //particles spawn on the outer points of the disc. move it a random amount towrds the center to distribute the spawning. a high number of outer points makes it look OK without exra sideways randomness.
+            //            particles[i].position = Vector3.Lerp(particles[i].position, washDisc.transform.position, UnityEngine.Random.value);
+            //        }
 
-            // assign the array back to the emitter
-            particleFX.pEmitter.particles = particles;
+            //        // The position of the current particle relative to the disc center
+            //        Vector3 offset = washDisc.transform.position - particles[i].position;
+            //        // Repel the particles. The closer a particle is to the disc center, the faster it moves away from it.
+            //        particles[i].position -= offset.normalized * 0.01f * Mathf.Clamp((maxDistance - currentDistance) - offset.magnitude, 1f, 15f);
+            //    }
+
+            //    // assign the array back to the emitter
+            //    particleFX.pEmitter.particles = particles;
+            //KSP 1.8
         }
     }
 }

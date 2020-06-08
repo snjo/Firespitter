@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BFE97E64-BF01-48AF-81EE-6B2610076542}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Firespitter</RootNamespace>
+    <AssemblyName>Firespitter</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <NoWarn>0649</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(KSPDIR)\KSP_x64_Data\Managed\Assembly*.dll">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="$(KSPDIR)\KSP_x64_Data\Managed\UnityEngine*.dll">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="aero\FSbladeLiftSurface.cs" />
+    <Compile Include="aero\FSliftSurface.cs" />
+    <Compile Include="aero\FSwingBase.cs" />
+    <Compile Include="animation\FSanimateLooping.cs" />
+    <Compile Include="animation\FSmimickRotation.cs" />
+    <Compile Include="animation\FSslowtato.cs" />
+    <Compile Include="cockpit\AnalogCounter.cs" />
+    <Compile Include="cockpit\FSairSpeedIndicator.cs" />
+    <Compile Include="cockpit\FSaltimeterCounter.cs" />
+    <Compile Include="cockpit\FSartificialHorizon.cs" />
+    <Compile Include="cockpit\FSclimbRate.cs" />
+    <Compile Include="cockpit\FSfuelGauge.cs" />
+    <Compile Include="cockpit\FSkerbalPuppet.cs" />
+    <Compile Include="cockpit\FSmaintenanceCounter.cs" />
+    <Compile Include="cockpit\FSpitchIndicator.cs" />
+    <Compile Include="cockpit\FStachometer.cs" />
+    <Compile Include="customization\FSfuelSwitch.cs" />
+    <Compile Include="customization\FSmodularTank.cs" />
+    <Compile Include="engine\FS engine modules\FSengineBladed.cs" />
+    <Compile Include="engine\FSalternator.cs" />
+    <Compile Include="engine\FSresource.cs" />
+    <Compile Include="info\FSpartDirectionGuide.cs" />
+    <Compile Include="engine\Stock based modules\FSengineHover.cs" />
+    <Compile Include="engine\FSengineWrapper.cs" />
+    <Compile Include="engine\FSgroundParticles.cs" />
+    <None Include="unused\FSheliLiftEngine.cs" />
+    <Compile Include="engine\FS engine modules\FSengine.cs" />
+    <Compile Include="engine\FSpropellerTweak.cs" />
+    <Compile Include="customization\FSmeshSwitch.cs" />
+    <Compile Include="customization\FStextureSwitch2.cs" />
+    <Compile Include="tools\MeshCreator.cs" />
+    <Compile Include="tools\CompatabilityChecker.cs" />
+    <Compile Include="tools\FSversionCheck.cs" />
+    <None Include="unused\FShelicopterEngine.cs" />
+    <Compile Include="engine\FSparticleFX.cs" />
+    <Compile Include="engine\FSvelocityController.cs" />
+    <Compile Include="info\FSinputVisualizer.cs" />
+    <Compile Include="info\HelpPopup.cs" />
+    <Compile Include="tools\ShipHeading.cs" />
+    <Compile Include="engine\FSanimateThrottle.cs" />
+    <Compile Include="tools\FSgenericButtonHandler.cs" />
+    <Compile Include="tools\FSrandomNumberGenerator.cs" />
+    <Compile Include="tools\FStools.cs" />
+    <None Include="unused\transformTest.cs" />
+    <Compile Include="water\FSbuoyancy.cs" />
+    <Compile Include="info\FSdebugMessages.cs" />
+    <Compile Include="gui\FSGUIPopup.cs" />
+    <Compile Include="aero\FSairBrake.cs" />
+    <Compile Include="animation\FSanimateGeneric.cs" />
+    <Compile Include="unused\FSchangeControlDirection.cs" />
+    <Compile Include="engine\Stock based modules\FScopterThrottle.cs" />
+    <Compile Include="cockpit\FSActionGroupSwitch.cs" />
+    <Compile Include="animation\FSanimatedAirIntake.cs" />
+    <Compile Include="animation\FSanimateManually.cs" />
+    <Compile Include="tools\FSgenericButtonHandlerID.cs" />
+    <Compile Include="cockpit\FScameraToTV.cs" />
+    <Compile Include="engine\Stock based modules\FSengineHandCrank.cs" />
+    <Compile Include="engine\Stock based modules\FSengineMenuCleaner.cs" />
+    <Compile Include="wheel\FSexternalLandingGearControl.cs" />
+    <Compile Include="gui\FSGUIwindowID.cs" />
+    <Compile Include="engine\Stock based modules\FShoverThrottle.cs" />
+    <Compile Include="info\FSinfoPopup.cs" />
+    <Compile Include="cockpit\FSmonitorScript.cs" />
+    <Compile Include="tools\FSnodeLoader.cs" />
+    <None Include="unused\FSplaceStaticMesh.cs" />
+    <Compile Include="engine\FSplanePropellerSpinner.cs" />
+    <Compile Include="info\FSradarAltitude.cs" />
+    <None Include="unused\FSremoteControl.cs" />
+    <None Include="unused\FSresourceDial.cs" />
+    <Compile Include="water\FSrudder.cs" />
+    <Compile Include="engine\FSengineSounds.cs" />
+    <Compile Include="cockpit\FSswitchButtonHandler.cs" />
+    <Compile Include="engine\FSswitchEngineThrustTransform.cs" />
+    <Compile Include="cockpit\FSinternalPropRotator.cs" />
+    <Compile Include="cockpit\FSmonitorInterface.cs" />
+    <Compile Include="engine\Stock based modules\FSmultiAxisEngine.cs" />
+    <Compile Include="wheel\FSpartTurner.cs" />
+    <Compile Include="engine\Stock based modules\FSpropellerAtmosphericNerf.cs" />
+    <Compile Include="control\FSmoveCraftAtLaunch.cs" />
+    <Compile Include="customization\FStextureSwitch.cs" />
+    <Compile Include="control\FStrimAdjustment.cs" />
+    <Compile Include="wheel\FSwheel.cs" />
+    <Compile Include="aero\FSwing.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="engine\FSrotorTrim.cs" />
+    <Compile Include="engine\Stock based modules\FStailRotorThrust.cs" />
+    <Compile Include="engine\Stock based modules\FSthrottlePropSpinner.cs" />
+    <Compile Include="engine\Stock based modules\FSVTOLrotator.cs" />
+    <Compile Include="aero\FSwingletRangeAdjustment.cs" />
+    <Compile Include="wheel\FSwheelAlignment.cs" />
+    <Compile Include="wheel\WheelClass.cs" />
+    <Compile Include="wheel\WheelList.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Documentation.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
