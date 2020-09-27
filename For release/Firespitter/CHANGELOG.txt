@@ -1,0 +1,4 @@
+1.4.0 - 2020.09.26
+------------------
+KSP 1.10 Compatibility
+Converted Biplane cockpit into a crewed command seat
