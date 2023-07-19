@@ -221,7 +221,7 @@ namespace Firespitter.engine
 
         public override void FixedUpdate()
         {
-            if (!HighLogic.LoadedSceneIsFlight || !flightStarted || vessel != FlightGlobals.ActiveVessel) return;
+            if (!HighLogic.LoadedSceneIsFlight || !flightStarted) return;
 
             float airDirection = getAirSpeed();
 
