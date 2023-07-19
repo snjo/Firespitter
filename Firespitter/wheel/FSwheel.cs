@@ -805,7 +805,7 @@ class FSwheel : PartModule
 
         #region Active vessel code        
 
-        if (vessel.isActiveVessel && base.vessel.IsControllable)
+        if (base.vessel.IsControllable)
         {
             disableColliders();
 

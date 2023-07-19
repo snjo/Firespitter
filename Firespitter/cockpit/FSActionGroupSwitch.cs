@@ -237,7 +237,7 @@ namespace Firespitter.cockpit
             if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA
                 || CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Internal)
             {
-                bool groupState = FlightGlobals.ActiveVessel.ActionGroups.groups[actionGroupNumber];
+                bool groupState = vessel.ActionGroups.groups[actionGroupNumber];
 
                 if (switchTypeEnum == SwitchType.flipSwitch)
                 {

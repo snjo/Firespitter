@@ -29,7 +29,7 @@ public class FSanimatedAirIntake : PartModule
     public override void OnFixedUpdate()
     {
         base.OnFixedUpdate();
-        if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+        if (!HighLogic.LoadedSceneIsFlight) return;
         if (intakeMeshTransform != null && intakeModule != null)
         {
             float modifiedFlow = intakeModule.airFlow - flowAtAnimateStart;

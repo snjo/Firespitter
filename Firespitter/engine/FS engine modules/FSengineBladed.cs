@@ -314,7 +314,7 @@ namespace Firespitter.engine
         {
             base.OnUpdate();
 
-            if (!HighLogic.LoadedSceneIsFlight || !flightStarted || vessel != FlightGlobals.ActiveVessel) return;
+            if (!HighLogic.LoadedSceneIsFlight || !flightStarted) return;
 
             getCollectiveInput();
 

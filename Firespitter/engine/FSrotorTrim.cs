@@ -144,7 +144,7 @@ namespace Firespitter.engine
         {
             if (initialized)
             {
-                if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+                if (!HighLogic.LoadedSceneIsFlight) return;
 
                 FlightCtrlState ctrl = vessel.ctrlState;
 

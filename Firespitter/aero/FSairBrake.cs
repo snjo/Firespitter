@@ -86,7 +86,7 @@ public class FSairBrake : PartModule // Inspired by Vlad Just Vlad's airbrake pl
 
     public void FixedUpdate()
     {        
-        if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+        if (!HighLogic.LoadedSceneIsFlight) return;
 
 
         float angleChange = targetAngle - currentAngle;

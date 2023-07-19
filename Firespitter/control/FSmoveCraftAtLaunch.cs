@@ -210,7 +210,7 @@ public class FSmoveCraftAtLaunch : PartModule
     {
 		if (this.hasLaunched) return;
 		if (this.isDefaultPosition) return;
-        if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+        if (!HighLogic.LoadedSceneIsFlight) return;
         
         {
             //Debug.Log("FSmoveCraftAtLaunch: Launching vessel at " + positionDisplayName + ", lat " + latitude + ", long " + longitude + ", alt " + altitude);

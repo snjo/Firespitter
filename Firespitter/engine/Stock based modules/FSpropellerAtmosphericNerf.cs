@@ -49,7 +49,7 @@ namespace Firespitter.engine
 
         public override void OnUpdate()
         {
-            if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+            if (!HighLogic.LoadedSceneIsFlight) return;
             float atmosphericModifier = ((float)part.staticPressureAtm * thrustModifier);
             if ((atmosphericModifier > 1f && thrustModifier > 1f) || disableAtmosphericNerf) atmosphericModifier = 1f; // not setting modifier to 1 at thrustModifier 1 or lower allows for engine that are better than normal in atmospeheres above 1
             float newThrust = fullThrottle * atmosphericModifier * engineModeModifier * steeringModifier;

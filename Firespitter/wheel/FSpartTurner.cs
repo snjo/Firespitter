@@ -296,7 +296,7 @@ using UnityEngine;
 
         public override void OnUpdate()
         {
-            if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+            if (!HighLogic.LoadedSceneIsFlight) return;
             FlightCtrlState ctrl = vessel.ctrlState;
 
             int reverseModifier = 1;

@@ -98,7 +98,7 @@ namespace Firespitter.engine
         public override void OnFixedUpdate()
         {
             base.OnFixedUpdate();
-            if (HighLogic.LoadedSceneIsFlight && vessel == FlightGlobals.ActiveVessel)
+            if (HighLogic.LoadedSceneIsFlight)
             {
                 if (hoverActive)
                 {

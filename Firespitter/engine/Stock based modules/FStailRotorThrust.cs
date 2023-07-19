@@ -131,7 +131,7 @@ namespace Firespitter.engine
         {
             if (initialized)
             {
-                if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+                if (!HighLogic.LoadedSceneIsFlight) return;
                 FlightCtrlState ctrl = vessel.ctrlState;
                 Vector3 steeringInput = new Vector3(0, 0, 0);
 

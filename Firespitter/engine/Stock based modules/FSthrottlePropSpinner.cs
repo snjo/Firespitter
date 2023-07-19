@@ -15,7 +15,7 @@ public class FSthrottlePropSpinner : PartModule
 
     public override void OnUpdate()
     {
-        if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return; 
+        if (!HighLogic.LoadedSceneIsFlight) return; 
 
         var engine = part.Modules.OfType<ModuleEngines>().FirstOrDefault();
 
