@@ -138,7 +138,7 @@ namespace Firespitter.cockpit
         public override void OnUpdate()
         {
             base.OnUpdate();
-            if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+            if (!HighLogic.LoadedSceneIsFlight) return;
 
             // Run once. (Must be run after all parts have been created, so it can't be in the OnAwake)
             if (!monitorDefaultStateSet)

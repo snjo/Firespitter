@@ -238,7 +238,7 @@ namespace Firespitter.engine
         public override void OnFixedUpdate()
         {
             base.OnFixedUpdate();
-            if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+            if (!HighLogic.LoadedSceneIsFlight) return;
             FlightCtrlState ctrl = vessel.ctrlState;
             Vector3 steeringInput = new Vector3(0, 0, 0);
 

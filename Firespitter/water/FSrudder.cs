@@ -138,7 +138,7 @@ public class FSrudder : PartModule
     public void FixedUpdate()
     {
         //base.OnFixedUpdate();
-        if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+        if (!HighLogic.LoadedSceneIsFlight) return;
 
         if (firstRun)
         {

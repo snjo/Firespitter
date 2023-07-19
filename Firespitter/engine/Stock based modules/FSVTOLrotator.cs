@@ -537,7 +537,7 @@ namespace Firespitter.engine
 
         public void FixedUpdate() // moved angle update to fixed update to make rotation speed indpendent of framerate
         {
-            if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+            if (!HighLogic.LoadedSceneIsFlight) return;
 
             float angleChange = targetAngle - currentAngle;
 

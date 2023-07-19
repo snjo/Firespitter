@@ -82,9 +82,9 @@ public class FSinternalPropRotator : InternalModule
     {
         base.OnUpdate();
 
-        if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel) return;
+        if (!HighLogic.LoadedSceneIsFlight) return;
 
-        smoothBrake = Mathf.Lerp(smoothBrake, (FlightGlobals.ActiveVessel.ActionGroups.groups[brakeActionInt] ? 1 : 0), 0.1f);
+        smoothBrake = Mathf.Lerp(smoothBrake, (vessel.ActionGroups.groups[brakeActionInt] ? 1 : 0), 0.1f);
 
         if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA
             || CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Internal)

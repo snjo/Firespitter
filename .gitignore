@@ -211,3 +211,5 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 *.zip
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json

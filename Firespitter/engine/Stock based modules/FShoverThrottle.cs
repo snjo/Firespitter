@@ -156,7 +156,7 @@ namespace Firespitter.engine
         public override void OnUpdate()
         {
             base.OnUpdate();
-            if (!HighLogic.LoadedSceneIsFlight || !vessel.isActiveVessel || !engine.EngineIgnited) return;
+            if (!HighLogic.LoadedSceneIsFlight || !engine.EngineIgnited) return;
 
             double pqsAltitude = vessel.pqsAltitude;
             if (pqsAltitude < 0) pqsAltitude = 0;
