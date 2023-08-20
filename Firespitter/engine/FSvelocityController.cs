@@ -116,7 +116,7 @@ namespace Firespitter.engine
                     if (!resourceReceived)
                         thrustUsed = 0f;
                     if (thrustUsed > 0f)
-                        part.gameObject.GetComponent<Rigidbody>().AddForceAtPosition(finalThrust, t.transform.position);
+                        part.AddForceAtPosition(finalThrust, t.transform.position);
                     //KSP 1.8
                     //if (useFX)
                     //{
@@ -157,7 +157,7 @@ namespace Firespitter.engine
                 if (thrustModifier > 0f && velocityDirection.magnitude > minVelocityToActivate)
                 {
                     finalThrust = -thrustDirection * thrustModifier * maxThrust;
-                    //part.gameObject.GetComponent<Rigidbody>().AddForceAtPosition(-thrustDirection * thrustModifier * maxThrust, t.transform.position);
+                    //part.AddForceAtPosition(-thrustDirection * thrustModifier * maxThrust, t.transform.position);
                 }
                 else
                 {
